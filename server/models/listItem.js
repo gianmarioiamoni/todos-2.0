@@ -2,7 +2,6 @@ import mongoose from "mongoose"
 const Schema = mongoose.Schema;
 
 const listItemSchema = new Schema({
-    id: Number,
     name: String,
     checked: Boolean,
     listId: {
@@ -11,4 +10,4 @@ const listItemSchema = new Schema({
     },
 });
 
-module.exports = mongoose.model("ListItem", listItemSchema);
+export default mongoose.model("ListItem", listItemSchema);

@@ -2,13 +2,24 @@ import express from "express";
 import cors from "cors";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-import List from "./models/list";
-import ListItem from "./models/listItem"
+import 'dotenv/config'
+import List from "./models/list.js";
+import ListItem from "./models/listItem.js"
 // import dotenv from "dotenv;"
 
 const app = express();
 
-app.use(cors());
+const corsOptions = {
+    origin: 'http://localhost:5173',
+    // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+    credentials: true,
+    optionsSuccessStatus: 200,
+};
+
+
+app.use(cors(corsOptions));  // Use cors middleware
+
+// app.use(cors());
 app.use(express.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -20,12 +31,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // }
 
 const localDbUrl = "mongodb://localhost:27017/todos"
-const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : localDbUrl;
+const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : process.env.LOCAL_DB_URL;
 
 // ROUTES
 
 app.route("/lists")
     .get(async function (req, res) {
+        res.setHeader("Access-Control-Allow-Origin", "*")
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+        res.setHeader("Access-Control-Max-Age", "1800");
+        res.setHeader("Access-Control-Allow-Headers", "content-type");
+        res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS"); 
         try {
             const data = await List.find({}, null);
             res.send(data);
@@ -36,7 +52,7 @@ app.route("/lists")
     })
     .post(async function (req, res) {
         try {
-            const { name, id, icon } = req.body;
+            const { name, icon } = req.body;
             const savedData = await new List({ _id: id, name: name, id: id, icon: icon }).save()
 
             const newId = (savedData._id);
@@ -62,13 +78,12 @@ app.route("/lists/:id")
 
     })
     .put(async function (req, res) {
-        const { name, id, icon } = req.body;
+        const { name, id } = req.body;
         const _id = req.params.id;
         try {
             await List.findByIdAndUpdate((_id),
                 {
                     name: name,
-                    icon: icon,
                     id: id
                 }
             )
@@ -90,7 +105,7 @@ app.route("/listItems/:id")
         }
     });
 
-app, route("/listItems")
+app.route("/listItems")
     .post(async function (req, res) {
         try {
             const { name, checked, id, listId } = req.body;

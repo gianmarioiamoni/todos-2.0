@@ -1,4 +1,7 @@
 import Dexie from 'dexie';
+import axios from 'axios';
+
+const dbUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_DB_URL : import.meta.env.VITE_LOCAL_DB_URL;
 
 export const db = new Dexie('todo-list-db');
 db.version(2).stores({
@@ -14,15 +17,44 @@ export const APIs = {
   TodoListUpdate: 'todo-list-update',
 };
 
+// fetcher
 export async function fetcher({ url, ...variables }) {
   switch (url) {
+    //
+    // lists
+    //
+    
+    // GET
     case APIs.TodoLists: {
       const data = db.lists.toArray();
       console.log("fetcher - APIs.TodoLists: ", data);
+
+      try {
+        // const fetchedData = await fetch(dbUrl+"/lists", {
+        //   method: 'GET',
+        //   headers: {
+        //     'Accept': 'application/json',
+        //   }
+        // })
+        const fetchedData = await axios.get(`${import.meta.env.VITE_SERVER_URL}/lists`);
+        const returnData = fetchedData.data.map((d) => ({ ...d, id: d._id }));
+        console.log("returnData = ", returnData);
+        // console.log("dataAxios.data = ", dataAxios.data);
+      } catch (err) { console.log(err) }
+          
+
       // return db.lists.toArray();
       return data;
     }
+    
+    
+    //
+    // lists, listItems
+    //
+    
+    // GET
     case APIs.TodoList: {
+      // {name: "list name", icon: "icon name", items: [{listItams1}, ...]}
       const data = {
         ...(await db.lists.get(variables.id)),
         items:
@@ -41,36 +73,63 @@ export async function fetcher({ url, ...variables }) {
   }
 }
 
+// putter
 export async function putter({ url, id, ...variables }) {
   switch (url) {
+    //
+    // lists
+    //
+    
+    // POST
     case APIs.TodoLists: {
-      const data = db.lists.add({ name: variables.name, icon: variables.icon });
-      console.log("putter - APIs.TodoLists: ", data);
+      const inputData = { name: variables.name, icon: variables.icon }; 
+      const data = db.lists.add(inputData);
+      console.log("putter - APIs.TodoLists data:", data);
+      console.log("inputData: ", inputData)
       return data;
     }
 
       // return db.lists.add({ name: variables.name, icon: variables.icon });
+    
+    // PUT
     case APIs.TodoListsUpdate: {
-      const data = db.lists.update(id, { name: variables.name }); 
+      const inputData = { name: variables.name };
+      const data = db.lists.update(id, inputData); 
       console.log("putter - APIs.TodoListsUpdate: ", data);
+      console.log("inputData: ", inputData)
       return data;  
     }
       // return db.lists.update(id, { name: variables.name });
+    
+    
+    //
+    // listItems
+    //
+    
+    // POST
     case APIs.TodoList: {
-      const data = db.listItems.add({ listId: id, name: variables.name }); 
+      const inputData = { listId: id, name: variables.name };
+      const data = db.listItems.add(inputData); 
       console.log("putter - APIs.TodoList: ", data);
+      console.log("inputData: ", inputData)
       return data; 
     }
       // return db.listItems.add({ listId: id, name: variables.name });
+    
+    // DELETE
     case APIs.TodoListDelete: {
       const data = db.listItems.delete(id); 
       console.log("putter - APIs.TodoListDelete: ", data);
       return data; 
     }
       // return db.listItems.delete(id);
+    
+    // PUT
     case APIs.TodoListUpdate: {
-      const data = db.listItems.update(id, variables); 
+      const inputData = variables;
+      const data = db.listItems.update(id, inputData); 
       console.log("putter - APIs.TodoListUpdate - variables: ", variables);
+      console.log("inputData: ", inputData)
       return data; 
     }
       // return db.listItems.update(id, variables);
