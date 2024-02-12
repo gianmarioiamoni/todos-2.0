@@ -7,19 +7,46 @@ import {
   ListItemText,
   Toolbar,
 } from '@mui/material';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 import { useTodoLists } from '../hooks/useTodoLists.js';
 import { useAppState } from '../providers/AppState.jsx';
+import { getAllLists } from '../services/listServices.js';
+
+import axios from 'axios';
+
+const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 export function AllTodoLists() {
-  const { data } = useTodoLists(); // add loading
+  const [data, setData] = useState([]); // add loading
   const { currentList, setCurrentList } = useAppState();
 
   useEffect(() => {
-    if (!currentList) {
-      setCurrentList(data[0]?.id);
-    }
+    axios.get(serverUrl + "/lists")
+      .then((data) => {
+        setData(data?.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+    
+
+  useEffect(() => {
+    axios.get(serverUrl + "/lists")
+      .then((data) => {
+        setData(data?.data);
+        if (!currentList) {
+          setCurrentList(data.data[0]?.id);
+        }
+
+      })
+      .catch((err) => console.log(err));
+    // const getNewList = () => getAllLists();
+    // const newLists = getNewList();
+    // setData(newLists);
+
+    // if (!currentList) {
+    //   setCurrentList(newLists[0]?.id);
+    // }
   }, [currentList, data, setCurrentList]);
 
   return (
@@ -40,7 +67,7 @@ export function AllTodoLists() {
       {/*Empty Toolbar for spacing*/}
       <Toolbar />
       <List>
-        {data.map(({ name, id, icon }) => {
+        {data != null && data.map(({ name, id, icon }) => {
           const Icon = Icons[icon];
           return (
             <ListItem key={id} disablePadding>

@@ -37,11 +37,11 @@ const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : proce
 
 app.route("/lists")
     .get(async function (req, res) {
-        res.setHeader("Access-Control-Allow-Origin", "*")
-        res.setHeader("Access-Control-Allow-Credentials", "true");
-        res.setHeader("Access-Control-Max-Age", "1800");
-        res.setHeader("Access-Control-Allow-Headers", "content-type");
-        res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS"); 
+        // res.setHeader("Access-Control-Allow-Origin", "*")
+        // res.setHeader("Access-Control-Allow-Credentials", "true");
+        // res.setHeader("Access-Control-Max-Age", "1800");
+        // res.setHeader("Access-Control-Allow-Headers", "content-type");
+        // res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS"); 
         try {
             const data = await List.find({}, null);
             res.send(data);
@@ -103,7 +103,16 @@ app.route("/listItems/:id")
         } catch (err) {
             err => res.send(err)
         }
-    });
+    })
+    .put(async function (req, res) {
+        try {
+            await ListItem.findByIdAndUpdate((req.params.id),
+                {...req.body}
+            )
+        } catch (err) {
+            err => res.send(err);
+        }
+    })
 
 app.route("/listItems")
     .post(async function (req, res) {

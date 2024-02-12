@@ -14,13 +14,15 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { useTodoLists } from '../hooks/useTodoLists.js';
+import { newList } from '../services/listServices.js';
+
+// import { useTodoLists } from '../hooks/useTodoLists.js';
 
 export function NewListDialog({ dialogState }) {
   const [state, setState] = useState('');
   const [iconSearch, setIconSearch] = useState('');
   const [icon, setIcon] = useState('');
-  const { newList } = useTodoLists();
+  // const { newList } = useTodoLists();
 
   const [filteredIcons, setFilteredIcons] = useState(Object.entries(Icons));
 

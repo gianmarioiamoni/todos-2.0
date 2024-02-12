@@ -26,25 +26,19 @@ export async function fetcher({ url, ...variables }) {
     
     // GET
     case APIs.TodoLists: {
-      const data = db.lists.toArray();
+      // const data = db.lists.toArray();
       console.log("fetcher - APIs.TodoLists: ", data);
 
       try {
-        // const fetchedData = await fetch(dbUrl+"/lists", {
-        //   method: 'GET',
-        //   headers: {
-        //     'Accept': 'application/json',
-        //   }
-        // })
         const fetchedData = await axios.get(`${import.meta.env.VITE_SERVER_URL}/lists`);
         const returnData = fetchedData.data.map((d) => ({ ...d, id: d._id }));
         console.log("returnData = ", returnData);
-        // console.log("dataAxios.data = ", dataAxios.data);
       } catch (err) { console.log(err) }
           
 
       // return db.lists.toArray();
-      return data;
+      // return data;
+      return returnData;
     }
     
     
@@ -55,13 +49,21 @@ export async function fetcher({ url, ...variables }) {
     // GET
     case APIs.TodoList: {
       // {name: "list name", icon: "icon name", items: [{listItams1}, ...]}
-      const data = {
-        ...(await db.lists.get(variables.id)),
-        items:
-          (await db.listItems.where({ listId: variables.id }).toArray()) ?? [],
-      };
+      // const data = {
+      //   ...(await db.lists.get(variables.id)),
+      //   items:
+      //     (await db.listItems.where({ listId: variables.id }).toArray()) ?? [],
+      // };
+      try {
+        const fetchedListData = await axios.get(`${import.meta.env.VITE_SERVER_URL}/lists:${variables.id}`);
+        const fetchedListItemsData = await axios.get(`${import.meta.env.VITE_SERVER_URL}/lists:${variables.id}/listitems`);
+        const returnData = { ...fetchedListData.data[0], items: fetchedListItemsData };
+        console.log("returnData = ", returnData);
+      } catch (err) { console.log(err) }
+
       console.log("fetcher - APIs.TodoList: ", data);
-      return data;
+      // return data;
+      return returnData;
     }
       // return {
       //   ...(await db.lists.get(variables.id)),
@@ -84,9 +86,17 @@ export async function putter({ url, id, ...variables }) {
     case APIs.TodoLists: {
       const inputData = { name: variables.name, icon: variables.icon }; 
       const data = db.lists.add(inputData);
+      try {
+        let payload = inputData;
+        let resData = await axios.post(`${import.meta.env.VITE_SERVER_URL}/lists`, payload);
+
+        resData = { ...prev, id: res.data.id };
+
+      } catch(err) {console.log(err)}
       console.log("putter - APIs.TodoLists data:", data);
-      console.log("inputData: ", inputData)
-      return data;
+      console.log("resData: ", resData);
+      // return data;
+      return resData;
     }
 
       // return db.lists.add({ name: variables.name, icon: variables.icon });

@@ -28,6 +28,7 @@ export function useTodoList(currentList) {
             ...oldData,
             items: [...oldData.items, newItemsData],
           }),
+          
         }
       );
     },

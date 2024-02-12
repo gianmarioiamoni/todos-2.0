@@ -17,15 +17,19 @@ import {
 } from '@mui/material';
 import { useEffect, useState } from 'react';
 
-import { useTodoList } from '../hooks/useTodoList.js';
+// import { useTodoList } from '../hooks/useTodoList.js';
 import { useTodoLists } from '../hooks/useTodoLists.js';
 import { useAppState } from '../providers/AppState.jsx';
 
+import { newItem, deleteItem, toggleChecked, updateItem } from '../services/listItemServices.js';
+import { updateList } from '../services/listServices.js';
+
 export function CurrentTodoList() {
   const { currentList } = useAppState();
-  const { data, newItem, deleteItem, toggleChecked, updateItem } =
-    useTodoList(currentList);
-  const { updateList } = useTodoLists();
+  
+  const [data, setData] = useState({});
+  
+  // const { updateList } = useTodoLists();
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
@@ -74,6 +78,7 @@ export function CurrentTodoList() {
                   setOriginalListName(event.target.value);
                 }}
                 onBlur={event => {
+                  setData((prev) => ({ ...prev, name: event.target.value }));
                   void updateList(data.id, event.target.value);
                 }}
               />
@@ -87,7 +92,7 @@ export function CurrentTodoList() {
                 mt: 2,
               }}
             >
-              {data.items.map(({ id, checked }) => {
+              {data.items && data.items.map(({ id, checked }) => {
                 const labelId = `checkbox-list-label-${id}`;
 
                 return (
@@ -97,7 +102,11 @@ export function CurrentTodoList() {
                       <IconButton
                         edge="end"
                         aria-label="delete"
-                        onClick={() => deleteItem(id)}
+                        onClick={() => {
+                          const newItems = data.items.filter(i => i.id !== id);
+                          setData(prev => ({ ...prev, items: newItems }));
+                          return deleteItem(id);
+                        }}
                       >
                         <DeleteOutlineRounded />
                       </IconButton>
@@ -106,7 +115,14 @@ export function CurrentTodoList() {
                   >
                     <ListItemButton
                       role={undefined}
-                      onClick={() => toggleChecked(id)}
+                      // onClick={() => toggleChecked(id)}
+                      onClick={() => {
+                        const index = data.items.findIndex((i) => i.id === id);
+                        const newitems = [...data.items];
+                        newitems[index].toggle = !newitems[index].toggle;
+                        setData(prev => ({ ...prev, items: newItems }));
+                        return toggleChecked(id);
+                      }}
                       dense
                     >
                       <ListItemIcon>
@@ -145,7 +161,7 @@ export function CurrentTodoList() {
                   sx={{ width: 1 }}
                   onSubmit={event => {
                     event.preventDefault();
-                    void newItem(newItemText);
+                    newItem(newItemText, currentList);
                     setNewItemText('');
                   }}
                 >
