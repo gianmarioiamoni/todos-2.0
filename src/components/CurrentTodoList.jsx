@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react';
 import { useTodoLists } from '../hooks/useTodoLists.js';
 import { useAppState } from '../providers/AppState.jsx';
 
-import { newItem, deleteItem, toggleChecked, updateItem } from '../services/listItemServices.js';
+import { newItem, deleteItem, toggleChecked, updateItem, getListItems } from '../services/listItemServices.js';
 import { updateList } from '../services/listServices.js';
 
 export function CurrentTodoList() {
@@ -34,10 +34,29 @@ export function CurrentTodoList() {
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
 
+  
   useEffect(() => {
+    // getListItems(currentList)
+    //   .then(currListItems => {
+    //     console.log("currListItems = ", currListItems)
+    //     setData(currListItems);
+    //   })
+    // if (data?.name) {
+    //   setOriginalListName(data.name);
+    // }
+
+  }, []);
+
+  useEffect(() => {
+    getListItems(currentList)
+      .then(currListItems => {
+        console.log("currListItems2 = ", currListItems)
+        setData(currListItems);
+    })
     if (data?.name) {
       setOriginalListName(data.name);
     }
+    
   }, [currentList, data?.name]);
 
   useEffect(() => {
@@ -92,7 +111,7 @@ export function CurrentTodoList() {
                 mt: 2,
               }}
             >
-              {data.items && data.items.map(({ id, checked }) => {
+              {data.items != null && data.items.map(({ id, checked }) => {
                 const labelId = `checkbox-list-label-${id}`;
 
                 return (

@@ -4,10 +4,12 @@ const Schema = mongoose.Schema;
 const listItemSchema = new Schema({
     name: String,
     checked: Boolean,
-    listId: {
-        type: Schema.Types.ObjectId,
-        ref: "listSchema"
-    },
+    id: String,
+    listId: String
+    // listId: {
+    //     type: Schema.Types.ObjectId,
+    //     ref: "List"
+    // }
 });
 
 export default mongoose.model("ListItem", listItemSchema);

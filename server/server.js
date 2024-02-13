@@ -30,23 +30,17 @@ app.use(bodyParser.urlencoded({ extended: true }));
 //     dotenv.config();
 // }
 
-const localDbUrl = "mongodb://localhost:27017/todos"
 const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : process.env.LOCAL_DB_URL;
 
 // ROUTES
 
 app.route("/lists")
     .get(async function (req, res) {
-        // res.setHeader("Access-Control-Allow-Origin", "*")
-        // res.setHeader("Access-Control-Allow-Credentials", "true");
-        // res.setHeader("Access-Control-Max-Age", "1800");
-        // res.setHeader("Access-Control-Allow-Headers", "content-type");
-        // res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, PATCH, OPTIONS"); 
         try {
             const data = await List.find({}, null);
             res.send(data);
         } catch (err) {
-            res.send(err);
+            console.log(err);
         }
 
     })
@@ -69,11 +63,16 @@ app.route("/lists")
 
 app.route("/lists/:id")
     .get(async function (req, res) {
+        const id = req.params.id;
+        console.log("+++++++++ get(/list/:id")
+        console.log("+++++++++ get(/list/:id - id: ", id)
+
         try {
-            const data = await List.find({ _id: id }, null);
+            const data = await List.findOne({ id: id });
+            console.log("+++++++++ get(/list/:id - data", data)
             res.send(data);
         } catch (err) {
-            res.send(err);
+            console.log(err);
         }
 
     })
@@ -133,14 +132,20 @@ app.route("/listItems")
     });
 
 
-app.route("lists/:id/listItems")
+app.route("/lists/:id/listItems")
     .get(async function (req, res) {
-        try {
-            const data = await ListItem.find({ listId: req.params.id }, null);
-            res.send(data);
-        } catch (err) {
-            res.send(err);
-        }
+        const { id } = req.params;
+
+            console.log("====== get(lists/:id/listItems");
+            console.log("====== get(lists/:id/listItems - req.params.id: ", req.params.id)
+            console.log("====== get(lists/:id/listItems - typeof(req.params.id): ", typeof (req.params.id));
+            try {
+                const data = await ListItem.find({ listId: req.params.id }, null);
+                console.log("get(lists/:id/listItems) - data", data)
+                res.send(data);
+            } catch (err) {
+                res.send(err);
+            }
 
     })
     .put(async function (req, res) {

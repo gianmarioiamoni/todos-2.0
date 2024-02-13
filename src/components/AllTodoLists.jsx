@@ -22,31 +22,30 @@ export function AllTodoLists() {
   const { currentList, setCurrentList } = useAppState();
 
   useEffect(() => {
-    axios.get(serverUrl + "/lists")
-      .then((data) => {
-        setData(data?.data);
-      })
-      .catch((err) => console.log(err));
+    // getAllLists()
+    //   .then(data => {
+    //     console.log("data = ", data)
+    //     setData(data)
+    //     if (!currentList) {
+    //       setCurrentList(data[0]?.id);
+    //     }
+    //     return data;
+    //   })
+    //   .catch((err) => console.log(err));
   }, []);
     
 
   useEffect(() => {
-    axios.get(serverUrl + "/lists")
-      .then((data) => {
-        setData(data?.data);
+    getAllLists()
+      .then(data => {
+        setData(data)
         if (!currentList) {
-          setCurrentList(data.data[0]?.id);
+          setCurrentList(data[0]?.id);
         }
-
+        return data;
       })
       .catch((err) => console.log(err));
-    // const getNewList = () => getAllLists();
-    // const newLists = getNewList();
-    // setData(newLists);
 
-    // if (!currentList) {
-    //   setCurrentList(newLists[0]?.id);
-    // }
   }, [currentList, data, setCurrentList]);
 
   return (
