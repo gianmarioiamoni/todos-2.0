@@ -11,25 +11,20 @@ export async function getAllLists() {
 }
 
 export async function updateList(id, name) {
-    try {
-        let oldList = await fetch(serverUrl + `/lists/${id}`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": 'application/json'
-            }
-        });
-        oldList = await oldList.json();
-        const newList = { ...oldList[0], name: name };
+    console.log("***** updateList()");
+    console.log("***** updateList() - id = ", id);
+    console.log("***** updateList() - name = ", name);
 
-        const res = await fetch(serverUrl + `/lists/${id}`, {
-            method: 'PUT',
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            body: JSON.stringify(newList)
-        })
-        const response = res.json();
-        return response;
+    try {
+        const oldList = await axios(serverUrl + `/lists/${id}`);
+        const newList = { ...oldList.data, name: name };
+
+        const response = axios.put(serverUrl + `/lists/${id}`,
+            {
+                name: name
+            }
+        );
+        return response.data;
     } catch (err) { console.log(err) }
 }
 
@@ -40,18 +35,8 @@ export async function newList(name, icon) {
         id: crypto.randomUUID(),
     };
     try {
-        // let res = await fetch(serverUrl + '/lists', {
-        //     method: 'POST',
-        //     headers: {
-        //         "Content-Type": 'application/json'
-        //     },
-        //     body: JSON.stringify(newListData)
-        // });
-
         const payload = { name: name, icon: icon };
         const res = await axios.post(serverUrl + "/lists", payload);
-
-        // const response = await res.json();
 
         // id field is added to db by the server
         const returnData = { ...res.data, id: res.data._id };

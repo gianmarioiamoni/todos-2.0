@@ -51,21 +51,10 @@ app.route("/lists")
 
             const newStrId = savedData._id.valueOf();
             const newId = savedData._id;
-            console.log("post(/lists) - savedData = ", savedData);
-            console.log("post(/lists) - newId = ", newId);
-            console.log("post(/lists) - newStrId = ", newStrId);
 
             const newSavedData = await List.findByIdAndUpdate(newId, { id: newStrId });
 
-            console.log("post(/lists) - newSavedData = ", newSavedData);
-            
-
             res.send(newSavedData);
-            // return res.status(201).json({
-            //     success: true,
-            //     id: newId,
-            //     message: 'List created!'
-            // })
         } catch (err) {
             console.log(err);
         }
@@ -85,16 +74,15 @@ app.route("/lists/:id")
 
     })
     .put(async function (req, res) {
-        const { name, id } = req.body;
-        const _id = req.params.id;
+        const { name } = req.body;
+        const id = req.params.id;
         try {
-            await List.findByIdAndUpdate((_id),
+            const response = await List.findByIdAndUpdate((id),
                 {
-                    name: name,
-                    id: id
+                    name: name
                 }
             )
-            res.send("Todos successfully updated");
+            res.send(response);
         } catch (err) {
             res.send(err);
         }

@@ -100,6 +100,13 @@ export function CurrentTodoList() {
                   setData((prev) => ({ ...prev, name: event.target.value }));
                   void updateList(data.id, event.target.value);
                 }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    setData((prev) => ({ ...prev, name: event.target.value }));
+                    void updateList(data.id, event.target.value);
+                    event.preventDefault();
+                  }
+                }}
               />
             </Box>
             <Divider />
