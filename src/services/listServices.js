@@ -5,19 +5,6 @@ const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_S
 
 export async function getAllLists() {
     try {
-        //     console.log("serverUrl = ", serverUrl);
-        //     const res = await fetch(serverUrl + '/lists', {
-        //         method: 'GET',
-        //         headers: {
-        //             'Accept': 'application/json',
-        //         }
-        //     });
-        //     const response = await res.json();
-        //     console.log("getAllLists() - response: ", response);
-        //     const returnData = response.data.map((d) => ({ ...d, id: d._id }));
-        //     console.log("getAllLists() - returnData: ", returnData);
-        //     return returnData;
-        // } catch (err) { console.log(err) }
         const data = await axios.get(serverUrl + '/lists');
         return data.data;
     } catch (err) { console.log(err) }
@@ -53,15 +40,22 @@ export async function newList(name, icon) {
         id: crypto.randomUUID(),
     };
     try {
-        let res = await fetch(serverUrl + '/lists', {
-            method: 'POST',
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            body: JSON.stringify(newListData)
-        });
-        response = await res.json();
-        returnData = { ...response[0], id: response[0]._id }
+        // let res = await fetch(serverUrl + '/lists', {
+        //     method: 'POST',
+        //     headers: {
+        //         "Content-Type": 'application/json'
+        //     },
+        //     body: JSON.stringify(newListData)
+        // });
+
+        const payload = { name: name, icon: icon };
+        const res = await axios.post(serverUrl + "/lists", payload);
+
+        // const response = await res.json();
+
+        // id field is added to db by the server
+        const returnData = { ...res.data, id: res.data._id };
+
         return returnData;
 
     } catch (err) { console.log(err) }

@@ -47,14 +47,25 @@ app.route("/lists")
     .post(async function (req, res) {
         try {
             const { name, icon } = req.body;
-            const savedData = await new List({ _id: id, name: name, id: id, icon: icon }).save()
+            const savedData = await new List({ name: name, icon: icon }).save()
 
-            const newId = (savedData._id);
-            return res.status(201).json({
-                success: true,
-                id: newId,
-                message: 'List created!'
-            })
+            const newStrId = savedData._id.valueOf();
+            const newId = savedData._id;
+            console.log("post(/lists) - savedData = ", savedData);
+            console.log("post(/lists) - newId = ", newId);
+            console.log("post(/lists) - newStrId = ", newStrId);
+
+            const newSavedData = await List.findByIdAndUpdate(newId, { id: newStrId });
+
+            console.log("post(/lists) - newSavedData = ", newSavedData);
+            
+
+            res.send(newSavedData);
+            // return res.status(201).json({
+            //     success: true,
+            //     id: newId,
+            //     message: 'List created!'
+            // })
         } catch (err) {
             console.log(err);
         }
@@ -64,12 +75,9 @@ app.route("/lists")
 app.route("/lists/:id")
     .get(async function (req, res) {
         const id = req.params.id;
-        console.log("+++++++++ get(/list/:id")
-        console.log("+++++++++ get(/list/:id - id: ", id)
 
         try {
             const data = await List.findOne({ id: id });
-            console.log("+++++++++ get(/list/:id - data", data)
             res.send(data);
         } catch (err) {
             console.log(err);
@@ -136,16 +144,12 @@ app.route("/lists/:id/listItems")
     .get(async function (req, res) {
         const { id } = req.params;
 
-            console.log("====== get(lists/:id/listItems");
-            console.log("====== get(lists/:id/listItems - req.params.id: ", req.params.id)
-            console.log("====== get(lists/:id/listItems - typeof(req.params.id): ", typeof (req.params.id));
-            try {
-                const data = await ListItem.find({ listId: req.params.id }, null);
-                console.log("get(lists/:id/listItems) - data", data)
-                res.send(data);
-            } catch (err) {
-                res.send(err);
-            }
+        try {
+            const data = await ListItem.find({ listId: req.params.id }, null);
+            res.send(data);
+        } catch (err) {
+            res.send(err);
+        }
 
     })
     .put(async function (req, res) {

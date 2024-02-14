@@ -4,14 +4,6 @@ const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_S
 
 async function getItems(listId) {
     try {
-        // const fetchedData = await fetch(serverUrl + `/lists/${listId}/listItems`, {
-        //     method: 'GET',
-        //     headers: {
-        //         "Content-Type": 'application/json'
-        //     }
-        // });
-        // res = await fetchedData.json();
-        // return res;
         const res = await axios.get(serverUrl + `/lists/${listId}/listItems`);
         return res.data;
 
@@ -19,17 +11,10 @@ async function getItems(listId) {
 }
 
 export async function getListItems(listId) {
-    console.log("******** getListItems(listId)")
     try {
         const res = await axios.get(serverUrl + `/lists/${listId}`);
-        // res = await fetchedData.json();
-        console.log("getListItems(listId) - res: ", res)
-        console.log("getListItems(listId) - res.data: ", res.data);
-        // const resItems = await getItems(listId);
         const resItems = await axios.get(serverUrl + `/lists/${listId}/listItems`);
         const returnData = { ...res?.data, items: resItems.data };
-        console.log("getListItems(listId) - resItems.data: ", resItems.data)
-        console.log("getListItems(listId) - returnData: ", returnData)
         return returnData;
 
     } catch{(err) => console.log(err)}
