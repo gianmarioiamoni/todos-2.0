@@ -18,14 +18,20 @@ import {
 import { useEffect, useState } from 'react';
 
 // import { useTodoList } from '../hooks/useTodoList.js';
-import { useTodoLists } from '../hooks/useTodoLists.js';
+// import { useTodoLists } from '../hooks/useTodoLists.js';
 import { useAppState } from '../providers/AppState.jsx';
 
-import { newItem, deleteItem, toggleChecked, updateItem, getListItems } from '../services/listItemServices.js';
-import { updateList } from '../services/listServices.js';
+import {
+  newItem,
+  deleteItem,
+  toggleChecked,
+  updateItem,
+  getListItems
+} from '../services/listItemServices.js';
+import { updateList, deleteList, getAllLists } from '../services/listServices.js';
 
-export function CurrentTodoList() {
-  const { currentList } = useAppState();
+export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
+  const { currentList, setCurrentList } = useAppState();
   
   const [data, setData] = useState({});
   
@@ -34,25 +40,28 @@ export function CurrentTodoList() {
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
 
+
+  useEffect(() => { 
+    if (isListDeleted) {
+      getAllLists()
+        .then(async (lists) => {
+          const newList = await getListItems(lists[0]?.id);
+          setCurrentList(lists[0]?.id);
+          setData(newList);
+          if (newList[0]?.name) {
+            setOriginalListName(newList[0].name);
+          }
+      })
+      setIsListDeleted(false);
+    }
+  }, [isListDeleted])
   
   useEffect(() => {
-    // getListItems(currentList)
-    //   .then(currListItems => {
-    //     console.log("currListItems = ", currListItems)
-    //     setData(currListItems);
-    //   })
-    // if (data?.name) {
-    //   setOriginalListName(data.name);
-    // }
 
-  }, []);
-
-  useEffect(() => {
     getListItems(currentList)
       .then(currListItems => {
-        console.log("currListItems2 = ", currListItems)
         setData(currListItems);
-    })
+      })
     if (data?.name) {
       setOriginalListName(data.name);
     }
@@ -144,8 +153,8 @@ export function CurrentTodoList() {
                       // onClick={() => toggleChecked(id)}
                       onClick={() => {
                         const index = data.items.findIndex((i) => i.id === id);
-                        const newitems = [...data.items];
-                        newitems[index].toggle = !newitems[index].toggle;
+                        const newItems = [...data.items];
+                        newItems[index].toggle = !newItems[index].toggle;
                         setData(prev => ({ ...prev, items: newItems }));
                         return toggleChecked(id);
                       }}

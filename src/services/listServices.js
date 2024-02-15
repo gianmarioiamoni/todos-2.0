@@ -11,9 +11,6 @@ export async function getAllLists() {
 }
 
 export async function updateList(id, name) {
-    console.log("***** updateList()");
-    console.log("***** updateList() - id = ", id);
-    console.log("***** updateList() - name = ", name);
 
     try {
         const oldList = await axios(serverUrl + `/lists/${id}`);
@@ -43,6 +40,17 @@ export async function newList(name, icon) {
 
         return returnData;
 
+    } catch (err) { console.log(err) }
+}
+
+export async function deleteList(id) {
+    try {
+        // alert(`delete list id = ${id}`);
+
+        const res = await axios.delete(serverUrl + `/lists/${id}`);
+        await axios.delete(serverUrl + `/lists/${id}/listItems`);
+
+        return res;
     } catch (err) { console.log(err) }
 }
 

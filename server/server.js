@@ -86,6 +86,15 @@ app.route("/lists/:id")
         } catch (err) {
             res.send(err);
         }
+    })
+    .delete(async function (req, res) {
+        const id = req.params.id;
+        try {
+            const data = await List.findByIdAndDelete((id));
+            res.send(data);
+        } catch (err) {
+            res.send(err)
+        }
     });
 
 
@@ -156,7 +165,18 @@ app.route("/lists/:id/listItems")
         } catch (err) {
             res.send(err);
         }
+    })
+    .delete(async function (req, res) {
+        const listId = req.params.id;
+        try {
+            const data = await ListItem.deleteMany({ listId: listId });
+            res.send(data);
+        } catch (err) {
+            res.send(err);
+        }
     });
+
+
 
 
 main()

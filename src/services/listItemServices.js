@@ -19,6 +19,15 @@ export async function getListItems(listId) {
 
     } catch{(err) => console.log(err)}
 }
+
+// export async function deleteListItems(listId) {
+//     try {
+//         const returnData = await axios.delete(serverUrl + `/lists/${listId}/listItems`);
+//         return returnData;
+
+//     } catch { (err) => console.log(err) }
+// }
+
 export async function newItem(newItemName, listId) {
         const newItemData = {
             name: newItemName,

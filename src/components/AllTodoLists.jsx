@@ -1,4 +1,6 @@
 import * as Icons from '@mui/icons-material';
+import { DeleteOutlineRounded } from '@mui/icons-material';
+import ClearIcon from '@mui/icons-material/Clear';
 import {
   Drawer,
   List,
@@ -6,32 +8,23 @@ import {
   ListItemButton,
   ListItemText,
   Toolbar,
+  IconButton
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 
-import { useTodoLists } from '../hooks/useTodoLists.js';
+// import { useTodoLists } from '../hooks/useTodoLists.js';
 import { useAppState } from '../providers/AppState.jsx';
-import { getAllLists } from '../services/listServices.js';
+import { getAllLists, deleteList } from '../services/listServices.js';
 
 import axios from 'axios';
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
-export function AllTodoLists() {
+export function AllTodoLists({handleListDelete}) {
   const [data, setData] = useState([]); // add loading
   const { currentList, setCurrentList } = useAppState();
 
   useEffect(() => {
-    // getAllLists()
-    //   .then(data => {
-    //     console.log("data = ", data)
-    //     setData(data)
-    //     if (!currentList) {
-    //       setCurrentList(data[0]?.id);
-    //     }
-    //     return data;
-    //   })
-    //   .catch((err) => console.log(err));
   }, []);
     
 
@@ -69,7 +62,29 @@ export function AllTodoLists() {
         {data != null && data.map(({ name, id, icon }) => {
           const Icon = Icons[icon];
           return (
-            <ListItem key={id} disablePadding>
+            <ListItem
+              key={id}
+              secondaryAction={
+                <IconButton
+                  edge="end"
+                  aria-label="delete"
+                  onClick={() => {
+                    // alert("Delete List")
+                    // call function in App to manage update of CurrentTodoList
+                    handleListDelete(id, name);
+                    const newLists = data.filter(l => l.id !== id);
+                    setData(prev => ([...newLists]));
+                    setCurrentList(data[0]?.id);
+                    deleteList(id);
+
+                    // return deleteItem(id);
+                  }}
+                >
+                  {/* <DeleteOutlineRounded /> */}
+                  <ClearIcon />
+                </IconButton>
+              }
+              disablePadding>
               <ListItemButton
                 onClick={() => {
                   setCurrentList(id);
