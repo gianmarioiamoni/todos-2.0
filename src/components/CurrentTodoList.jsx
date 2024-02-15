@@ -98,6 +98,14 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
     return item;
   }
 
+  function handleToggleChecked(id) {
+    const idx = data.items.findIndex((i) => i.id === id);
+    const itemsArray = [...data.items];
+    itemsArray[idx].checked = !itemsArray[idx].checked;
+    setData(prev => ({ ...prev, items: itemsArray }));
+    return toggleChecked(id, itemsArray[idx].checked);
+  }
+
   const Icon = Icons[data?.icon];
 
   return (
@@ -172,14 +180,7 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
                   >
                     <ListItemButton
                       role={undefined}
-                      // onClick={() => toggleChecked(id)}
-                      onClick={() => {
-                        const index = data.items.findIndex((i) => i.id === id);
-                        const newItems = [...data.items];
-                        newItems[index].toggle = !newItems[index].toggle;
-                        setData(prev => ({ ...prev, items: newItems }));
-                        return toggleChecked(id);
-                      }}
+                      onClick={() => handleToggleChecked(id) }
                       dense
                     >
                       <ListItemIcon>

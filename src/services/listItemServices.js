@@ -41,26 +41,14 @@ export async function deleteItem(id) {
     } catch{(err) => console.log(err)}
 }
 
-export async function toggleChecked(id) {
+export async function toggleChecked(id, isChecked) {
     try {
-        const oldListItem = await fetch(serverUrl + `/listItems/${id}`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": 'application/json'
+        const response = await axios.put(serverUrl + `/listitems/${id}`,
+            {
+                checked: isChecked
             }
-        });
-        const oldList = await oldListItem.json();
-        const newListItem = { ...oldList[0], checked: !oldList[0].checked };
-
-        const res = await fetch(serverUrl + `/listItems/${id}`, {
-            method: 'PUT',
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            body: JSON.stringify(newListItem)
-        })
-        const response = await res.json();
-        return response;
+        );
+        return response.data;
 
     } catch (err) { console.log(err) }
 }
@@ -72,7 +60,6 @@ export async function updateItem(id, text) {
                 name: text 
             }
         );
-        console.log("***** updatedItem() - response = ", response)
         return response.data;
 
     } catch (err) { console.log(err) }
