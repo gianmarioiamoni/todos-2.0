@@ -4,7 +4,8 @@ const Schema = mongoose.Schema;
 const listSchema = new Schema({
     name: String,
     icon: String,
-    id: String
+    id: String,
+    isAllTodos: Boolean
 });
 
 export default mongoose.model("List", listSchema);

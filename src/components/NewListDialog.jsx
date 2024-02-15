@@ -16,13 +16,11 @@ import { useEffect, useState } from 'react';
 
 import { newList } from '../services/listServices.js';
 
-// import { useTodoLists } from '../hooks/useTodoLists.js';
 
-export function NewListDialog({ dialogState }) {
+export function NewListDialog({ dialogState, handleListAdded }) {
   const [state, setState] = useState('');
   const [iconSearch, setIconSearch] = useState('');
   const [icon, setIcon] = useState('');
-  // const { newList } = useTodoLists();
 
   const [filteredIcons, setFilteredIcons] = useState(Object.entries(Icons));
 
@@ -103,6 +101,7 @@ export function NewListDialog({ dialogState }) {
         <Button
           onClick={() => {
             void newList(state, icon);
+            handleListAdded();
             dialogState.close();
           }}
         >

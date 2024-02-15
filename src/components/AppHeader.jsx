@@ -4,12 +4,12 @@ import { usePopupState } from 'material-ui-popup-state/hooks';
 
 import { NewListDialog } from './NewListDialog.jsx';
 
-export function AppHeader() {
+export function AppHeader({handleListAdded}) {
   const dialogState = usePopupState({ variant: 'dialog', popupId: 'new-list' });
 
   return (
     <>
-      <NewListDialog dialogState={dialogState} />
+      <NewListDialog dialogState={dialogState} handleListAdded={handleListAdded} />
       <AppBar
         position="fixed"
         sx={{ zIndex: theme => theme.zIndex.drawer + 1 }}

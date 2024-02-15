@@ -61,6 +61,19 @@ app.route("/lists")
 
     })
 
+app.route("/lists/allTodosList")
+    .get(async function (req, res) {
+        try {
+            const allTodosList = await List.findOne({ isAllTodos: true }).exec();
+            console.log("get(lists/allTodosList) - allTodosList = ", allTodosList)
+            res.send(allTodosList);
+
+        
+        } catch (err) {
+            console.log(err);
+        }
+})
+
 app.route("/lists/:id")
     .get(async function (req, res) {
         const id = req.params.id;

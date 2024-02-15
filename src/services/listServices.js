@@ -25,14 +25,15 @@ export async function updateList(id, name) {
     } catch (err) { console.log(err) }
 }
 
-export async function newList(name, icon) {
+export async function newList(name, icon, isAllTodos=false) {
     const newListData = {
         name: name,
         icon: icon,
         id: crypto.randomUUID(),
+
     };
     try {
-        const payload = { name: name, icon: icon };
+        const payload = { name: name, icon: icon, isAllTodos: isAllTodos};
         const res = await axios.post(serverUrl + "/lists", payload);
 
         // id field is added to db by the server
@@ -49,6 +50,22 @@ export async function deleteList(id) {
         await axios.delete(serverUrl + `/lists/${id}/listItems`);
 
         return res;
+    } catch (err) { console.log(err) }
+}
+
+export async function getAllTodosListId() {
+    try {
+        const allTodosList = await axios.get(serverUrl + "/lists/allTodosList");
+        console.log("allTodosList.data = ", allTodosList.data)
+        if (allTodosList.data.length != 0) {
+            console.log("allTodosList found")
+            return allTodosList.data._id;
+        }
+        else {
+            console.log("allTodosList not found")
+            return -1;
+        }
+
     } catch (err) { console.log(err) }
 }
 
