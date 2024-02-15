@@ -20,31 +20,12 @@ export async function getListItems(listId) {
     } catch{(err) => console.log(err)}
 }
 
-// export async function deleteListItems(listId) {
-//     try {
-//         const returnData = await axios.delete(serverUrl + `/lists/${listId}/listItems`);
-//         return returnData;
-
-//     } catch { (err) => console.log(err) }
-// }
-
 export async function newItem(newItemName, listId) {
-        const newItemData = {
-            name: newItemName,
-            checked: false,
-            id: crypto.randomUUID(),
-            listId: listId
-        };
     try {
-        const res = await fetch(serverUrl + '/listItems', {
-            method: 'POST',
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            body: JSON.stringify(newItemData)
-        });
-        const response = await res.json();
-        returnData = { ...response[0], id: response[0]._id }
+        const payload = { name: newItemName, checked: false, listId: listId };
+        const res = await axios.post(serverUrl + "/listitems", payload);
+
+        const returnData = { ...res.data, id: res.data._id };
         return returnData;
 
     } catch(err) {console.log(err)}

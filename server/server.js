@@ -121,15 +121,15 @@ app.route("/listItems/:id")
 app.route("/listItems")
     .post(async function (req, res) {
         try {
-            const { name, checked, id, listId } = req.body;
-            const savedData = await new List({ _id: id, name: name, id: id, checked: checked, listId: listId }).save()
+            const { name, checked, listId } = req.body;
+            const savedData = await new ListItem({name: name, checked: checked, listId: listId }).save()
 
-            const newId = (savedData._id);
-            return res.status(201).json({
-                success: true,
-                id: newId,
-                message: 'List created!'
-            })
+            const newStrId = savedData._id.valueOf();
+            const newId = savedData._id;
+
+            const newSavedData = await ListItem.findByIdAndUpdate(newId, { id: newStrId });
+
+            res.send(newSavedData);
         } catch (err) {
             console.log(err);
         }

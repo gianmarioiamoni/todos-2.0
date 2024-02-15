@@ -196,7 +196,16 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
                   sx={{ width: 1 }}
                   onSubmit={event => {
                     event.preventDefault();
-                    newItem(newItemText, currentList);
+                    newItem(newItemText, currentList)
+                      .then((newTodo) => {
+                        const itemsArray = [...data.items];
+                        if (itemsArray != null) {
+                          const newItemsArray = [...itemsArray, newTodo];
+                          setData((prev) => ({ ...prev, items: newItemsArray }))
+                        }
+                      })
+                      .catch(err => console.log(err))
+
                     setNewItemText('');
                   }}
                 >
