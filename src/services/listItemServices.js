@@ -67,24 +67,30 @@ export async function toggleChecked(id) {
         
 export async function updateItem(id, text) {
     try {
-        const oldListItem = await fetch(serverUrl + `/listItems/${id}`, {
-            method: 'GET',
-            headers: {
-                "Content-Type": 'application/json'
-            }
-        });
-        const oldList = await oldListItem.json();
-        const newListItem = { ...oldList[0], name: text };
+        // const oldListItem = await fetch(serverUrl + `/listItems/${id}`, {
+        //     method: 'GET',
+        //     headers: {
+        //         "Content-Type": 'application/json'
+        //     }
+        // });
+        // const oldList = await oldListItem.json();
 
-        const res = await fetch(serverUrl + `/listItems/${id}`, {
-            method: 'PUT',
-            headers: {
-                "Content-Type": 'application/json'
-            },
-            body: JSON.stringify(newListItem)
-        })
-        const response = res.json();
-        return response;
+        // const res = await fetch(serverUrl + `/listItems/${id}`, {
+        //     method: 'PUT',
+        //     headers: {
+        //         "Content-Type": 'application/json'
+        //     },
+        //     body: JSON.stringify(newListItem)
+        // })
+        // const response = res.json();
+        
+        const response = await axios.put(serverUrl + `/listitems/${id}`,
+            {
+                name: text 
+            }
+        );
+        console.log("***** updatedItem() - response = ", response)
+        return response.data;
 
     } catch (err) { console.log(err) }
 

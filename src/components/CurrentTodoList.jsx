@@ -179,7 +179,18 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
                             });
                           }}
                           onBlur={event => {
-                            void updateItem(id, event.target.value);
+                            updateItem(id, event.target.value)
+                              .then((updatedItem) => {
+                                console.log("==== onBlur() - updatedItem = ", updatedItem)
+                                const itemsArray = data.items;
+                                console.log("==== onBlur() - itemsArray = ", itemsArray)
+                                const idx = itemsArray.findIndex((i) => i._id === updatedItem.id);
+                                console.log("==== onBlur() - idx = ", idx)
+                                const newItemsArray = itemsArray[idx].name = event.target.value;
+                                console.log("==== onBlur() - newItemsArray = ", newItemsArray)
+                                setData((prev) => ({ ...prev, items: newItemsArray }));
+                              })
+                            .catch(err => console.log(err))
                           }}
                           value={originalListItems[id] ?? ''}
                           size="small"
