@@ -83,6 +83,21 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
     setData((prev) => ({ ...prev, items: newItemsArray }));
   }
 
+  function handleAddItem() {
+    const item = newItem(newItemText, currentList)
+      .then((newTodo) => {
+        const itemsArray = [...data.items];
+        if (itemsArray != null) {
+          const newItemsArray = [...itemsArray, newTodo];
+          setData((prev) => ({ ...prev, items: newItemsArray }))
+        }
+      })
+      .catch(err => console.log(err))
+
+    setNewItemText('');
+    return item;
+  }
+
   const Icon = Icons[data?.icon];
 
   return (
@@ -216,17 +231,7 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
                   sx={{ width: 1 }}
                   onSubmit={event => {
                     event.preventDefault();
-                    newItem(newItemText, currentList)
-                      .then((newTodo) => {
-                        const itemsArray = [...data.items];
-                        if (itemsArray != null) {
-                          const newItemsArray = [...itemsArray, newTodo];
-                          setData((prev) => ({ ...prev, items: newItemsArray }))
-                        }
-                      })
-                      .catch(err => console.log(err))
-
-                    setNewItemText('');
+                    return handleAddItem();
                   }}
                 >
                   <TextField
@@ -245,8 +250,10 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
                         <InputAdornment position="end">
                           <IconButton
                             aria-label="submit"
+                             
                             onClick={() => {
                               document.activeElement.blur();
+                              return handleAddItem();
                             }}
                             edge="end"
                           >
