@@ -76,6 +76,13 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
     }
   }, [data]);
 
+  function handleUpdateItem(updatedItem) {
+    const itemsArray = data.items;
+    const idx = itemsArray.findIndex((i) => i._id === updatedItem.id);
+    const newItemsArray = itemsArray[idx].name = event.target.value;
+    setData((prev) => ({ ...prev, items: newItemsArray }));
+  }
+
   const Icon = Icons[data?.icon];
 
   return (
@@ -180,17 +187,19 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
                           }}
                           onBlur={event => {
                             updateItem(id, event.target.value)
-                              .then((updatedItem) => {
-                                console.log("==== onBlur() - updatedItem = ", updatedItem)
-                                const itemsArray = data.items;
-                                console.log("==== onBlur() - itemsArray = ", itemsArray)
-                                const idx = itemsArray.findIndex((i) => i._id === updatedItem.id);
-                                console.log("==== onBlur() - idx = ", idx)
-                                const newItemsArray = itemsArray[idx].name = event.target.value;
-                                console.log("==== onBlur() - newItemsArray = ", newItemsArray)
-                                setData((prev) => ({ ...prev, items: newItemsArray }));
-                              })
+                              .then((updatedItem) =>
+                                handleUpdateItem(updatedItem)
+                              )
                             .catch(err => console.log(err))
+                          }}
+                          onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                              updateItem(id, event.target.value)
+                                .then((updatedItem) => {
+                                  return handleUpdateItem(updatedItem)
+                                })
+                                .catch(err => console.log(err))
+                            }
                           }}
                           value={originalListItems[id] ?? ''}
                           size="small"

@@ -100,7 +100,6 @@ app.route("/lists/:id")
 
 app.route("/listItems/:id")
     .delete(async function (req, res) {
-        console.log("deleting todo id = " + req.params.id);
         try {
             await ListItem.findByIdAndDelete((req.params.id));
             res.send("todo successfully deleted");
