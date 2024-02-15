@@ -69,15 +69,12 @@ export function AllTodoLists({handleListDelete}) {
                   edge="end"
                   aria-label="delete"
                   onClick={() => {
-                    // alert("Delete List")
                     // call function in App to manage update of CurrentTodoList
                     handleListDelete(id, name);
                     const newLists = data.filter(l => l.id !== id);
                     setData(prev => ([...newLists]));
                     setCurrentList(data[0]?.id);
-                    deleteList(id);
-
-                    // return deleteItem(id);
+                    return deleteList(id);
                   }}
                 >
                   {/* <DeleteOutlineRounded /> */}

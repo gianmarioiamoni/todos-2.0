@@ -33,11 +33,13 @@ export async function newItem(newItemName, listId) {
 
 export async function deleteItem(id) {
     try {
-        const res = fetch(serverUrl + `/listItems/${id}`, {
-            method: 'DELETE'
-        });
-        const response = await res.json();
-        return response;
+        // const res = fetch(serverUrl + `/listItems/${id}`, {
+        //     method: 'DELETE'
+        // });
+        // const response = await res.json();
+        // return response;
+        const res = await axios.delete(serverUrl + `/listitems/${id}`);
+        return res.data;
     } catch{(err) => console.log(err)}
 }
 

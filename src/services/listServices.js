@@ -45,8 +45,6 @@ export async function newList(name, icon) {
 
 export async function deleteList(id) {
     try {
-        // alert(`delete list id = ${id}`);
-
         const res = await axios.delete(serverUrl + `/lists/${id}`);
         await axios.delete(serverUrl + `/lists/${id}/listItems`);
 
