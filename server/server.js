@@ -131,6 +131,15 @@ app.route("/listItems/:id")
     })
 
 app.route("/listItems")
+    .get(async function (req, res) {
+        try {
+            const data = await ListItem.find({});
+            res.send(data);
+        } catch (err) {
+            console.log(err);
+        }
+
+    })
     .post(async function (req, res) {
         try {
             const { name, checked, listId } = req.body;

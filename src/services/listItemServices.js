@@ -1,4 +1,5 @@
 import axios from "axios";
+import { AllTodosListItem } from "../components/AllTodosListItem";
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
@@ -10,11 +11,25 @@ async function getItems(listId) {
     } catch{(err) => console.log(err)}
 }
 
-export async function getListItems(listId) {
+export async function getListItems(listId, allTodosListId) {
     try {
-        const res = await axios.get(serverUrl + `/lists/${listId}`);
-        const resItems = await axios.get(serverUrl + `/lists/${listId}/listItems`);
-        const returnData = { ...res?.data, items: resItems.data };
+        console.log("1. listId = ", listId)
+        console.log("2. allTodosListId = ", allTodosListId)
+        const resList = await axios.get(serverUrl + `/lists/${listId}`);
+        console.log("3. resList = ", resList)
+        let resItems;
+        // if list is "ALL TODOs" get all items
+        if (listId === allTodosListId) {
+            console.log("getListItems() - ALL TODOs")
+            resItems = await axios.get(serverUrl + `/listItems`);
+            console.log("4a. resItems = ", resItems)
+        } else {
+            console.log("getListItems() - NOT ALL TODOs")
+            resItems = await axios.get(serverUrl + `/lists/${listId}/listItems`);
+            console.log("4.b resItems = ", resItems)
+        }
+        
+        const returnData = { ...resList?.data, items: resItems.data };
         return returnData;
 
     } catch{(err) => console.log(err)}

@@ -12,22 +12,25 @@ import {
 } from '@mui/material';
 import { useState, useEffect } from 'react';
 
+import { AllTodosListItem } from './AllTodosListItem.jsx';
+
 // import { useTodoLists } from '../hooks/useTodoLists.js';
 import { useAppState } from '../providers/AppState.jsx';
 import { getAllLists, getAllTodosListId, newList, deleteList } from '../services/listServices.js';
 
-import axios from 'axios';
 
-const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 let allTodosListId = "";
 
 export function AllTodoLists({handleListDelete, isListAdded, setIsListAdded}) {
   const [data, setData] = useState([]); // add loading
   const { currentList, setCurrentList } = useAppState();
-
   
 
   useEffect(() => {
+    if (!currentList) {
+      setCurrentList(data[0]?.id);
+    }
+
     getAllTodosListId()
       .then((listId) => {
         // getAllTodosListId() returns -1 if an "ALL TODOs" list is not in the db
@@ -47,39 +50,6 @@ export function AllTodoLists({handleListDelete, isListAdded, setIsListAdded}) {
     
 
   useEffect(() => {
-    console.log("^^^^ useEffect()")
-    // getAllLists()
-    //   .then(data => {
-    //     // check if "ALL TODOs" list is the first in the list
-    //     if (data[0]?._id != allTodosListId) {
-    //       // move "ALL TODOs" list at the top of the array
-    //       const oldListsArray = [...data];
-    //       const idx = oldListsArray.findIndex((l) => l._id === allTodosListId);
-    //       const list = { ...oldListsArray[idx] };
-
-    //       // remove list from previous position in the array
-    //       const filteredArray = oldListsArray.filter((l) => l._id !== allTodosListId);
-    //       // add list at the top of the array
-    //       const newListArray = [list, ...filteredArray];
-
-    //       setData(newListArray);
-
-    //       if (!currentList) {
-    //         setCurrentList(newListArray[0].id);
-    //       }
-    //     } else {
-    //       // "ALL TODOs" list is already at the top
-    //       setData(data);
-          
-      //     if (!currentList) {
-      //       setCurrentList(data[0]?.id);
-      //     }
-      //   // }
-
-        
-      //   return data;
-      // })
-    // .catch((err) => console.log(err));
     if (!currentList) {
       setCurrentList(data[0]?.id);
     }
@@ -98,18 +68,18 @@ export function AllTodoLists({handleListDelete, isListAdded, setIsListAdded}) {
         if (data[0]?._id != allTodosListId) {
           // move "ALL TODOs" list at the top of the array
           const oldListsArray = [...data];
-          const idx = oldListsArray.findIndex((l) => l._id === allTodosListId);
+          const idx = oldListsArray.findIndex((l) => l.id === allTodosListId);
           const list = { ...oldListsArray[idx] };
 
           // remove list from previous position in the array
-          const filteredArray = oldListsArray.filter((l) => l._id !== allTodosListId);
+          const filteredArray = oldListsArray.filter((l) => l.id !== allTodosListId);
           // add list at the top of the array
           const newListArray = [list, ...filteredArray];
 
           setData(newListArray);
 
           if (!currentList) {
-            setCurrentList(newListArray[0].id);
+            setCurrentList(newListArray[0]?.id);
           }
         } else {
           // "ALL TODOs" list is already at the top
@@ -124,6 +94,12 @@ export function AllTodoLists({handleListDelete, isListAdded, setIsListAdded}) {
       })
       .catch((err) => console.log(err));
   }
+
+  function isAllTodosList(listId) {
+    return (listId === allTodosListId); 
+      
+  }
+
 
   return (
     <Drawer
@@ -145,38 +121,42 @@ export function AllTodoLists({handleListDelete, isListAdded, setIsListAdded}) {
       <List>
         {data != null && data.map(({ name, id, icon }) => {
           const Icon = Icons[icon];
-          return (
-            <ListItem
-              key={id}
-              secondaryAction={
-                <IconButton
-                  edge="end"
-                  aria-label="delete"
+          if (!isAllTodosList(id)) {
+            return (
+              <ListItem
+                key={id}
+                secondaryAction={
+                  <IconButton
+                    edge="end"
+                    aria-label="delete"
+                    onClick={() => {
+                      // call function in App to manage update of CurrentTodoList
+                      handleListDelete();
+                      const newLists = data.filter(l => l.id !== id);
+                      setData(newLists);
+                      setCurrentList(data[0]?.id);
+                      return deleteList(id);
+                    }}
+                  >
+                    {/* <DeleteOutlineRounded /> */}
+                    <ClearIcon />
+                  </IconButton>
+                }
+                disablePadding>
+                <ListItemButton
                   onClick={() => {
-                    // call function in App to manage update of CurrentTodoList
-                    handleListDelete(id, name);
-                    const newLists = data.filter(l => l.id !== id);
-                    setData(prev => ([...newLists]));
-                    setCurrentList(data[0]?.id);
-                    return deleteList(id);
+                    setCurrentList(id);
                   }}
+                  selected={currentList === id}
                 >
-                  {/* <DeleteOutlineRounded /> */}
-                  <ClearIcon />
-                </IconButton>
-              }
-              disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  setCurrentList(id);
-                }}
-                selected={currentList === id}
-              >
-                {Icon ? <Icon /> : <Icons.List />}
-                <ListItemText sx={{ ml: 0.5 }} primary={name} />
-              </ListItemButton>
-            </ListItem>
-          );
+                  {Icon ? <Icon /> : <Icons.List />}
+                  <ListItemText sx={{ ml: 0.5 }} primary={name} />
+                </ListItemButton>
+              </ListItem>
+            );
+          } else {
+            return <AllTodosListItem key={id} id={id} name={name} setCurrentList={setCurrentList} currentList={currentList} />
+          }
         })}
       </List>
     </Drawer>

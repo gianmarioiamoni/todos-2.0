@@ -12,12 +12,11 @@ export function App() {
   const [isListDeleted, setIsListDeleted] = useState(false);
   const [isListAdded, setIsListAdded] = useState(false);
 
-  function handleListDelete(id, name) {
+  function handleListDelete() {
     setIsListDeleted(true);
   }
 
   function handleListAdded(id, name) {
-    console.log("handleListAdded")
     setIsListAdded(true);
   }
 

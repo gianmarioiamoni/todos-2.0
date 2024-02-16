@@ -6,15 +6,22 @@ const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_S
 export async function getAllLists() {
     try {
         const data = await axios.get(serverUrl + '/lists');
+        // // move "ALL TODOs" list at the top of the array
+        // const listsArray = [...data.data];
+        // const idx = listsArray.findIndex((l) => l.id === allTodosListId);
+        // const allTodosList = [...listsArray[idx]];
+        // const newListsArray = listsArray.filter((l) => l.id !== allTodosListId);
+        // return [allTodosList, ...newListsArray];
         return data.data;
+        // return newListsArray;
     } catch (err) { console.log(err) }
 }
 
 export async function updateList(id, name) {
 
     try {
-        const oldList = await axios(serverUrl + `/lists/${id}`);
-        const newList = { ...oldList.data, name: name };
+        // const oldList = await axios.get(serverUrl + `/lists/${id}`);
+        // const newList = { ...oldList.data, name: name };
 
         const response = axios.put(serverUrl + `/lists/${id}`,
             {
@@ -56,13 +63,12 @@ export async function deleteList(id) {
 export async function getAllTodosListId() {
     try {
         const allTodosList = await axios.get(serverUrl + "/lists/allTodosList");
-        console.log("allTodosList.data = ", allTodosList.data)
-        if (allTodosList.data.length != 0) {
-            console.log("allTodosList found")
-            return allTodosList.data._id;
+        console.log("===== getAllTodosListId() - allTodosList = ", allTodosList)
+        if (allTodosList.data != null) {
+            return allTodosList.data.id;
         }
         else {
-            console.log("allTodosList not found")
+            console.log("===== getAllTodosListId() - return -1")
             return -1;
         }
 
