@@ -38,7 +38,22 @@ app.route("/lists")
     .get(async function (req, res) {
         try {
             const data = await List.find({}, null);
-            res.send(data);
+
+            // order lists by putting ALL TODOs at the top of the array
+            const listsArray = [...data];
+            const idx = listsArray.findIndex((l) => l.isAllTodos === true);
+            if (idx === -1) {
+                // no ALL TODOs lists in db
+                res.send(listsArray);
+            }
+
+            // ALL TODOs is in the db; put It on the top of the array
+            const allTodosList = listsArray[idx];
+            const filteredListsArray = listsArray.filter((l) => l.isAllTodos !== true);
+            const orderedListsArray = [allTodosList, ...filteredListsArray];
+
+            // // res.send(data);
+            res.send(orderedListsArray);
         } catch (err) {
             console.log(err);
         }
@@ -65,7 +80,6 @@ app.route("/lists/allTodosList")
     .get(async function (req, res) {
         try {
             const allTodosList = await List.findOne({ isAllTodos: true }).exec();
-            console.log("get(lists/allTodosList) - allTodosList = ", allTodosList)
             res.send(allTodosList);
 
         
@@ -133,7 +147,8 @@ app.route("/listItems/:id")
 app.route("/listItems")
     .get(async function (req, res) {
         try {
-            const data = await ListItem.find({});
+            const data = await ListItem.find({}).exec();
+            console.log("===== get(/listitems) - data: ", data)
             res.send(data);
         } catch (err) {
             console.log(err);
@@ -163,7 +178,7 @@ app.route("/lists/:id/listItems")
         const { id } = req.params;
 
         try {
-            const data = await ListItem.find({ listId: req.params.id }, null);
+            const data = await ListItem.find({ listId: id }, null);
             res.send(data);
         } catch (err) {
             res.send(err);
