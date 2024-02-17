@@ -157,7 +157,12 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
               </ListItem>
             );
           } else {
-            return <AllTodosListItem key={id} id={id} name={name} setCurrentList={setCurrentList} currentList={currentList} />
+            return <AllTodosListItem
+              key={id}
+              id={id}
+              name={name}
+              setCurrentList={setCurrentList}
+              currentList={currentList} />
           }
         })}
       </List>

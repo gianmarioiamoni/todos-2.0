@@ -26,7 +26,8 @@ import {
   deleteItem,
   toggleChecked,
   updateItem,
-  getListItems
+  getListItems,
+  getAllTodosListItems
 } from '../services/listItemServices.js';
 import { updateList, deleteList, getAllLists, getAllTodosListId } from '../services/listServices.js';
 
@@ -58,19 +59,44 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         getAllLists()
           .then((lists) => {
             setCurrentList(lists[0]?.id);
+
             if (lists[0]?.name) {
               setOriginalListName(() => lists[0].name);
             }
 
+            console.log(lists[0]?.id);
+            console.log(allTodosListId);
+            
             const setListItems = async () => {
               const listItems = await getListItems(lists[0]?.id);
               return listItems;
-
             }
-            const newList = setListItems();
-            // setCurrentList(newList.id);
 
-            setData(newList);
+            const setAllTodosListItems = async () => {
+              const listItems = await getAllTodosListItems();
+              console.log("=== listItem = ", listItems)
+              return listItems;
+            }
+
+            let newList;
+
+            if (lists[0]?.id === allTodosListId) {
+              console.log("CURRENT LIST SELECTED")
+              setAllTodosListItems()
+                .then((l) => {
+                  console.log("l = ", l)
+                  setData({ ...l });
+                  return l.data;
+
+                })
+                .catch(err => console.log(err))
+              console.log("=== newlist = ", newList)
+            } else {
+              newList = setListItems();
+              setData(newList);
+            }
+
+            
 
             // if (newList[0]?.name) {
             //   setOriginalListName(() => newList[0].name);
@@ -109,10 +135,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   
   // currentList, data?.name
   useEffect(() => {
-    // const setAllTodosId = async () => {
-    //   allTodosListId = await getAllTodosListId();
-    // }
-    // setAllTodosId();
     getListItems(currentList)
       .then(currListItems => {
         setData(currListItems);

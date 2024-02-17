@@ -148,7 +148,6 @@ app.route("/listItems")
     .get(async function (req, res) {
         try {
             const data = await ListItem.find({}).exec();
-            console.log("===== get(/listitems) - data: ", data)
             res.send(data);
         } catch (err) {
             console.log(err);
