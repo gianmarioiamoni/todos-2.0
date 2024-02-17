@@ -17,7 +17,7 @@ import { useEffect, useState } from 'react';
 import { newList } from '../services/listServices.js';
 
 
-export function NewListDialog({ dialogState, handleListAdded }) {
+export function NewListDialog({ dialogState, handleListUpdated }) {
   const [state, setState] = useState('');
   const [iconSearch, setIconSearch] = useState('');
   const [icon, setIcon] = useState('');
@@ -101,7 +101,7 @@ export function NewListDialog({ dialogState, handleListAdded }) {
         <Button
           onClick={() => {
             void newList(state, icon);
-            handleListAdded();
+            handleListUpdated();
             dialogState.close();
           }}
         >

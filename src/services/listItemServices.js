@@ -11,44 +11,13 @@ async function getItems(listId) {
     } catch{(err) => console.log(err)}
 }
 
-export async function getListItems(listId, allTodosListId) {
+export async function getListItems(listId) {
     try {
         
         let resItems;
-        // console.log("1. listId = ", listId)
-        // console.log("2. allTodosListId = ", allTodosListId)
-        // const resList = await axios.get(serverUrl + `/lists/${listId}`);
-        // console.log("3. resList = ", resList)
-        // let resItems;
-        // // if list is "ALL TODOs" get all items
-        // if (listId === allTodosListId) {
-        //     console.log("getListItems() - ALL TODOs")
-        //     resItems = await axios.get(serverUrl + `/listItems`);
-        //     console.log("4a. resItems = ", resItems)
-        // } else {
-        //     console.log("getListItems() - NOT ALL TODOs")
-        //     resItems = await axios.get(serverUrl + `/lists/${listId}/listItems`);
-        //     console.log("4.b resItems = ", resItems)
-        // }
-        console.log("§§§§§ getListItems() - listId: ", listId);
-        console.log("§§§§§ getListItems() - allTodosListId: ", allTodosListId);
-        if (listId === allTodosListId) {
-            console.log("§§§§§ getListItems() - ALL TODOs")
-            resItems = await axios.get(serverUrl + `/listItems`);
-            console.log("§§§§§ getListItems() - ALL TODOs - resItems.data = ", resItems.data)
-
-        } else {
-            console.log("§§§§§ getListItems() - NOT ALL TODOs")
-            resItems = await axios.get(serverUrl + `/lists/${listId}/listItems`);
-            console.log("§§§§§ getListItems() - NOT ALL TODOs - resItems.data = ", resItems.data)
-        }
-        console.log("§§§§§ getListItems() - resItems.data: ", resItems.data);
-
+        resItems = await axios.get(serverUrl + `/lists/${listId}/listItems`);
         const resList = await axios.get(serverUrl + `/lists/${listId}`);
-        console.log("§§§§§ getListItems() - resList.data: ", resList.data);
-
         const returnData = { ...resList?.data, items: resItems?.data };
-        console.log("§§§§§ getListItems() - returnData: ", returnData);
         return returnData;
 
     } catch{(err) => console.log(err)}

@@ -21,11 +21,13 @@ import { getAllLists, getAllTodosListId, newList, deleteList } from '../services
 
 let allTodosListId = "";
 
-export function AllTodoLists({handleListDelete, isListAdded, setIsListAdded}) {
+export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}) {
   const [data, setData] = useState([]); // add loading
   const { currentList, setCurrentList } = useAppState();
   
+  // USE EFFECTS
 
+  // first render
   useEffect(() => {
     if (!currentList) {
       setCurrentList(data[0]?.id);
@@ -48,18 +50,18 @@ export function AllTodoLists({handleListDelete, isListAdded, setIsListAdded}) {
       .catch(err => console.log(err))
   }, []);
     
-
+  // currentList, setCurrentList, isListUpdated
   useEffect(() => {
     if (!currentList) {
       setCurrentList(data[0]?.id);
     }
 
-    if (isListAdded) {
+    if (isListUpdated) {
       handleAllTodosList();
-      setIsListAdded(false);
+      setIsListUpdated(false);
     }
 
-  }, [currentList, setCurrentList, isListAdded]);
+  }, [currentList, setCurrentList, isListUpdated]);
 
   function handleAllTodosList() {
     getAllLists()

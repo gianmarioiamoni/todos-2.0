@@ -67,12 +67,10 @@ export async function deleteList(id) {
 export async function getAllTodosListId() {
     try {
         const allTodosList = await axios.get(serverUrl + "/lists/allTodosList");
-        console.log("===== getAllTodosListId() - allTodosList = ", allTodosList)
         if (allTodosList.data != null) {
             return allTodosList.data.id;
         }
         else {
-            console.log("===== getAllTodosListId() - return -1")
             return -1;
         }
 

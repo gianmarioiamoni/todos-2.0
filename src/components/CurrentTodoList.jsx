@@ -30,14 +30,13 @@ import {
 } from '../services/listItemServices.js';
 import { updateList, deleteList, getAllLists, getAllTodosListId } from '../services/listServices.js';
 
-export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
+export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpdated }) {
   const { currentList, setCurrentList } = useAppState();
   
   const [data, setData] = useState({});
 
   let allTodosListId;
   
-  // const { updateList } = useTodoLists();
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
@@ -48,58 +47,33 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
   useEffect(() => {
     getAllTodosListId()
       .then((listId) => {
-        // getAllTodosListId() returns -1 if an "ALL TODOs" list is not in the db
         if (listId === -1) {
           // add a "ALL TODOs" list to the db
           return;
         }
+
+        // global variable
         allTodosListId = listId;
 
         getAllLists()
           .then((lists) => {
-            // setCurrentList(allTodosListId);
-            console.log("^^^^^ useEffect [] - lists = ", lists)
-
             setCurrentList(lists[0]?.id);
+            if (lists[0]?.name) {
+              setOriginalListName(() => lists[0].name);
+            }
 
             const setListItems = async () => {
-              // return await getListItems(lists[0]?.id, allTodosListId);
-              // return await getListItems(currentList, allTodosListId);
-              const listItems = await getListItems(lists[0]?.id, allTodosListId);
-              console.log("///// setListItems() - lists[0]?.id: ", lists[0]?.id);
-              console.log("///// setListItems() - currentList: ", currentList);
-              console.log("///// setListItems() - allTodosListId: ", allTodosListId);
-              console.log("///// setListItems() - listItems: ", listItems);
-
+              const listItems = await getListItems(lists[0]?.id);
               return listItems;
 
             }
-            // getAllTodosListId()
-            //   .then((listId) => {
-            //     // getAllTodosListId() returns -1 if an "ALL TODOs" list is not in the db
-            //     allTodosListId = listId;
-            //     return listId;
-            //   })
-            //   .catch(err => console.log(err))
             const newList = setListItems();
-            console.log("^^^^^ useEffect [] - allTodosListId = ", allTodosListId);
-            console.log("^^^^^ useEffect [] - newList = ", newList)
-
-            // setCurrentList(lists[0]?.id);
-            // setCurrentList(allTodosListId);
-            setCurrentList(newList.id);
-
-            // const idx = newList.findIndex((l) => l.id === allTodosListId)
+            // setCurrentList(newList.id);
 
             setData(newList);
 
-            // setOriginalListItems(newList.items)
-
-            if (newList[0]?.name) {
-              setOriginalListName(newList[0].name);
-            }
-            // if (newList[idx].name) {
-            //   setOriginalListName(newList[idx].name);
+            // if (newList[0]?.name) {
+            //   setOriginalListName(() => newList[0].name);
             // }
             return data;
           })
@@ -108,43 +82,29 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
 
   // isListDeleted
   useEffect(() => { 
-    // // const setAllTodosId = async () => {
-    // //   allTodosListId = await getAllTodosListId();
-    // // }
-    // // setAllTodosId();
-    // if (isListDeleted) {
-    //   getAllLists()
-    //     .then((lists) => {
-    //       const setListItems = async () => {
-    //         return await getListItems(lists[0]?.id, allTodosListId); 
-    //         // return await getListItems(currentList, allTodosListId); 
-    //       }
-          
-    //       // getAllTodosListId()
-    //       //   .then((listId) => {
-    //       //     // getAllTodosListId() returns -1 if an "ALL TODOs" list is not in the db
-    //       //     allTodosListId = listId;
-    //       //     return listId;
-    //       //   })
-    //       //   .catch(err => console.log(err))
-    //       console.log("useEffect [] - getAllLists()" )
-    //       const newList = setListItems();
-          
-    //       // const idx = newList.findIndex((l) => l.id === allTodosListId)
-    //       // if (newList[idx].name) {
-    //       //   setOriginalListName(newList[idx].name);
-    //       // }
-    //       setCurrentList(lists[0]?.id);
-    //       setCurrentList(newList[idx]?.id);
-
-    //       setData(newList);
-
-    //       if (newList[0]?.name) {
-    //         setOriginalListName(newList[0].name);
-    //       }
-    //   })
-    //   setIsListDeleted(false);
+    // const setAllTodosId = async () => {
+    //   allTodosListId = await getAllTodosListId();
     // }
+    // setAllTodosId();
+    if (isListDeleted) {
+      getAllLists()
+        .then((lists) => {
+          const setListItems = async () => {
+            return await getListItems(lists[0]?.id, allTodosListId); 
+          }
+          
+          const newList = setListItems();
+          
+          setCurrentList(lists[0]?.id);
+
+          setData(newList);
+
+          if (newList[0]?.name) {
+            setOriginalListName(newList[0].name);
+          }
+      })
+      setIsListDeleted(false);
+    }
   }, [isListDeleted])
   
   // currentList, data?.name
@@ -153,8 +113,7 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
     //   allTodosListId = await getAllTodosListId();
     // }
     // setAllTodosId();
-    // const listId = await getAllTodosListId();
-    getListItems(currentList, allTodosListId)
+    getListItems(currentList)
       .then(currListItems => {
         setData(currListItems);
 
@@ -170,10 +129,9 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
 
   // data
   useEffect(() => {
-    const setAllTodosId = async () => {
-      allTodosListId = await getAllTodosListId();
+    if (data?.name) {
+      setOriginalListName(data.name);
     }
-    setAllTodosId();
 
     if (data?.items) {
       setOriginalListItems(
@@ -212,6 +170,31 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
     return toggleChecked(id, itemsArray[idx].checked);
   }
 
+  // manages list name chenge
+  function onListUpdate(event) {
+    if (event.key && event.key === 'Enter') {
+      event.preventDefault();
+    }
+    setData((prev) => ({ ...prev, name: event.target.value }));
+    // update lists in AllTosoLists
+    handleListUpdated();
+    // update list in db
+    void updateList(data.id, event.target.value);
+  }
+
+  // manages list item update
+  function onListItemUpdate(id, event) {
+    if (event.key && event.key === 'Enter') {
+      event.preventDefault();
+    }
+    updateItem(id, event.target.value)
+      .then((updatedItem) => {
+        return handleUpdateItem(updatedItem)
+      })
+      .catch(err => console.log(err))
+  }
+
+
   const Icon = Icons[data?.icon];
 
   return (
@@ -241,17 +224,8 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
                 onChange={event => {
                   setOriginalListName(event.target.value);
                 }}
-                onBlur={event => {
-                  setData((prev) => ({ ...prev, name: event.target.value }));
-                  void updateList(data.id, event.target.value);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    setData((prev) => ({ ...prev, name: event.target.value }));
-                    void updateList(data.id, event.target.value);
-                    event.preventDefault();
-                  }
-                }}
+                onBlur={(event) => onListUpdate(event)}
+                onKeyDown={(event) => onListUpdate(event)}
               />
             </Box>
             <Divider />
@@ -307,22 +281,8 @@ export function CurrentTodoList({isListDeleted, setIsListDeleted}) {
                               [id]: event.target.value,
                             });
                           }}
-                          onBlur={event => {
-                            updateItem(id, event.target.value)
-                              .then((updatedItem) =>
-                                handleUpdateItem(updatedItem)
-                              )
-                            .catch(err => console.log(err))
-                          }}
-                          onKeyDown={(event) => {
-                            if (event.key === 'Enter') {
-                              updateItem(id, event.target.value)
-                                .then((updatedItem) => {
-                                  return handleUpdateItem(updatedItem)
-                                })
-                                .catch(err => console.log(err))
-                            }
-                          }}
+                          onBlur={event => onListItemUpdate(id, event)}
+                          onKeyDown={(event) => onListItemUpdate(id, event)}
                           value={originalListItems[id] ?? ''}
                           size="small"
                           variant="standard"

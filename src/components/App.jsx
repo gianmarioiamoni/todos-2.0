@@ -10,25 +10,29 @@ import { CurrentTodoList } from './CurrentTodoList.jsx';
 
 export function App() {
   const [isListDeleted, setIsListDeleted] = useState(false);
-  const [isListAdded, setIsListAdded] = useState(false);
+  const [isListUpdated, setIsListUpdated] = useState(false);
 
   function handleListDelete() {
     setIsListDeleted(true);
   }
 
-  function handleListAdded(id, name) {
-    setIsListAdded(true);
+  function handleListUpdated() {
+    setIsListUpdated(true);
   }
 
   return (
     <AppState>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
-        <AppHeader handleListAdded={handleListAdded} />
+        <AppHeader handleListUpdated={handleListUpdated} />
         <AllTodoLists
           handleListDelete={handleListDelete}
-          setIsListAdded={setIsListAdded} isListAdded={isListAdded} />
-        <CurrentTodoList isListDeleted={isListDeleted} setIsListDeleted={setIsListDeleted}/>
+          setIsListUpdated={setIsListUpdated} isListUpdated={isListUpdated} />
+        <CurrentTodoList
+          isListDeleted={isListDeleted}
+          setIsListDeleted={setIsListDeleted} 
+          handleListUpdated={handleListUpdated}
+          />
       </Box>
     </AppState>
   );
