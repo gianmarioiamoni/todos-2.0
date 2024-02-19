@@ -8,7 +8,7 @@ async function getItems(listId) {
         const res = await axios.get(serverUrl + `/lists/${listId}/listItems`);
         return res.data;
 
-    } catch{(err) => console.log(err)}
+    } catch { (err) => console.log(err) }
 }
 
 export async function getAllTodosListItems() {
@@ -17,21 +17,23 @@ export async function getAllTodosListItems() {
         const resList = await axios.get(serverUrl + `/lists/allTodosList`);
         const returnData = { ...resList?.data, items: resItems?.data };
 
+        // console.log("^^^^^ getAllTodosListItems() - returnData: ", returnData)
+
         return returnData;
 
-    } catch{(err) => console.log(err)}
+    } catch { (err) => console.log(err) }
 }
 
 export async function getListItems(listId) {
     try {
-        
+
         const resItems = await axios.get(serverUrl + `/lists/${listId}/listItems`);
         const resList = await axios.get(serverUrl + `/lists/${listId}`);
         const returnData = { ...resList?.data, items: resItems?.data };
-        
+
         return returnData;
 
-    } catch{(err) => console.log(err)}
+    } catch { (err) => console.log(err) }
 }
 
 export async function newItem(newItemName, listId) {
@@ -42,14 +44,14 @@ export async function newItem(newItemName, listId) {
         const returnData = { ...res.data, id: res.data._id };
         return returnData;
 
-    } catch(err) {console.log(err)}
+    } catch (err) { console.log(err) }
 }
 
 export async function deleteItem(id) {
     try {
         const res = await axios.delete(serverUrl + `/listItems/${id}`);
         return res.data;
-    } catch{(err) => console.log(err)}
+    } catch { (err) => console.log(err) }
 }
 
 export async function toggleChecked(id, isChecked) {
@@ -63,12 +65,12 @@ export async function toggleChecked(id, isChecked) {
 
     } catch (err) { console.log(err) }
 }
-        
+
 export async function updateItem(id, text) {
     try {
         const response = await axios.put(serverUrl + `/listItems/${id}`,
             {
-                name: text 
+                name: text
             }
         );
         return response.data;

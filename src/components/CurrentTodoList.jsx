@@ -33,132 +33,119 @@ import { updateList, deleteList, getAllLists, getAllTodosListId } from '../servi
 
 export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpdated }) {
   const { currentList, setCurrentList } = useAppState();
-  
-  const [data, setData] = useState({});
 
-  let allTodosListId;
-  
+  const [data, setData] = useState({});
+  const [allTodosListId, setAllTodosListId] = useState();
+
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
 
-  // USE EFFECTS
-
+  
   // first render
   useEffect(() => {
-    getAllTodosListId()
-      .then((listId) => {
-        if (listId === -1) {
-          // add a "ALL TODOs" list to the db
-          return;
-        }
+    async function getInitialData() {
+      try {
+        const listId = await getAllTodosListId();
 
-        // global variable
-        allTodosListId = listId;
+        setAllTodosListId(listId);
+        setCurrentList(listId);
 
-        getAllLists()
-          .then((lists) => {
-            setCurrentList(lists[0]?.id);
+        const lists = await getAllLists();
 
-            if (lists[0]?.name) {
-              setOriginalListName(() => lists[0].name);
-            }
+        const l = await getAllTodosListItems();
+        setData(l)
 
-            console.log(lists[0]?.id);
-            console.log(allTodosListId);
-            
-            const setListItems = async () => {
-              const listItems = await getListItems(lists[0]?.id);
-              return listItems;
-            }
-
-            const setAllTodosListItems = async () => {
-              const listItems = await getAllTodosListItems();
-              console.log("=== listItem = ", listItems)
-              return listItems;
-            }
-
-            let newList;
-
-            if (lists[0]?.id === allTodosListId) {
-              console.log("CURRENT LIST SELECTED")
-              setAllTodosListItems()
-                .then((l) => {
-                  console.log("l = ", l)
-                  setData({ ...l });
-                  return l.data;
-
-                })
-                .catch(err => console.log(err))
-              console.log("=== newlist = ", newList)
-            } else {
-              newList = setListItems();
-              setData(newList);
-            }
-
-            
-
-            // if (newList[0]?.name) {
-            //   setOriginalListName(() => newList[0].name);
-            // }
-            return data;
-          })
-      })
+      } catch (err) { console.log(err) }
+    } // getInitialData()
+    getInitialData();
+    
   }, []);
 
   // isListDeleted
-  useEffect(() => { 
-    // const setAllTodosId = async () => {
-    //   allTodosListId = await getAllTodosListId();
-    // }
-    // setAllTodosId();
-    if (isListDeleted) {
-      getAllLists()
-        .then((lists) => {
-          const setListItems = async () => {
-            return await getListItems(lists[0]?.id, allTodosListId); 
-          }
-          
-          const newList = setListItems();
-          
-          setCurrentList(lists[0]?.id);
-
-          setData(newList);
-
-          if (newList[0]?.name) {
-            setOriginalListName(newList[0].name);
-          }
-      })
-      setIsListDeleted(false);
-    }
-  }, [isListDeleted])
-  
-  // currentList, data?.name
   useEffect(() => {
-    getListItems(currentList)
-      .then(currListItems => {
-        setData(currListItems);
+    // console.log("useEffect([isListDeleted])")
+    // // const setAllTodosId = async () => {
+    // //   allTodosListId = await getAllTodosListId();
+    // // }
+    // // setAllTodosId();
+    // if (isListDeleted) {
+    //   console.log("isListDeleted")
+    //   getAllLists()
+    //     .then((lists) => {
+    //       const setListItems = async () => {
+    //         return await getListItems(lists[0]?.id); 
+    //       }
 
-        setCurrentList(currListItems.id);
+    //       const newList = setListItems();
 
-        if (data?.name) {
+    //       setCurrentList(lists[0]?.id);
+
+    //       setData(newList);
+
+    //       if (newList[0]?.name) {
+    //         setOriginalListName(newList[0].name);
+    //       }
+    //   })
+    //   setIsListDeleted(false);
+    // }
+  }, [isListDeleted])
+
+  // currentList
+  useEffect(() => {
+    if (currentList != null) {
+      const setListItems = async () => {
+        const listItems = await getListItems(currentList);
+        return listItems;
+      }
+
+      const setAllTodosListItems = async () => {
+        const listItems = await getAllTodosListItems();
+        return listItems;
+      }
+
+      if (currentList != null && currentList === allTodosListId) {
+        setAllTodosListItems()
+          .then((l) => {
+            setData(l);
+
+            return l;
+          })
+          .catch(err => console.log(err))
+      } else {
+        setListItems()
+          .then((l) => {
+            setData(l);
+            return l;
+          })
+          .catch(err => console.log(err))
+      } // if (currentList != null && currentList === allTodosListId)
+    } // if (currentList != null)
+
+  }, [currentList]);
+
+  // data?.name
+  useEffect(() => {
+    if (data?.name) {
           setOriginalListName(data.name);
-        }
-        return data;
-      })
-    .catch(err => console.log(err))
-  }, [currentList, data?.name]);
+    }
+  }, [data?.name]);
+
 
   // data
   useEffect(() => {
-    if (data?.name) {
-      setOriginalListName(data.name);
-    }
 
-    if (data?.items) {
-      setOriginalListItems(
-        data.items.reduce((acc, { id, name }) => ({ ...acc, [id]: name }), {})
-      );
+    if (data != null && data?.name) {
+
+      if (data?.name) {
+        setOriginalListName(data.name);
+      }
+
+      if (data?.items) {
+        setOriginalListItems(
+          data.items.reduce((acc, { id, name }) => ({ ...acc, [id]: name }), {})
+        );
+      }
     }
   }, [data]);
 
@@ -192,7 +179,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     return toggleChecked(id, itemsArray[idx].checked);
   }
 
-  // manages list name chenge
+  // manages list name change
   function onListUpdate(event) {
     if (event.key && event.key === 'Enter') {
       event.preventDefault();
@@ -282,7 +269,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                   >
                     <ListItemButton
                       role={undefined}
-                      onClick={() => handleToggleChecked(id) }
+                      onClick={() => handleToggleChecked(id)}
                       dense
                     >
                       <ListItemIcon>
@@ -339,7 +326,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                         <InputAdornment position="end">
                           <IconButton
                             aria-label="submit"
-                             
+
                             onClick={() => {
                               document.activeElement.blur();
                               return handleAddItem();
