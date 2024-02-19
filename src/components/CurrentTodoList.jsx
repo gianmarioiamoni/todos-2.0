@@ -149,12 +149,12 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     return item;
   }
 
-  function handleToggleChecked(id) {
+  async function handleToggleChecked(id) {
     const idx = data.items.findIndex((i) => i.id === id);
     const itemsArray = [...data.items];
     itemsArray[idx].checked = !itemsArray[idx].checked;
     setData(prev => ({ ...prev, items: itemsArray }));
-    return toggleChecked(id, itemsArray[idx].checked);
+    return await toggleChecked(id, itemsArray[idx].checked);
   }
 
   // manages list name change
@@ -174,11 +174,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     if (event.key && event.key === 'Enter') {
       event.preventDefault();
     }
-    // updateItem(id, event.target.value)
-    //   .then((updatedItem) => {
-    //     return handleUpdateItem(updatedItem)
-    //   })
-    //   .catch(err => console.log(err))
     const updatedItem = await updateItem(id, event.target.value);
     const returnItem = handleUpdateItem(updatedItem);
     return returnItem;
