@@ -64,18 +64,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   // isListDeleted
   useEffect(() => {
-    console.log("useEffect([isListDeleted])")
-    // const setAllTodosId = async () => {
-    //   allTodosListId = await getAllTodosListId();
-    // }
-    // setAllTodosId();
     if (isListDeleted) {
       console.log("isListDeleted");
 
       async function setListDeleted() {
         const lists = await getAllLists();
         setCurrentList(lists[0]?.id);
-        
+
         if (currentList != null && currentList === allTodosListId) {
           const newList = await getAllTodosListItems();
           setData(newList);
@@ -83,28 +78,9 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
           const newList = await getListItems(lists[0]?.id);
           setData(newList);
         }
-        
-        
-        
-
       }
       setListDeleted();
-    //   getAllLists()
-    //     .then((lists) => {
-    //       const setListItems = async () => {
-    //         return await getListItems(lists[0]?.id); 
-    //       }
-
-    //       const newList = setListItems();
-
-    //       setCurrentList(lists[0]?.id);
-
-    //       setData(newList);
-
-    //       if (newList[0]?.name) {
-    //         setOriginalListName(newList[0].name);
-    //       }
-    //   })
+      
       setIsListDeleted(false);
     } // if (isListDeleted)
   }, [isListDeleted])
@@ -112,34 +88,17 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   // currentList
   useEffect(() => {
     if (currentList != null) {
-      const setListItems = async () => {
-        const listItems = await getListItems(currentList);
-        return listItems;
+      async function setCurrentListChange() {
+        if (currentList != null && currentList === allTodosListId) {
+          const listItems = await getAllTodosListItems();
+          setData(listItems);
+        } else {
+          const listItems = await getListItems(currentList);
+          setData(listItems);
+        }
       }
-
-      const setAllTodosListItems = async () => {
-        const listItems = await getAllTodosListItems();
-        return listItems;
-      }
-
-      if (currentList != null && currentList === allTodosListId) {
-        setAllTodosListItems()
-          .then((l) => {
-            setData(l);
-
-            return l;
-          })
-          .catch(err => console.log(err))
-      } else {
-        setListItems()
-          .then((l) => {
-            setData(l);
-            return l;
-          })
-          .catch(err => console.log(err))
-      } // if (currentList != null && currentList === allTodosListId)
-    } // if (currentList != null)
-
+      setCurrentListChange();
+    } 
   }, [currentList]);
 
   // data?.name
@@ -170,7 +129,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   function handleUpdateItem(updatedItem) {
     const itemsArray = data.items;
     const idx = itemsArray.findIndex((i) => i._id === updatedItem.id);
-    const newItemsArray = itemsArray[idx].name = event.target.value;
+    const newItemsArray = [...itemsArray];
+    newItemsArray[idx].name = updatedItem.name;
     setData((prev) => ({ ...prev, items: newItemsArray }));
   }
 
@@ -210,15 +170,19 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   }
 
   // manages list item update
-  function onListItemUpdate(id, event) {
+  async function onListItemUpdate(id, event) {
     if (event.key && event.key === 'Enter') {
       event.preventDefault();
     }
-    updateItem(id, event.target.value)
-      .then((updatedItem) => {
-        return handleUpdateItem(updatedItem)
-      })
-      .catch(err => console.log(err))
+    // updateItem(id, event.target.value)
+    //   .then((updatedItem) => {
+    //     return handleUpdateItem(updatedItem)
+    //   })
+    //   .catch(err => console.log(err))
+    const updatedItem = await updateItem(id, event.target.value);
+    const returnItem = handleUpdateItem(updatedItem);
+    return returnItem;
+
   }
 
 
@@ -319,46 +283,50 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                   </ListItem>
                 );
               })}
-              <ListItem>
-                <Box
-                  component="form"
-                  sx={{ width: 1 }}
-                  onSubmit={event => {
-                    event.preventDefault();
-                    return handleAddItem();
-                  }}
-                >
-                  <TextField
-                    onChange={event => {
-                      setNewItemText(event.target.value);
-                    }}
-                    value={newItemText}
-                    margin="normal"
-                    id="new-item"
-                    label="New Item"
-                    type="text"
-                    fullWidth
-                    variant="filled"
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton
-                            aria-label="submit"
 
-                            onClick={() => {
-                              document.activeElement.blur();
-                              return handleAddItem();
-                            }}
-                            edge="end"
-                          >
-                            <Send />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
+              {/* Add Item */}
+              {(currentList !== allTodosListId) ? (
+                <ListItem>
+                  <Box
+                    component="form"
+                    sx={{ width: 1 }}
+                    onSubmit={event => {
+                      event.preventDefault();
+                      return handleAddItem();
                     }}
-                  />
-                </Box>
-              </ListItem>
+                  >
+                    <TextField
+                      onChange={event => {
+                        setNewItemText(event.target.value);
+                      }}
+                      value={newItemText}
+                      margin="normal"
+                      id="new-item"
+                      label="New Item"
+                      type="text"
+                      fullWidth
+                      variant="filled"
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="submit"
+
+                              onClick={() => {
+                                document.activeElement.blur();
+                                return handleAddItem();
+                              }}
+                              edge="end"
+                            >
+                              <Send />
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
+                    />
+                  </Box>
+                </ListItem>
+              ) : (<p></p>)}
             </List>
           </>
         ) : (
