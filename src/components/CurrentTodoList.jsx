@@ -64,13 +64,31 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   // isListDeleted
   useEffect(() => {
-    // console.log("useEffect([isListDeleted])")
-    // // const setAllTodosId = async () => {
-    // //   allTodosListId = await getAllTodosListId();
-    // // }
-    // // setAllTodosId();
-    // if (isListDeleted) {
-    //   console.log("isListDeleted")
+    console.log("useEffect([isListDeleted])")
+    // const setAllTodosId = async () => {
+    //   allTodosListId = await getAllTodosListId();
+    // }
+    // setAllTodosId();
+    if (isListDeleted) {
+      console.log("isListDeleted");
+
+      async function setListDeleted() {
+        const lists = await getAllLists();
+        setCurrentList(lists[0]?.id);
+        
+        if (currentList != null && currentList === allTodosListId) {
+          const newList = await getAllTodosListItems();
+          setData(newList);
+        } else {
+          const newList = await getListItems(lists[0]?.id);
+          setData(newList);
+        }
+        
+        
+        
+
+      }
+      setListDeleted();
     //   getAllLists()
     //     .then((lists) => {
     //       const setListItems = async () => {
@@ -87,8 +105,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     //         setOriginalListName(newList[0].name);
     //       }
     //   })
-    //   setIsListDeleted(false);
-    // }
+      setIsListDeleted(false);
+    } // if (isListDeleted)
   }, [isListDeleted])
 
   // currentList
