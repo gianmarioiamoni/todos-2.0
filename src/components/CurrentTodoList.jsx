@@ -14,6 +14,7 @@ import {
   TextField,
   Toolbar,
   Typography,
+  Chip
 } from '@mui/material';
 
 import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
@@ -38,9 +39,9 @@ import { updateList, getAllLists, getAllTodosListId } from '../services/listServ
 
 
 const priorityData = [
-  { value: 1, name: "Urgent", color: "error.main", icon: <PriorityHighIcon /> },
-  { value: 2, name: "Medium", color: "warning.main", icon: <DragHandleIcon />},
-  { value: 3, name: "Normal", color: "success.main", icon: <LowPriorityIcon /> }
+  { value: 1, name: "Urgent", color: "error.main", chipColor: "error", icon: <PriorityHighIcon /> },
+  { value: 2, name: "Medium", color: "warning.main", chipColor: "warning", icon: <DragHandleIcon /> },
+  { value: 3, name: "Normal", color: "success.main", chipColor: "success", icon: <LowPriorityIcon /> }
 ];
 
 export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpdated }) {
@@ -275,12 +276,10 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                         />
                       </ListItemIcon>
 
-                      <IconButton aria-label="priority" sx={{ color: priorityColor }}>
-                        {/* <PriorityIcon priority={priority} /> */}
-                        {priorityData.find(p => p.value === priority).icon}
-                      </IconButton>
+                      
+                      
 
-                      <ListItemText id={labelId} >
+                      <ListItemText id={labelId} color="error" >
                         <TextField
                           onClick={e => e.stopPropagation()}
                           onChange={event => {
@@ -296,6 +295,17 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           variant="standard"
                         />
                       </ListItemText>
+                      <Chip
+                        label={priorityData.find(p => p.value === priority).name}
+                        color={priorityData.find(p => p.value === priority).chipColor}
+                        icon={priorityData.find(p => p.value === priority).icon}
+                        size="small"
+                        sx={{ marginRight: "5px" }}
+
+                      />
+                      {/* <IconButton aria-label="priority" sx={{ color: priorityColor }}>
+                        {priorityData.find(p => p.value === priority).icon}
+                      </IconButton> */}
                     </ListItemButton>
                   </ListItem>
                 );
