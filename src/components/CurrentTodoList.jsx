@@ -15,6 +15,11 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
+
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import LowPriorityIcon from '@mui/icons-material/LowPriority';
+import DragHandleIcon from '@mui/icons-material/DragHandle';
+
 import { useEffect, useState } from 'react';
 
 // import { useTodoList } from '../hooks/useTodoList.js';
@@ -29,7 +34,14 @@ import {
   getListItems,
   getAllTodosListItems
 } from '../services/listItemServices.js';
-import { updateList, deleteList, getAllLists, getAllTodosListId } from '../services/listServices.js';
+import { updateList, getAllLists, getAllTodosListId } from '../services/listServices.js';
+
+
+const priorityData = [
+  { value: 1, name: "Urgent", color: "error.main", icon: <PriorityHighIcon /> },
+  { value: 2, name: "Medium", color: "warning.main", icon: <DragHandleIcon />},
+  { value: 3, name: "Normal", color: "success.main", icon: <LowPriorityIcon /> }
+];
 
 export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpdated }) {
   const { currentList, setCurrentList } = useAppState();
@@ -65,7 +77,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   // isListDeleted
   useEffect(() => {
     if (isListDeleted) {
-      console.log("isListDeleted");
 
       async function setListDeleted() {
         const lists = await getAllLists();
@@ -82,7 +93,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       setListDeleted();
       
       setIsListDeleted(false);
-    } // if (isListDeleted)
+    } 
   }, [isListDeleted])
 
   // currentList
@@ -223,14 +234,19 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                 mt: 2,
               }}
             >
-              {data.items != null && data.items.map(({ id, checked }) => {
+              {data.items != null && data.items.map(({ id, checked, priority }) => {
                 const labelId = `checkbox-list-label-${id}`;
+                const priorityObj = priorityData.find(p => p.value === priority);
+                const priorityColor = priorityObj.color;
+                const priorityIcon = priorityObj.icon;
 
                 return (
+
                   <ListItem
                     key={id}
                     secondaryAction={
                       <IconButton
+                        // sx={{ color: priorityColor }}
                         edge="end"
                         aria-label="delete"
                         onClick={() => {
@@ -245,7 +261,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                     disablePadding
                   >
                     <ListItemButton
-                      role={undefined}
+                      role={undefined} 
                       onClick={() => handleToggleChecked(id)}
                       dense
                     >
@@ -258,7 +274,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           inputProps={{ 'aria-labelledby': labelId }}
                         />
                       </ListItemIcon>
-                      <ListItemText id={labelId}>
+
+                      <IconButton aria-label="priority" sx={{ color: priorityColor }}>
+                        {/* <PriorityIcon priority={priority} /> */}
+                        {priorityData.find(p => p.value === priority).icon}
+                      </IconButton>
+
+                      <ListItemText id={labelId} >
                         <TextField
                           onClick={e => e.stopPropagation()}
                           onChange={event => {

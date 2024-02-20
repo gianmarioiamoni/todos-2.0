@@ -5,6 +5,11 @@ const listItemSchema = new Schema({
     name: String,
     checked: Boolean,
     id: String,
+    priority: {
+        type: Number,
+        min: 1,
+        max: 3
+    },
     listId: String
     // listId: {
     //     type: Schema.Types.ObjectId,

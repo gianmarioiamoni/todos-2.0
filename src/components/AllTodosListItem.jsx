@@ -1,4 +1,4 @@
-import { ListItem, ListItemButton, ListItemText, Icon } from "@mui/material";
+import { ListItem, ListItemButton, ListItemText } from "@mui/material";
 import * as Icons from '@mui/icons-material';
 
 export function AllTodosListItem({id, name, setCurrentList, currentList }) {

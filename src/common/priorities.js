@@ -1,0 +1,10 @@
+import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
+import LowPriorityIcon from '@mui/icons-material/LowPriority';
+import DragHandleIcon from '@mui/icons-material/DragHandle';
+
+export const priorityData = [
+    { value: 1, name: "Urgent", color: "error.main", icon: <PriorityHighIcon /> },
+    { value: 2, name: "Medium", color: "warning.main", icon: <DragHandleIcon /> },
+    { value: 3, name: "Normal", color: "success.main", icon: <LowPriorityIcon /> }
+];
+
