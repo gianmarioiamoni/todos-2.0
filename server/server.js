@@ -156,8 +156,13 @@ app.route("/listItems")
     })
     .post(async function (req, res) {
         try {
-            const { name, checked, listId } = req.body;
-            const savedData = await new ListItem({name: name, checked: checked, listId: listId }).save()
+            const { name, checked, priority, listId } = req.body;
+            const savedData = await new ListItem({
+                name: name,
+                checked: checked,
+                priority: priority,
+                listId: listId
+            }).save()
 
             const newStrId = savedData._id.valueOf();
             const newId = savedData._id;

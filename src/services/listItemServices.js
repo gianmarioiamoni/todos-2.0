@@ -36,9 +36,14 @@ export async function getListItems(listId) {
     } catch { (err) => console.log(err) }
 }
 
-export async function newItem(newItemName, listId) {
+export async function newItem(newItemName, listId, priority=3) {
     try {
-        const payload = { name: newItemName, checked: false, listId: listId };
+        const payload = {
+            name: newItemName,
+            checked: false,
+            priority: priority,
+            listId: listId
+        };
         const res = await axios.post(serverUrl + "/listItems", payload);
 
         const returnData = { ...res.data, id: res.data._id };
