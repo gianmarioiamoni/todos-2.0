@@ -59,6 +59,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
   const [newItemPriority, setNewItemPriority] = useState(3);
+  const [isPriorityEdit, setIsPriorityEdit] = useState([]);
 
 
   // first render
@@ -73,7 +74,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         const lists = await getAllLists();
 
         const l = await getAllTodosListItems();
-        setData(l)
+        setData(l);
+        l.items.map(item => setIsPriorityEdit(prev => [...prev, {id: item.id, editable: false}]))
 
       } catch (err) { console.log(err) }
     } // getInitialData()
@@ -169,12 +171,21 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
           const newItemsArray = [...itemsArray, newTodo];
           setData((prev) => ({ ...prev, items: newItemsArray }))
         }
+        setIsPriorityEdit(prev => [...prev, { id: item.id, editable: false}])
         setNewItemText('');
         setNewItemPriority(1);
       })
       .catch(err => console.log(err))
 
     return item;
+  }
+
+  function onClickDeleteItem(id) {
+      const newItems = data.items.filter(i => i.id !== id);
+    setData(prev => ({ ...prev, items: newItems }));
+    const newIsPriorityEdit = isPriorityEdit.filter(i => i.id !== id);
+    setIsPriorityEdit(newIsPriorityEdit);
+      return deleteItem(id);
   }
 
   async function handleToggleChecked(id) {
@@ -205,6 +216,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   }
 
+  // PRIORITY
+
   // update hook for new item priority
   const onChangePriority = (event) => {
     setNewItemPriority(event.target.value);
@@ -213,6 +226,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   // update hook for update item priority
   const onChangeUpdateItemPriority = async (event, id) => {
     try {
+      toggleIsPriorityEdit(id);
       const idx = data.items.findIndex((i) => i.id === id);
       const newItemsArray = [...data.items];
       newItemsArray[idx].priority = event.target.value;
@@ -221,6 +235,18 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       return updatedItem;
     } catch (err) {console.log(err)}
 
+  }
+
+  function getPriorityId(id) {
+    return isPriorityEdit.findIndex(i => i.id === id);
+  }
+
+  function toggleIsPriorityEdit(id) {
+    const idx = getPriorityId(id);
+    const newIsPriorityEdit = [...isPriorityEdit];
+    newIsPriorityEdit[idx].editable = !newIsPriorityEdit[idx].editable;
+    const newData = { ...data };
+    setData(newData)
   }
 
 
@@ -282,11 +308,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       <IconButton
                         edge="end"
                         aria-label="delete"
-                        onClick={() => {
-                          const newItems = data.items.filter(i => i.id !== id);
-                          setData(prev => ({ ...prev, items: newItems }));
-                          return deleteItem(id);
-                        }}
+                        onClick={() => onClickDeleteItem(id)}
                       >
                         <DeleteOutlineRounded />
                       </IconButton>
@@ -325,19 +347,22 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           variant="standard"
                         />
                       </ListItemText>
-                      {/* <Chip
-                        label={priorityData.find(p => p.value === priority).name}
-                        color={priorityData.find(p => p.value === priority).chipColor}
-                        icon={priorityData.find(p => p.value === priority).icon}
-                        size="small"
-                        sx={{ marginRight: "5px" }}
-                        onClick={() => console.log("Chip clicked")}
-                      /> */}
-                      <PrioritySelect
-                        key={`priority-select-${id}`}
-                        value={data.items.find(item => item.id === id).priority}
-                        onChange={(event) => onChangeUpdateItemPriority(event, id)}
-                        isLabelVisible={false} />
+                      {(!isPriorityEdit[getPriorityId(id)]?.editable) ? (
+                        <Chip
+                          label={priorityData.find(p => p.value === priority).name}
+                          color={priorityData.find(p => p.value === priority).chipColor}
+                          icon={priorityData.find(p => p.value === priority).icon}
+                          size="small"
+                          sx={{ marginRight: "5px" }}
+                          onClick={() => toggleIsPriorityEdit(id)}
+                        />
+                      ) : (
+                        <PrioritySelect
+                          key={`priority-select-${id}`}
+                          value={data.items.find(item => item.id === id).priority}
+                          onChange={(event) => onChangeUpdateItemPriority(event, id)}
+                          isLabelVisible={false} />
+                      )}
                     </ListItemButton>
                   </ListItem>
                 );
