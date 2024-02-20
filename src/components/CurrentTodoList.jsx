@@ -37,6 +37,8 @@ import {
 } from '../services/listItemServices.js';
 import { updateList, getAllLists, getAllTodosListId } from '../services/listServices.js';
 
+import PrioritySelect from './PrioritySelect.jsx';
+
 
 const priorityData = [
   { value: 1, name: "Urgent", color: "error.main", chipColor: "error", icon: <PriorityHighIcon /> },
@@ -53,6 +55,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
+  const [newItemPriority, setNewItemPriority] = useState(3);
 
   
   // first render
@@ -138,6 +141,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     }
   }, [data]);
 
+  // events handlers
+
   function handleUpdateItem(updatedItem) {
     const itemsArray = data.items;
     const idx = itemsArray.findIndex((i) => i._id === updatedItem.id);
@@ -191,6 +196,12 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     return returnItem;
 
   }
+
+  const onChangePriority = (event) => {
+    console.log(event.target.value);
+    console.log(typeof (event.target.value))
+          setNewItemPriority(event.target.value);
+      };
 
 
   const Icon = Icons[data?.icon];
@@ -322,6 +333,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       return handleAddItem();
                     }}
                   >
+                    
                     <TextField
                       onChange={event => {
                         setNewItemText(event.target.value);
@@ -349,9 +361,17 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                             </IconButton>
                           </InputAdornment>
                         ),
+                        
                       }}
                     />
+
+                    <PrioritySelect
+                      key="priority-select"
+                      value={newItemPriority}
+                      onChange={(event) => onChangePriority(event)} />
+
                   </Box>
+                 
                 </ListItem>
               ) : (<p></p>)}
             </List>
