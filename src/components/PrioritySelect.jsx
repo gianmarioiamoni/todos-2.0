@@ -1,15 +1,17 @@
 import React from 'react';
-import { Select, MenuItem, FormControl, InputLabel, Box, Chip } from '@mui/material';
+import { Select, MenuItem, FormControl, FormHelperText, InputLabel, Box, Chip } from '@mui/material';
 
 import { priorityData } from '../common/priorities';
 
 export default function PrioritySelect({ value, onChange }) {
     return (
-        <Box sx={{marginTop: "10px"}}>
+        <Box
+            // sx={{ marginTop: "10px" }}
+        >
         <FormControl >
-            <InputLabel id="severity-label" >Severity</InputLabel>
+            {/* <InputLabel id="severity-label" >Severity</InputLabel> */}
             <Select
-                labelId="severity-label"
+                // labelId="severity-label"
                 id="severity-select"
                 value={value}
                 onChange={onChange}
@@ -30,7 +32,8 @@ export default function PrioritySelect({ value, onChange }) {
                     </MenuItem>
                 }
                 )}
-            </Select>
+                </Select>
+                <FormHelperText>Priority</FormHelperText>
             </FormControl>
             </Box>
     );

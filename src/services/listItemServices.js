@@ -20,8 +20,6 @@ export async function getAllTodosListItems() {
         const resList = await axios.get(serverUrl + `/lists/allTodosList`);
         const returnData = { ...resList?.data, items: resItems?.data.sort((a, b) => sortItems(a, b)) };
 
-        // console.log("^^^^^ getAllTodosListItems() - returnData: ", returnData)
-
         return returnData;
 
     } catch { (err) => console.log(err) }
@@ -77,13 +75,17 @@ export async function toggleChecked(id, isChecked) {
     } catch (err) { console.log(err) }
 }
 
-export async function updateItem(id, text) {
+export async function updateItem(id, text, priority) {
     try {
-        const response = await axios.put(serverUrl + `/listItems/${id}`,
-            {
-                name: text
-            }
-        );
+
+        let payload;
+        if (text != null) {
+            payload = { name: text };
+        }
+        if (priority != null) {
+            payload = {...payload, priority: priority}
+        }
+        const response = await axios.put(serverUrl + `/listItems/${id}`, payload);
         return response.data;
 
     } catch (err) { console.log(err) }

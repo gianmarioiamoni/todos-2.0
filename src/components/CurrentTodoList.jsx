@@ -60,7 +60,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const [originalListItems, setOriginalListItems] = useState({});
   const [newItemPriority, setNewItemPriority] = useState(3);
 
-  
+
   // first render
   useEffect(() => {
     async function getInitialData() {
@@ -78,7 +78,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       } catch (err) { console.log(err) }
     } // getInitialData()
     getInitialData();
-    
+
   }, []);
 
   // isListDeleted
@@ -98,9 +98,9 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         }
       }
       setListDeleted();
-      
+
       setIsListDeleted(false);
-    } 
+    }
   }, [isListDeleted])
 
   // currentList
@@ -116,13 +116,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         }
       }
       setCurrentListChange();
-    } 
+    }
   }, [currentList]);
 
   // data?.name
   useEffect(() => {
     if (data?.name) {
-          setOriginalListName(data.name);
+      setOriginalListName(data.name);
     }
   }, [data?.name]);
 
@@ -146,11 +146,18 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   // events handlers
 
-  function handleUpdateItem(updatedItem) {
+  function handleUpdateItem(updatedItem, priority) {
+    console.log("§§§§§ handleUpdateItem() - updatedItem = ", updatedItem)
+    console.log("§§§§§ handleUpdateItem() - priority = ", priority)
     const itemsArray = data.items;
     const idx = itemsArray.findIndex((i) => i._id === updatedItem.id);
+    console.log("§§§§§ handleUpdateItem() - idx = ", idx)
     const newItemsArray = [...itemsArray];
     newItemsArray[idx].name = updatedItem.name;
+    if (priority != null) {
+      newItemsArray[idx].priority = updatedItem.priority;
+    }
+    console.log("§§§§§ handleUpdateItem() - newItemsArray = ", newItemsArray)
     setData((prev) => ({ ...prev, items: newItemsArray }));
   }
 
@@ -167,7 +174,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       })
       .catch(err => console.log(err))
 
-    
     return item;
   }
 
@@ -181,9 +187,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   // manages list name change
   function onListUpdate(event) {
-    if (event.key && event.key === 'Enter') {
-      event.preventDefault();
-    }
     setData((prev) => ({ ...prev, name: event.target.value }));
     // update lists in AllTosoLists
     handleListUpdated();
@@ -191,22 +194,34 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     void updateList(data.id, event.target.value);
   }
 
-  // manages list item update
+  // manages list item name update
   async function onListItemUpdate(id, event) {
-    if (event.key && event.key === 'Enter') {
-      event.preventDefault();
-    }
-    const updatedItem = await updateItem(id, event.target.value);
+    // if (event.key && event.key === 'Enter') {
+    //   event.preventDefault();
+    // }
+    const updatedItem = await updateItem(id, event.target.value, null);
     const returnItem = handleUpdateItem(updatedItem);
     return returnItem;
 
   }
 
+  // update hook for new item priority
   const onChangePriority = (event) => {
-    console.log(event.target.value);
-    console.log(typeof (event.target.value))
-          setNewItemPriority(event.target.value);
-      };
+    setNewItemPriority(event.target.value);
+  };
+
+  // update hook for update item priority
+  const onChangeUpdateItemPriority = async (event, id) => {
+    try {
+      const idx = data.items.findIndex((i) => i.id === id);
+      const newItemsArray = [...data.items];
+      newItemsArray[idx].priority = event.target.value;
+      setData((prev) => ({ ...prev, items: newItemsArray }));
+      const updatedItem = await updateItem(id, null, event.target.value);
+      return updatedItem;
+    } catch (err) {console.log(err)}
+
+  }
 
 
   const Icon = Icons[data?.icon];
@@ -239,7 +254,12 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                   setOriginalListName(event.target.value);
                 }}
                 onBlur={(event) => onListUpdate(event)}
-                onKeyDown={(event) => onListUpdate(event)}
+                onKeyDown={(event) => {
+                  onListUpdate(event);
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                  }
+                }}
               />
             </Box>
             <Divider />
@@ -274,12 +294,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                     disablePadding
                   >
                     <ListItemButton
-                      role={undefined} 
-                      onClick={() => handleToggleChecked(id)}
+                      role={undefined}
+                      // onClick={() => handleToggleChecked(id)}
                       dense
                     >
                       <ListItemIcon>
                         <Checkbox
+                          onClick={() => handleToggleChecked(id)}
                           edge="start"
                           checked={checked ?? false}
                           tabIndex={-1}
@@ -288,7 +309,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                         />
                       </ListItemIcon>
 
-                      <ListItemText id={labelId} color="error" >
+                      <ListItemText id={labelId} >
                         <TextField
                           onClick={e => e.stopPropagation()}
                           onChange={event => {
@@ -304,14 +325,18 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           variant="standard"
                         />
                       </ListItemText>
-                      <Chip
+                      {/* <Chip
                         label={priorityData.find(p => p.value === priority).name}
                         color={priorityData.find(p => p.value === priority).chipColor}
                         icon={priorityData.find(p => p.value === priority).icon}
                         size="small"
                         sx={{ marginRight: "5px" }}
-
-                      />
+                        onClick={() => console.log("Chip clicked")}
+                      /> */}
+                      <PrioritySelect
+                        key={`priority-select-${id}`}
+                        value={data.items.find(item => item.id === id).priority}
+                        onChange={(event) => onChangeUpdateItemPriority(event, id)} />
                     </ListItemButton>
                   </ListItem>
                 );
@@ -328,7 +353,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       return handleAddItem();
                     }}
                   >
-                    
+
                     <TextField
                       onChange={event => {
                         setNewItemText(event.target.value);
@@ -356,7 +381,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                             </IconButton>
                           </InputAdornment>
                         ),
-                        
+
                       }}
                     />
 
@@ -366,7 +391,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       onChange={(event) => onChangePriority(event)} />
 
                   </Box>
-                 
+
                 </ListItem>
               ) : (<p></p>)}
             </List>

@@ -6,7 +6,6 @@ export function AllTodosListItem({id, name, setCurrentList, currentList }) {
         <ListItem
             key={id}
             sx={{
-                // fontWeight: '700',
                 color: 'blue',
             }}
             
