@@ -336,7 +336,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       <PrioritySelect
                         key={`priority-select-${id}`}
                         value={data.items.find(item => item.id === id).priority}
-                        onChange={(event) => onChangeUpdateItemPriority(event, id)} />
+                        onChange={(event) => onChangeUpdateItemPriority(event, id)}
+                        isLabelVisible={false} />
                     </ListItemButton>
                   </ListItem>
                 );

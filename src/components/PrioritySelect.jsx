@@ -3,7 +3,7 @@ import { Select, MenuItem, FormControl, FormHelperText, InputLabel, Box, Chip } 
 
 import { priorityData } from '../common/priorities';
 
-export default function PrioritySelect({ value, onChange }) {
+export default function PrioritySelect({ value, onChange, isLabelVisible = true }) {
     return (
         <Box
             // sx={{ marginTop: "10px" }}
@@ -33,7 +33,7 @@ export default function PrioritySelect({ value, onChange }) {
                 }
                 )}
                 </Select>
-                <FormHelperText>Priority</FormHelperText>
+                {isLabelVisible && <FormHelperText>Priority</FormHelperText>}
             </FormControl>
             </Box>
     );
