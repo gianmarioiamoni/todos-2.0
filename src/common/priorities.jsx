@@ -9,3 +9,7 @@ export const priorityData = [
     { value: 3, name: "Normal", color: "success.main", chipColor: "success", icon: <LowPriorityIcon /> }
 ];
 
+export function sortItems(a, b) {
+    return a.priority - b.priority;
+}
+

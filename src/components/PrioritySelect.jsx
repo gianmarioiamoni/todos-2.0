@@ -5,13 +5,9 @@ import { priorityData } from '../common/priorities';
 
 export default function PrioritySelect({ value, onChange, isLabelVisible = true }) {
     return (
-        <Box
-            // sx={{ marginTop: "10px" }}
-        >
+        <Box>
         <FormControl >
-            {/* <InputLabel id="severity-label" >Severity</InputLabel> */}
             <Select
-                // labelId="severity-label"
                 id="severity-select"
                 value={value}
                 onChange={onChange}

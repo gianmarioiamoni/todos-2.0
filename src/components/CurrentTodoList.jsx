@@ -18,10 +18,6 @@ import {
 } from '@mui/material';
 
 
-import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
-import LowPriorityIcon from '@mui/icons-material/LowPriority';
-import DragHandleIcon from '@mui/icons-material/DragHandle';
-
 import { useEffect, useState } from 'react';
 
 // import { useTodoList } from '../hooks/useTodoList.js';
@@ -40,7 +36,7 @@ import { updateList, getAllLists, getAllTodosListId } from '../services/listServ
 
 import PrioritySelect from './PrioritySelect.jsx';
 
-import { priorityData } from '../common/priorities.jsx';
+import { priorityData, sortItems } from '../common/priorities.jsx';
 
 
 // const priorityData = [
@@ -75,6 +71,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
         const l = await getAllTodosListItems();
         setData(l);
+
         l.items.map(item => setIsPriorityEdit(prev => [...prev, {id: item.id, editable: false}]))
 
       } catch (err) { console.log(err) }
@@ -100,7 +97,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         }
       }
       setListDeleted();
-
       setIsListDeleted(false);
     }
   }, [isListDeleted])
@@ -160,7 +156,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       newItemsArray[idx].priority = updatedItem.priority;
     }
     console.log("§§§§§ handleUpdateItem() - newItemsArray = ", newItemsArray)
-    setData((prev) => ({ ...prev, items: newItemsArray }));
+    setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b)) }));
   }
 
   function handleAddItem() {
@@ -169,7 +165,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         const itemsArray = [...data.items];
         if (itemsArray != null) {
           const newItemsArray = [...itemsArray, newTodo];
-          setData((prev) => ({ ...prev, items: newItemsArray }))
+          setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b)) }))
         }
         setIsPriorityEdit(prev => [...prev, { id: item.id, editable: false}])
         setNewItemText('');
@@ -230,7 +226,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       const idx = data.items.findIndex((i) => i.id === id);
       const newItemsArray = [...data.items];
       newItemsArray[idx].priority = event.target.value;
-      setData((prev) => ({ ...prev, items: newItemsArray }));
+      setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b)) }));
       const updatedItem = await updateItem(id, null, event.target.value);
       return updatedItem;
     } catch (err) {console.log(err)}

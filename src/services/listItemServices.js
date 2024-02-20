@@ -1,5 +1,6 @@
 import axios from "axios";
-import { AllTodosListItem } from "../components/AllTodosListItem";
+
+import { sortItems } from "../common/priorities";
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
@@ -12,9 +13,9 @@ async function getItems(listId) {
 }
 
 export async function getAllTodosListItems() {
-    function sortItems(a, b) {
-        return a.priority - b.priority;
-    }
+    // function sortItems(a, b) {
+    //     return a.priority - b.priority;
+    // }
     try {
         const resItems = await axios.get(serverUrl + `/listItems`);
         const resList = await axios.get(serverUrl + `/lists/allTodosList`);
@@ -26,9 +27,9 @@ export async function getAllTodosListItems() {
 }
 
 export async function getListItems(listId) {
-    function sortItems(a, b) {
-        return a.priority - b.priority;
-    }
+    // function sortItems(a, b) {
+    //     return a.priority - b.priority;
+    // }
     try {
 
         const resItems = await axios.get(serverUrl + `/lists/${listId}/listItems`);
