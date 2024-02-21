@@ -2,8 +2,6 @@ import axios from "axios";
 
 import { sortItems } from "../common/priorities";
 
-import dayjs from 'dayjs';
-
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 async function getItems(listId) {
@@ -15,19 +13,13 @@ async function getItems(listId) {
 }
 
 export async function getAllTodosListItems() {
-    // function sortItems(a, b) {
-    //     return a.priority - b.priority;
-    // }
     try {
         const resItems = await axios.get(serverUrl + `/listItems`);
         const resList = await axios.get(serverUrl + `/lists/allTodosList`);
         // format dates
         // const newResItems = resItems.data.map(item => ({ ...item, date: date && dayjs(date) }));
-        // console.log("$$$$ getAllTodosListItems() - newResItems: ", newResItems)
-        console.log("$$$$ getAllTodosListItems() - resItems: ", resItems)
 
         const returnData = { ...resList?.data, items: resItems?.data.sort((a, b) => sortItems(a, b)) };
-        console.log("$$$$ getAllTodosListItems() - returnDatas: ", returnData)
 
         return returnData;
 
@@ -38,11 +30,11 @@ export async function getListItems(listId) {
     try {
 
         const resItems = await axios.get(serverUrl + `/lists/${listId}/listItems`);
+        const resList = await axios.get(serverUrl + `/lists/${listId}`);
 
         // format dates
         // const newResItems = resItems.data.map(item => ({ ...item, date: date && dayjs(date) }));
 
-        const resList = await axios.get(serverUrl + `/lists/${listId}`);
         const returnData = { ...resList?.data, items: resItems?.data.sort((a, b) => sortItems(a, b)) };
 
         return returnData;

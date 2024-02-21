@@ -20,12 +20,6 @@ import {
 
 import { useEffect, useState } from 'react';
 
-// dates
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-// import DatePicker from '@mui/lab/DatePicker';
-// import AdapterDateFns from '@mui/lab/AdapterDateFns';
-// import LocalizationProvider from '@mui/lab/LocalizationProvider';
-// import { AdapterDaysFns } from '@mui/x-date-pickers/AdapterDaysFns';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -49,13 +43,8 @@ import { updateList, getAllLists, getAllTodosListId } from '../services/listServ
 import PrioritySelect from './PrioritySelect.jsx';
 
 import { priorityData, sortItems } from '../common/priorities.jsx';
+import { HighlightedText } from "../common/themes.jsx";
 
-
-// const priorityData = [
-//   { value: 1, name: "Urgent", color: "error.main", chipColor: "error", icon: <PriorityHighIcon /> },
-//   { value: 2, name: "Medium", color: "warning.main", chipColor: "warning", icon: <DragHandleIcon /> },
-//   { value: 3, name: "Normal", color: "success.main", chipColor: "success", icon: <LowPriorityIcon /> }
-// ];
 
 export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpdated }) {
   const { currentList, setCurrentList } = useAppState();
@@ -270,6 +259,14 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     // axios.post(`/listitems/${id}/date`, { date: date });
   };
 
+  // const HighlightedText = styled(Typography)({
+  //   // backgroundColor: '#fff9c4',
+  //   backgroundColor: theme.palette.primary.main,
+  //   color: theme.palette.secondary.main,
+  //   padding: '4px 8px',
+  //   borderRadius: '4px',
+  //   display: 'inline-block',
+  // });
 
   const Icon = Icons[data?.icon];
 
@@ -387,7 +384,14 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           isLabelVisible={false} />
                       )}
 
-                      <p>{dayjs((data.items?.find(item => item.id === id).date)).format('DD/MM/YYYY')}</p>
+                      {/* Show date */}
+                      <div >
+                        {/* <Typography variant="body1" sx={{ mx: "20px" }}> */}
+                          <HighlightedText variant="body1">
+                          {dayjs((data.items?.find(item => item.id === id).date)).format('DD/MM/YYYY')}
+                          </HighlightedText>
+                        {/* </Typography> */}
+                      </div>
 
                     </ListItemButton>
                   </ListItem>

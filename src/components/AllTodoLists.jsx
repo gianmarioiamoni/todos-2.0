@@ -18,6 +18,7 @@ import { AllTodosListItem } from './AllTodosListItem.jsx';
 import { useAppState } from '../providers/AppState.jsx';
 import { getAllLists, getAllTodosListId, newList, deleteList } from '../services/listServices.js';
 
+import { theme } from "../common/themes";
 
 let allTodosListId = "";
 
@@ -127,6 +128,13 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
             return (
               <ListItem
                 key={id}
+                sx={ id === currentList &&
+                {
+                  // color: 'blue',
+                  color: theme.palette.secondary.main,
+                  backgroundColor: theme.palette.primary.main,
+                  fontWeight: 'bold'
+                }}
                 secondaryAction={
                   <IconButton
                     edge="end"
@@ -140,7 +148,6 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
                       return deleteList(id);
                     }}
                   >
-                    {/* <DeleteOutlineRounded /> */}
                     <ClearIcon />
                   </IconButton>
                 }

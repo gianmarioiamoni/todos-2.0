@@ -13,6 +13,8 @@ import { deepPurple, amber } from '@mui/material/colors';
 
 import { Box } from '@mui/material';
 
+import {theme} from "../src/common/themes.jsx"
+
 // create a theme using the DeepPurple & Amber palette
 // const theme = createTheme({
 //   palette: {
@@ -22,19 +24,19 @@ import { Box } from '@mui/material';
   
 //   });
 
-const theme = createTheme({
-  palette: {
-    primary: {
-      main: '#673AB7', // DeepPurple
-    },
-    secondary: {
-      main: '#FFC107', // amber 
-    },
-  },
-  background: {
-    default: '#F5F5F5', // custom Beige 
-  },
-});
+// const theme = createTheme({
+//   palette: {
+//     primary: {
+//       main: '#673AB7', // DeepPurple
+//     },
+//     secondary: {
+//       main: '#FFC107', // amber 
+//     },
+//   },
+//   background: {
+//     default: '#F5F5F5', // custom Beige 
+//   },
+// });
 
 
 
