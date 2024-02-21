@@ -20,6 +20,18 @@ import {
 
 import { useEffect, useState } from 'react';
 
+// dates
+// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+// import DatePicker from '@mui/lab/DatePicker';
+// import AdapterDateFns from '@mui/lab/AdapterDateFns';
+// import LocalizationProvider from '@mui/lab/LocalizationProvider';
+// import { AdapterDaysFns } from '@mui/x-date-pickers/AdapterDaysFns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+import dayjs from 'dayjs';
+
 // import { useTodoList } from '../hooks/useTodoList.js';
 // import { useTodoLists } from '../hooks/useTodoLists.js';
 import { useAppState } from '../providers/AppState.jsx';
@@ -57,6 +69,9 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const [newItemPriority, setNewItemPriority] = useState(3);
   const [isPriorityEdit, setIsPriorityEdit] = useState([]);
 
+  const [selectedDate, setSelectedDate] = useState(null);
+
+  // USE EFFECTS
 
   // first render
   useEffect(() => {
@@ -74,8 +89,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
         l.items.map(item => setIsPriorityEdit(prev => [...prev, {id: item.id, editable: false}]))
 
-      } catch (err) { console.log(err) }
-    } // getInitialData()
+      } catch (err) {console.log(err)}
+    } 
     getInitialData();
 
   }, []);
@@ -142,7 +157,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     }
   }, [data]);
 
-  // events handlers
+  // EVENTS HANDLERS
 
   function handleUpdateItem(updatedItem, priority) {
     console.log("§§§§§ handleUpdateItem() - updatedItem = ", updatedItem)
@@ -160,7 +175,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   }
 
   function handleAddItem() {
-    const item = newItem(newItemText, currentList, newItemPriority)
+    const item = newItem(newItemText, currentList, newItemPriority, selectedDate)
       .then((newTodo) => {
         const itemsArray = [...data.items];
         if (itemsArray != null) {
@@ -206,7 +221,9 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     // if (event.key && event.key === 'Enter') {
     //   event.preventDefault();
     // }
-    const updatedItem = await updateItem(id, event.target.value, null);
+
+    // params: id, name, priority, date
+    const updatedItem = await updateItem(id, event.target.value, null, null);
     const returnItem = handleUpdateItem(updatedItem);
     return returnItem;
 
@@ -227,7 +244,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       const newItemsArray = [...data.items];
       newItemsArray[idx].priority = event.target.value;
       setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b)) }));
-      const updatedItem = await updateItem(id, null, event.target.value);
+      // params: id, name, priority, date
+      const updatedItem = await updateItem(id, null, event.target.value, null);
       return updatedItem;
     } catch (err) {console.log(err)}
 
@@ -244,6 +262,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     const newData = { ...data };
     setData(newData)
   }
+
+  // dates
+  const handleDateChange = (date) => {
+    console.log("+++handleDateChange() - date: ", date)
+    setSelectedDate(date);
+    // axios.post(`/listitems/${id}/date`, { date: date });
+  };
 
 
   const Icon = Icons[data?.icon];
@@ -343,6 +368,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           variant="standard"
                         />
                       </ListItemText>
+
+                      {/* Priority visualization and edit  */}
                       {(!isPriorityEdit[getPriorityId(id)]?.editable) ? (
                         <Chip
                           label={priorityData.find(p => p.value === priority).name}
@@ -359,6 +386,9 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           onChange={(event) => onChangeUpdateItemPriority(event, id)}
                           isLabelVisible={false} />
                       )}
+
+                      <p>{dayjs((data.items?.find(item => item.id === id).date)).format('DD/MM/YYYY')}</p>
+
                     </ListItemButton>
                   </ListItem>
                 );
@@ -375,7 +405,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       return handleAddItem();
                     }}
                   >
-
+                    {/* New Item name and send button */}
                     <TextField
                       onChange={event => {
                         setNewItemText(event.target.value);
@@ -406,11 +436,25 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
                       }}
                     />
-
+                    {/* Add Priority */}
                     <PrioritySelect
                       key="priority-select"
                       value={newItemPriority}
                       onChange={(event) => onChangePriority(event)} />
+                    
+                    {/* Add date */}
+                    <div>
+                      {/* <LocalizationProvider dateAdapter={AdapterDateFns}> */}
+                      <LocalizationProvider dateAdapter={AdapterDayjs}>
+                        <DatePicker
+                          label="Choose an expiring date"
+                          value={selectedDate}
+                          onChange={handleDateChange}
+                          // renderInput={(params) => <TextField {...params} />}
+                          slotProps={{ textField: { variant: 'outlined' } }}
+                        />
+                      </LocalizationProvider>
+                    </div>
 
                   </Box>
 

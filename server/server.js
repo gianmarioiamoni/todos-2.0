@@ -135,6 +135,7 @@ app.route("/listItems/:id")
         }
     })
     .put(async function (req, res) {
+        console.log("PUT - req.body: ", req.body)
         try {
             await ListItem.findByIdAndUpdate((req.params.id),
                 {...req.body}
@@ -143,6 +144,21 @@ app.route("/listItems/:id")
             err => res.send(err);
         }
     })
+
+app.route("/listItems/:id/date")
+    .put(async function (req, res) {
+    // try {
+    //     const { date } = req.body;
+    //     const { id } = req.params;
+
+    //     const newDate = new DateModel({ date });
+    //     await newDate.save();
+    //     res.status(200).send('Data saved successfully');
+    // } catch (error) {
+    //     console.error(error);
+    //     res.status(500).send('Error saving data');
+    // }
+});
 
 app.route("/listItems")
     .get(async function (req, res) {
@@ -156,11 +172,12 @@ app.route("/listItems")
     })
     .post(async function (req, res) {
         try {
-            const { name, checked, priority, listId } = req.body;
+            const { name, checked, priority, listId, date } = req.body;
             const savedData = await new ListItem({
                 name: name,
                 checked: checked,
                 priority: priority,
+                date: date,
                 listId: listId
             }).save()
 

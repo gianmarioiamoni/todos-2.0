@@ -10,6 +10,7 @@ const listItemSchema = new Schema({
         min: 1,
         max: 3
     },
+    date: Date,
     listId: String
     // listId: {
     //     type: Schema.Types.ObjectId,
