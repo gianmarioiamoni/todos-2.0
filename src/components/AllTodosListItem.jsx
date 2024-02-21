@@ -4,7 +4,7 @@ import * as Icons from '@mui/icons-material';
 import { styled } from '@mui/system';
 import { Typography } from '@mui/material';
 
-import { theme } from "../common/themes";
+import { themeSelection,  } from "../common/themes";
 
 export function AllTodosListItem({ id, name, setCurrentList, currentList }) {
     function isSelected() {
@@ -17,14 +17,13 @@ export function AllTodosListItem({ id, name, setCurrentList, currentList }) {
             sx={ !isSelected() ? (
                 {
                 // color: 'blue',
-                color: theme.palette.primary.main,
+                color: themeSelection.palette.primary.main,
                 fontWeight: 'bold'
                 }
             ) : (
                     {
-                        // color: 'blue',
-                        color: theme.palette.secondary.main,
-                        backgroundColor: theme.palette.primary.main,
+                        color: themeSelection.palette.secondary.main,
+                        backgroundColor: themeSelection.palette.primary.main,
                         fontWeight: 'bold'
                     }    
             )

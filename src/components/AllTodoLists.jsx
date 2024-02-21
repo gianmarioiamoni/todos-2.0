@@ -18,7 +18,7 @@ import { AllTodosListItem } from './AllTodosListItem.jsx';
 import { useAppState } from '../providers/AppState.jsx';
 import { getAllLists, getAllTodosListId, newList, deleteList } from '../services/listServices.js';
 
-import { theme } from "../common/themes";
+import { themeSelection } from "../common/themes";
 
 let allTodosListId = "";
 
@@ -128,17 +128,26 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
             return (
               <ListItem
                 key={id}
-                sx={ id === currentList &&
+                sx={ id === currentList ? (
                 {
-                  // color: 'blue',
-                  color: theme.palette.secondary.main,
-                  backgroundColor: theme.palette.primary.main,
+                  color: themeSelection.palette.secondary.main,
+                  backgroundColor: themeSelection.palette.primary.main,
                   fontWeight: 'bold'
-                }}
+                  }
+                ) : ({})
+                }
                 secondaryAction={
                   <IconButton
                     edge="end"
                     aria-label="delete"
+                    sx={id === currentList ? (
+                      {
+                        color: themeSelection.palette.secondary.main,
+                        backgroundColor: themeSelection.palette.primary.main,
+                        fontWeight: 'bold'
+                      }
+                    ) : ({})
+                    }
                     onClick={() => {
                       // call function in App to manage update of CurrentTodoList
                       handleListDelete();

@@ -17,6 +17,8 @@ import {
   Chip
 } from '@mui/material';
 
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
+
 
 import { useEffect, useState } from 'react';
 
@@ -256,17 +258,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const handleDateChange = (date) => {
     console.log("+++handleDateChange() - date: ", date)
     setSelectedDate(date);
-    // axios.post(`/listitems/${id}/date`, { date: date });
   };
 
-  // const HighlightedText = styled(Typography)({
-  //   // backgroundColor: '#fff9c4',
-  //   backgroundColor: theme.palette.primary.main,
-  //   color: theme.palette.secondary.main,
-  //   padding: '4px 8px',
-  //   borderRadius: '4px',
-  //   display: 'inline-block',
-  // });
+  // item
+  function getItemData(id) {
+    return data.items?.find(item => item.id === id);
+  }
+
 
   const Icon = Icons[data?.icon];
 
@@ -335,7 +333,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                   >
                     <ListItemButton
                       role={undefined}
-                      // onClick={() => handleToggleChecked(id)}
                       dense
                     >
                       <ListItemIcon>
@@ -362,11 +359,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           onKeyDown={(event) => onListItemUpdate(id, event)}
                           value={originalListItems[id] ?? ''}
                           size="small"
+                          fullWidth
                           variant="standard"
+                          sx={{pr: "10px"}}
                         />
                       </ListItemText>
 
-                      {/* Priority visualization and edit  */}
+                      {/* Show and edit Priority  */}
                       {(!isPriorityEdit[getPriorityId(id)]?.editable) ? (
                         <Chip
                           label={priorityData.find(p => p.value === priority).name}
@@ -386,11 +385,16 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
                       {/* Show date */}
                       <div >
-                        {/* <Typography variant="body1" sx={{ mx: "20px" }}> */}
+                        {(dayjs(getItemData(id).date).format('DD/MM/YYYY') === dayjs(new Date()).format('DD/MM/YYYY')) ? (
                           <HighlightedText variant="body1">
-                          {dayjs((data.items?.find(item => item.id === id).date)).format('DD/MM/YYYY')}
+                            {/* {dayjs((data.items?.find(item => item.id === id).date)).format('DD/MM/YYYY')} */}
+                            {dayjs(getItemData(id).date).format('DD/MM/YYYY')}
                           </HighlightedText>
-                        {/* </Typography> */}
+                        ) : (
+                          <Typography variant="body1" sx={{ mx: "20px", p: '4px 8px' }}>
+                            {dayjs(getItemData(id).date).format('DD/MM/YYYY')}
+                          </Typography>
+                        )}
                       </div>
 
                     </ListItemButton>
@@ -440,28 +444,31 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
                       }}
                     />
-                    {/* Add Priority */}
-                    <PrioritySelect
-                      key="priority-select"
-                      value={newItemPriority}
-                      onChange={(event) => onChangePriority(event)} />
-                    
-                    {/* Add date */}
-                    <div>
-                      {/* <LocalizationProvider dateAdapter={AdapterDateFns}> */}
-                      <LocalizationProvider dateAdapter={AdapterDayjs}>
-                        <DatePicker
-                          label="Choose an expiring date"
-                          value={selectedDate}
-                          onChange={handleDateChange}
-                          // renderInput={(params) => <TextField {...params} />}
-                          slotProps={{ textField: { variant: 'outlined' } }}
-                        />
-                      </LocalizationProvider>
-                    </div>
-
+                    <Grid container spacing={2}>
+                      <Grid xs={4}>
+                        {/* Add Priority */}
+                        <PrioritySelect
+                          key="priority-select"
+                          value={newItemPriority}
+                          onChange={(event) => onChangePriority(event)} />
+                      </Grid>
+                      <Grid xs={4}>
+                        {/* Add date */}
+                        <div>
+                          {/* <LocalizationProvider dateAdapter={AdapterDateFns}> */}
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                              label="Choose an expiring date"
+                              value={selectedDate}
+                              onChange={handleDateChange}
+                              // renderInput={(params) => <TextField {...params} />}
+                              slotProps={{ textField: { variant: 'outlined' } }}
+                            />
+                          </LocalizationProvider>
+                        </div>
+                      </Grid>
+                    </Grid>
                   </Box>
-
                 </ListItem>
               ) : (<p></p>)}
             </List>
