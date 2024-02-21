@@ -20,7 +20,9 @@ export function App() {
     setIsListUpdated(true);
   }
 
+
   return (
+
     <AppState>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />
@@ -33,7 +35,8 @@ export function App() {
           setIsListDeleted={setIsListDeleted} 
           handleListUpdated={handleListUpdated}
           />
-      </Box>
-    </AppState>
+        </Box>
+      
+      </AppState>
   );
 }
