@@ -62,7 +62,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
   const [newItemPriority, setNewItemPriority] = useState(3);
-  const [isPriorityEdit, setIsPriorityEdit] = useState([]);
+  // const [isPriorityEdit, setPriorityIsEdit] = useState([]);
+  const [isEdit, setIsEdit] = useState([]);
 
   const [sortSelection, setSortSelection] = useState("Priority+Date");
   const [isCheckedTodayItems, setIsCheckedTodayItems] = useState(false);
@@ -85,7 +86,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         const l = await getAllTodosListItems();
         setData(l);
 
-        l.items.map(item => setIsPriorityEdit(prev => [...prev, {id: item.id, editable: false}]))
+        l.items.map(item => setIsEdit(prev => [...prev, {id: item.id, priorityEdit: false, dateEdit: false}]))
 
       } catch (err) {console.log(err)}
     } 
@@ -176,7 +177,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
           const newItemsArray = [...itemsArray, newTodo];
           setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b, sortSelection)) }))
         }
-        setIsPriorityEdit(prev => [...prev, { id: item.id, editable: false}])
+        // setIsPriorityEdit(prev => [...prev, { id: item.id, editable: false}])
+        setIsEdit(prev => [...prev, { id: item.id, priotiyEdit: false, dateEdit: false}])
         setNewItemText('');
         setNewItemPriority(1);
       })
@@ -188,8 +190,11 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   function onClickDeleteItem(id) {
       const newItems = data.items.filter(i => i.id !== id);
     setData(prev => ({ ...prev, items: newItems }));
-    const newIsPriorityEdit = isPriorityEdit.filter(i => i.id !== id);
-    setIsPriorityEdit(newIsPriorityEdit);
+    // const newIsPriorityEdit = isPriorityEdit.filter(i => i.id !== id);
+    // const newIsPriorityEdit = isEdit.filter(i => i.id !== id);
+    const newIsEdit = isEdit.filter(i => i.id !== id);
+    // setIsPriorityEdit(newIsPriorityEdit);
+    setIsEdit(newIsEdit);
       return deleteItem(id);
   }
 
@@ -245,14 +250,52 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   }
 
-  function getPriorityId(id) {
-    return isPriorityEdit.findIndex(i => i.id === id);
+  // update hook for update item date
+  const onChangeUpdateItemDate = async (date, id) => {
+    console.log("**** onChangeUpdateItemDate() - date: ", date)
+    console.log("**** onChangeUpdateItemDate() - id: ", id)
+    setSelectedDate(date);
+    try {
+      toggleIsDateEdit(id);
+      const idx = data.items.findIndex((i) => i.id === id);
+      const newItemsArray = [...data.items];
+      newItemsArray[idx].date = date;
+      setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b, sortSelection)) }));
+      // params: id, name, priority, date
+      const updatedItem = await updateItem(id, null, null, date);
+      setSelectedDate(new Date());
+      return updatedItem;
+    } catch (err) { console.log(err) }
+
+  }
+
+  // function getPriorityId(id) {
+  function getEditId(id) {
+    // return isPriorityEdit.findIndex(i => i.id === id);
+    return isEdit.findIndex(i => i.id === id);
   }
 
   function toggleIsPriorityEdit(id) {
-    const idx = getPriorityId(id);
-    const newIsPriorityEdit = [...isPriorityEdit];
-    newIsPriorityEdit[idx].editable = !newIsPriorityEdit[idx].editable;
+    // const idx = getPriorityId(id);
+    const idx = getEditId(id);
+    // const newIsPriorityEdit = [...isPriorityEdit];
+    const newIsEdit = [...isEdit];
+    // newIsPriorityEdit[idx].editable = !newIsPriorityEdit[idx].editable;
+    newIsEdit[idx].priorityEdit = !newIsEdit[idx].priorityEdit;
+    const newData = { ...data };
+    setData(newData)
+  }
+
+  function toggleIsDateEdit(id) {
+    console.log("^^^^ toggleIsDateEdit() - id = ", id )
+    // const idx = getPriorityId(id);
+    const idx = getEditId(id);
+    // const newIsPriorityEdit = [...isPriorityEdit];
+    const newIsEdit = [...isEdit];
+    // newIsPriorityEdit[idx].editable = !newIsPriorityEdit[idx].editable;
+    newIsEdit[idx].dateEdit = !newIsEdit[idx].dateEdit;
+    console.log("^^^^ toggleIsDateEdit() - newIsEdit = ", newIsEdit)
+    
     const newData = { ...data };
     setData(newData)
   }
@@ -427,7 +470,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       </ListItemText>
 
                       {/* Show and edit Priority  */}
-                      {(!isPriorityEdit[getPriorityId(id)]?.editable) ? (
+                      {/* {(!isPriorityEdit[getPriorityId(id)]?.editable) ? ( */}
+                      {(!isEdit[getEditId(id)]?.priorityEdit) ? (
                         <Chip
                           label={priorityData.find(p => p.value === priority).name}
                           color={priorityData.find(p => p.value === priority).chipColor}
@@ -444,19 +488,36 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           isLabelVisible={false} />
                       )}
 
-                      {/* Show date */}
-                      <div >
-                        {(dayjs(getItemData(id).date).format('DD/MM/YYYY') === dayjs(new Date()).format('DD/MM/YYYY')) ? (
-                          <HighlightedText variant="body1">
-                            {/* {dayjs((data.items?.find(item => item.id === id).date)).format('DD/MM/YYYY')} */}
-                            {dayjs(getItemData(id).date).format('DD/MM/YYYY')}
-                          </HighlightedText>
-                        ) : (
-                          <Typography variant="body1" sx={{ mx: "20px", p: '4px 8px' }}>
-                            {dayjs(getItemData(id).date).format('DD/MM/YYYY')}
-                          </Typography>
+                      {/* Show and edit date */}
+                      {(!isEdit[getEditId(id)]?.dateEdit) ? (
+                        <div >
+                          {(dayjs(getItemData(id).date).format('DD/MM/YYYY') === dayjs(new Date()).format('DD/MM/YYYY')) ? (
+                            <HighlightedText
+                              onClick={() => toggleIsDateEdit(id)}
+                              variant="body1">
+                              {/* {dayjs((data.items?.find(item => item.id === id).date)).format('DD/MM/YYYY')} */}
+                              {dayjs(getItemData(id).date).format('DD/MM/YYYY')}
+                            </HighlightedText>
+                          ) : (
+                            <Typography
+                              onClick={() => toggleIsDateEdit(id)}
+                              variant="body1"
+                              sx={{ mx: "20px", p: '4px 8px' }}>
+                              {dayjs(getItemData(id).date).format('DD/MM/YYYY')}
+                            </Typography>
+                          )}
+                        </div>
+                      ) : (
+                          <LocalizationProvider dateAdapter={AdapterDayjs}>
+                            <DatePicker
+                              label="Choose an expiring date"
+                              value={selectedDate}
+                              onChange={(date) => onChangeUpdateItemDate(date, id)}
+                              // renderInput={(params) => <TextField {...params} />}
+                              slotProps={{ textField: { variant: 'outlined' } }}
+                            />
+                          </LocalizationProvider>
                         )}
-                      </div>
 
                     </ListItemButton>
                   </ListItem>
