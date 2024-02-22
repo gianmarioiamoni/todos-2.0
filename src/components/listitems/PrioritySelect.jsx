@@ -1,7 +1,7 @@
 import React from 'react';
 import { Select, MenuItem, FormControl, FormHelperText, Box, Chip } from '@mui/material';
 
-import { priorityData } from '../common/priorities';
+import { priorityData } from '../../common/priorities';
 
 export default function PrioritySelect({ value, onChange, isLabelVisible = true }) {
     return (

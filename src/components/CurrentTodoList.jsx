@@ -39,11 +39,12 @@ import {
 } from '../services/listItemServices.js';
 import { updateList, getAllLists, getAllTodosListId } from '../services/listServices.js';
 
-import PrioritySelect from './PrioritySelect.jsx';
+import PrioritySelect from './listitems/PrioritySelect.jsx';
 
 import SortingAndFilteringTool from './listitems/SortingAndFilteringTool.jsx';
+import ShowAndEditPriority from './listitems/ShowAndEditPriority.jsx';
 
-import { priorityData, sortItems } from '../common/priorities.jsx';
+import { sortItems } from '../common/priorities.jsx';
 import { HighlightedText } from "../common/themes.jsx";
 
 
@@ -357,7 +358,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
             </Box>
 
             {/* Sorting and filtering */}
-            <SortingAndFilteringTool 
+            <SortingAndFilteringTool
               sortSelection={sortSelection}
               onChangeSort={onChangeSort}
               isCheckedTodayItems={isCheckedTodayItems || false}
@@ -365,7 +366,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
             />
 
             <Divider />
-            
+
             <List
               sx={{
                 width: '100%',
@@ -425,22 +426,15 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       </ListItemText>
 
                       {/* Show and edit Priority  */}
-                      {(!isEdit[getEditId(id)]?.priorityEdit) ? (
-                        <Chip
-                          label={priorityData.find(p => p.value === priority).name}
-                          color={priorityData.find(p => p.value === priority).chipColor}
-                          icon={priorityData.find(p => p.value === priority).icon}
-                          size="small"
-                          sx={{ marginRight: "5px" }}
-                          onClick={() => toggleIsPriorityEdit(id)}
-                        />
-                      ) : (
-                        <PrioritySelect
-                          key={`priority-select-${id}`}
-                          value={data.items.find(item => item.id === id).priority}
-                          onChange={(event) => onChangeUpdateItemPriority(event, id)}
-                          isLabelVisible={false} />
-                      )}
+                      <ShowAndEditPriority 
+                        id={id}
+                        priority={priority}
+                        data={data}
+                        isEdit={isEdit}
+                        getEditId={getEditId}
+                        toggleIsPriorityEdit={toggleIsPriorityEdit}
+                        onChangeUpdateItemPriority={onChangeUpdateItemPriority}
+                      />
 
                       {/* Show and edit date */}
                       {(!isEdit[getEditId(id)]?.dateEdit) ? (
