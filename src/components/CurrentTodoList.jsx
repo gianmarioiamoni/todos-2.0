@@ -19,7 +19,8 @@ import {
 
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 
-
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 
 import { useEffect, useState } from 'react';
@@ -64,6 +65,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const [isPriorityEdit, setIsPriorityEdit] = useState([]);
 
   const [sortSelection, setSortSelection] = useState("Priority+Date");
+  const [isCheckedTodayItems, setIsCheckedTodayItems] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -272,6 +274,25 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     }
   }
 
+  // filtering today's items
+  const onChangeTodayItems = async (event) => {
+    setIsCheckedTodayItems(event.target.checked);
+    if (event.target.checked && data.items != null) {
+      // filter data items array
+      const newDataItems = data.items.filter((item) => dayjs(item.date).format('DD/MM/YYYY') === dayjs(new Date()).format('DD/MM/YYYY'));
+      setData((prev) => ({...prev, items: [...newDataItems]}))
+    } else {
+      // restore full data items array
+      if (currentList != null && currentList !== allTodosListId) {
+        const newList = await getListItems(currentList);
+        setData( newList );
+      } else {
+        const newList = await getAllTodosListItems();
+        setData( newList );
+      }
+    }
+  }
+
   // item
   function getItemData(id) {
     return data.items?.find(item => item.id === id);
@@ -320,6 +341,18 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
             {/* Sorting */}
             <SortRadioButtonGroup value={sortSelection || ''} onChange={onChangeSort} />
+
+            {/* Show Today items only */}
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={isCheckedTodayItems}
+                    onChange={onChangeTodayItems} />
+                }
+                label="Today's items" />
+            </FormGroup>
+
             <Divider />
             <List
               sx={{
