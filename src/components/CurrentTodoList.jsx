@@ -1,5 +1,4 @@
 import { DeleteOutlineRounded } from '@mui/icons-material';
-import * as Icons from '@mui/icons-material';
 import {
   Box,
   Checkbox,
@@ -36,6 +35,7 @@ import ShowAndEditPriority from './listitems/ShowAndEditPriority.jsx';
 import ShowAndEditDate from './listitems/ShowAndEditDate.jsx';
 import NewItemNameSubmit from './listitems/NewItemNameSubmit.jsx';
 import NewItemPriorityAndDate from './listitems/NewItemPriorityAndDate.jsx';
+import CurrentListNameAndIcon from './list/CurrentListNameAndIcon.jsx';
 
 import { sortItems } from '../common/priorities.jsx';
 
@@ -56,6 +56,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const [isCheckedTodayItems, setIsCheckedTodayItems] = useState(false);
 
   const [selectedDate, setSelectedDate] = useState(dayjs(new Date()));
+
 
   // USE EFFECTS
 
@@ -249,7 +250,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   }
 
   function getEditId(id) {
-    // return isPriorityEdit.findIndex(i => i.id === id);
     return isEdit.findIndex(i => i.id === id);
   }
 
@@ -304,51 +304,19 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     }
   }
 
-  // item
-  function getItemData(id) {
-    return data.items?.find(item => item.id === id);
-  }
-
-
-  const Icon = Icons[data?.icon];
-
   return (
     <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
       <Toolbar />
       <Box sx={{ flex: 1 }}>
         {data ? (
           <>
-            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
-              <Box
-                sx={{
-                  border: theme => `1px solid ${theme.palette.divider}`,
-                  p: 1,
-                  mr: 1,
-                  borderRadius: '50%',
-                  display: 'flex',
-                }}
-              >
-                {Icon ? (
-                  <Icon fontSize="large" />
-                ) : (
-                  <Icons.List fontSize="large" />
-                )}
-              </Box>
-              <TextField
-                value={originalListName}
-                onChange={event => {
-                  setOriginalListName(event.target.value);
-                }}
-                onBlur={(event) => onListUpdate(event)}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault();
-                  }
-                  onListUpdate(event);
-
-                }}
-              />
-            </Box>
+            {/* List name show and edit, plus icon */}
+            <CurrentListNameAndIcon 
+              originalListName={originalListName}
+              setOriginalListName={setOriginalListName}
+              onListUpdate={onListUpdate}
+              icon={data.icon}
+            />
 
             {/* Sorting and filtering */}
             <SortingAndFilteringTool
@@ -360,6 +328,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
             <Divider />
 
+            {/* Current Todos list */}
             <List
               sx={{
                 width: '100%',
@@ -371,6 +340,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
               {data.items != null && data.items.map(({ id, checked, priority }) => {
                 const labelId = `checkbox-list-label-${id}`;
 
+                // list item
                 return (
                   <ListItem
                     key={id}
