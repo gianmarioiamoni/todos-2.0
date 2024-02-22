@@ -5,7 +5,6 @@ import {
   Checkbox,
   Divider,
   IconButton,
-  InputAdornment,
   List,
   ListItem,
   ListItemButton,
@@ -13,8 +12,7 @@ import {
   ListItemText,
   TextField,
   Toolbar,
-  Typography,
-  Chip
+  Typography
 } from '@mui/material';
 
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
@@ -44,6 +42,7 @@ import PrioritySelect from './listitems/PrioritySelect.jsx';
 import SortingAndFilteringTool from './listitems/SortingAndFilteringTool.jsx';
 import ShowAndEditPriority from './listitems/ShowAndEditPriority.jsx';
 import ShowAndEditDate from './listitems/ShowAndEditDate.jsx';
+import NewItemNameSubmit from './listitems/NewItemNameSubmit.jsx';
 
 import { sortItems } from '../common/priorities.jsx';
 
@@ -63,7 +62,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const [sortSelection, setSortSelection] = useState("Priority+Date");
   const [isCheckedTodayItems, setIsCheckedTodayItems] = useState(false);
 
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(dayjs(new Date()));
 
   // USE EFFECTS
 
@@ -463,36 +462,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                     }}
                   >
                     {/* New Item name and send button */}
-                    <TextField
-                      onChange={event => {
-                        setNewItemText(event.target.value);
-                      }}
-                      value={newItemText}
-                      margin="normal"
-                      id="new-item"
-                      label="New Item"
-                      type="text"
-                      fullWidth
-                      variant="filled"
-                      InputProps={{
-                        endAdornment: (
-                          <InputAdornment position="end">
-                            <IconButton
-                              aria-label="submit"
-
-                              onClick={() => {
-                                document.activeElement.blur();
-                                return handleAddItem();
-                              }}
-                              edge="end"
-                            >
-                              <Send />
-                            </IconButton>
-                          </InputAdornment>
-                        ),
-
-                      }}
+                    <NewItemNameSubmit 
+                      setNewItemText={setNewItemText}
+                      newItemText={newItemText}
+                      handleAddItem={handleAddItem}
                     />
+
+                    {/* New item priority and date */}
                     <Grid container spacing={2}>
                       <Grid xs={4}>
                         {/* Add Priority */}
@@ -515,6 +491,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                         </div>
                       </Grid>
                     </Grid>
+
                   </Box>
                 </ListItem>
               ) : (<p></p>)}
