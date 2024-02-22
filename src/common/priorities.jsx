@@ -2,6 +2,8 @@ import PriorityHighIcon from '@mui/icons-material/PriorityHigh';
 import LowPriorityIcon from '@mui/icons-material/LowPriority';
 import DragHandleIcon from '@mui/icons-material/DragHandle';
 
+import dayjs from 'dayjs';
+
 
 export const priorityData = [
     { value: 1, name: "High", color: "error.main", chipColor: "error", icon: <PriorityHighIcon /> },
@@ -10,6 +12,6 @@ export const priorityData = [
 ];
 
 export function sortItems(a, b) {
-    return a.priority - b.priority;
+    return a.priority - b.priority || dayjs(a.date) - dayjs(b.date);
 }
 
