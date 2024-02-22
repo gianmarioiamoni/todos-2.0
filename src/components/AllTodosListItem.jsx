@@ -1,9 +1,6 @@
 import { ListItem, ListItemButton, ListItemText } from "@mui/material";
 import * as Icons from '@mui/icons-material';
 
-import { styled } from '@mui/system';
-import { Typography } from '@mui/material';
-
 import { themeSelection,  } from "../common/themes";
 
 export function AllTodosListItem({ id, name, setCurrentList, currentList }) {

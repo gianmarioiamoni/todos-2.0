@@ -19,10 +19,6 @@ import {
 
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 
-import FormGroup from '@mui/material/FormGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-
-
 import { useEffect, useState } from 'react';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -31,8 +27,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import dayjs from 'dayjs';
 
-// import { useTodoList } from '../hooks/useTodoList.js';
-// import { useTodoLists } from '../hooks/useTodoLists.js';
 import { useAppState } from '../providers/AppState.jsx';
 
 import {
@@ -46,7 +40,8 @@ import {
 import { updateList, getAllLists, getAllTodosListId } from '../services/listServices.js';
 
 import PrioritySelect from './PrioritySelect.jsx';
-import SortRadioButtonGroup from './SortRadioButtonGroup.jsx';
+
+import SortingAndFilteringTool from './listitems/SortingAndFilteringTool.jsx';
 
 import { priorityData, sortItems } from '../common/priorities.jsx';
 import { HighlightedText } from "../common/themes.jsx";
@@ -62,7 +57,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
   const [newItemPriority, setNewItemPriority] = useState(3);
-  // const [isPriorityEdit, setPriorityIsEdit] = useState([]);
   const [isEdit, setIsEdit] = useState([]);
 
   const [sortSelection, setSortSelection] = useState("Priority+Date");
@@ -86,10 +80,10 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         const l = await getAllTodosListItems();
         setData(l);
 
-        l.items.map(item => setIsEdit(prev => [...prev, {id: item.id, priorityEdit: false, dateEdit: false}]))
+        l.items.map(item => setIsEdit(prev => [...prev, { id: item.id, priorityEdit: false, dateEdit: false }]))
 
-      } catch (err) {console.log(err)}
-    } 
+      } catch (err) { console.log(err) }
+    }
     getInitialData();
 
   }, []);
@@ -138,7 +132,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     }
   }, [data?.name]);
 
-
   // data
   useEffect(() => {
 
@@ -155,6 +148,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       }
     }
   }, [data]);
+
 
   // EVENTS HANDLERS
 
@@ -177,8 +171,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
           const newItemsArray = [...itemsArray, newTodo];
           setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b, sortSelection)) }))
         }
-        // setIsPriorityEdit(prev => [...prev, { id: item.id, editable: false}])
-        setIsEdit(prev => [...prev, { id: item.id, priotiyEdit: false, dateEdit: false}])
+        setIsEdit(prev => [...prev, { id: item.id, priotiyEdit: false, dateEdit: false }])
         setNewItemText('');
         setNewItemPriority(1);
       })
@@ -188,14 +181,11 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   }
 
   function onClickDeleteItem(id) {
-      const newItems = data.items.filter(i => i.id !== id);
+    const newItems = data.items.filter(i => i.id !== id);
     setData(prev => ({ ...prev, items: newItems }));
-    // const newIsPriorityEdit = isPriorityEdit.filter(i => i.id !== id);
-    // const newIsPriorityEdit = isEdit.filter(i => i.id !== id);
     const newIsEdit = isEdit.filter(i => i.id !== id);
-    // setIsPriorityEdit(newIsPriorityEdit);
     setIsEdit(newIsEdit);
-      return deleteItem(id);
+    return deleteItem(id);
   }
 
   async function handleToggleChecked(id) {
@@ -217,16 +207,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   // manages list item name update
   async function onListItemUpdate(id, event) {
-    // if (event.key && event.key === 'Enter') {
-    //   event.preventDefault();
-    // }
-
     // params: id, name, priority, date
     const updatedItem = await updateItem(id, event.target.value, null, null);
     const returnItem = handleUpdateItem(updatedItem, null);
     return returnItem;
 
   }
+
 
   // PRIORITY
 
@@ -246,14 +233,12 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       // params: id, name, priority, date
       const updatedItem = await updateItem(id, null, event.target.value, null);
       return updatedItem;
-    } catch (err) {console.log(err)}
+    } catch (err) { console.log(err) }
 
   }
 
   // update hook for update item date
   const onChangeUpdateItemDate = async (date, id) => {
-    console.log("**** onChangeUpdateItemDate() - date: ", date)
-    console.log("**** onChangeUpdateItemDate() - id: ", id)
     setSelectedDate(date);
     try {
       toggleIsDateEdit(id);
@@ -269,46 +254,35 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   }
 
-  // function getPriorityId(id) {
   function getEditId(id) {
     // return isPriorityEdit.findIndex(i => i.id === id);
     return isEdit.findIndex(i => i.id === id);
   }
 
   function toggleIsPriorityEdit(id) {
-    // const idx = getPriorityId(id);
     const idx = getEditId(id);
-    // const newIsPriorityEdit = [...isPriorityEdit];
     const newIsEdit = [...isEdit];
-    // newIsPriorityEdit[idx].editable = !newIsPriorityEdit[idx].editable;
     newIsEdit[idx].priorityEdit = !newIsEdit[idx].priorityEdit;
     const newData = { ...data };
     setData(newData)
   }
 
   function toggleIsDateEdit(id) {
-    console.log("^^^^ toggleIsDateEdit() - id = ", id )
-    // const idx = getPriorityId(id);
     const idx = getEditId(id);
-    // const newIsPriorityEdit = [...isPriorityEdit];
     const newIsEdit = [...isEdit];
-    // newIsPriorityEdit[idx].editable = !newIsPriorityEdit[idx].editable;
     newIsEdit[idx].dateEdit = !newIsEdit[idx].dateEdit;
-    console.log("^^^^ toggleIsDateEdit() - newIsEdit = ", newIsEdit)
-    
+
     const newData = { ...data };
     setData(newData)
   }
 
   // dates
   const handleDateChange = (date) => {
-    console.log("+++handleDateChange() - date: ", date)
     setSelectedDate(date);
   };
 
   // sorting
   const onChangeSort = (event) => {
-    console.log("onChangeSort() - event.target.value: ", event.target.value)
     setSortSelection(event.target.value);
     let newDataItems = [...data.items];
     if (newDataItems != null) {
@@ -323,15 +297,15 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     if (event.target.checked && data.items != null) {
       // filter data items array
       const newDataItems = data.items.filter((item) => dayjs(item.date).format('DD/MM/YYYY') === dayjs(new Date()).format('DD/MM/YYYY'));
-      setData((prev) => ({...prev, items: [...newDataItems]}))
+      setData((prev) => ({ ...prev, items: [...newDataItems] }))
     } else {
       // restore full data items array
       if (currentList != null && currentList !== allTodosListId) {
         const newList = await getListItems(currentList);
-        setData( newList );
+        setData(newList);
       } else {
         const newList = await getAllTodosListItems();
-        setData( newList );
+        setData(newList);
       }
     }
   }
@@ -377,33 +351,21 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                     event.preventDefault();
                   }
                   onListUpdate(event);
-                  
+
                 }}
               />
             </Box>
 
             {/* Sorting and filtering */}
-            <Grid container spacing={2}>
-              <Grid xs={4}>
-                {/* Sorting */}
-                <SortRadioButtonGroup value={sortSelection || ''} onChange={onChangeSort} />
-              </Grid>
-              <Grid xs={4}>
-                {/* Show Today items only */}
-                <FormGroup>
-                  <FormControlLabel
-                    control={
-                      <Checkbox
-                        checked={isCheckedTodayItems}
-                        onChange={onChangeTodayItems} />
-                    }
-                    label="Today's items" 
-                    />
-                </FormGroup>
-              </Grid>
-            </Grid>
+            <SortingAndFilteringTool 
+              sortSelection={sortSelection}
+              onChangeSort={onChangeSort}
+              isCheckedTodayItems={isCheckedTodayItems || false}
+              onChangeTodayItems={onChangeTodayItems}
+            />
 
             <Divider />
+            
             <List
               sx={{
                 width: '100%',
@@ -416,7 +378,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                 const labelId = `checkbox-list-label-${id}`;
 
                 return (
-
                   <ListItem
                     key={id}
                     secondaryAction={
@@ -455,22 +416,15 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                             });
                           }}
                           onBlur={event => onListItemUpdate(id, event)}
-                          // onKeyDown={(event) => {
-                          //   if (event.key && event.key === 'Enter') {
-                          //     event.preventDefault();
-                          //   }
-                          //   onListItemUpdate(id, event);
-                          // }}
                           value={originalListItems[id] ?? ''}
                           size="small"
                           fullWidth
                           variant="standard"
-                          sx={{pr: "10px"}}
+                          sx={{ pr: "10px" }}
                         />
                       </ListItemText>
 
                       {/* Show and edit Priority  */}
-                      {/* {(!isPriorityEdit[getPriorityId(id)]?.editable) ? ( */}
                       {(!isEdit[getEditId(id)]?.priorityEdit) ? (
                         <Chip
                           label={priorityData.find(p => p.value === priority).name}
@@ -495,7 +449,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                             <HighlightedText
                               onClick={() => toggleIsDateEdit(id)}
                               variant="body1">
-                              {/* {dayjs((data.items?.find(item => item.id === id).date)).format('DD/MM/YYYY')} */}
                               {dayjs(getItemData(id).date).format('DD/MM/YYYY')}
                             </HighlightedText>
                           ) : (
@@ -508,16 +461,15 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           )}
                         </div>
                       ) : (
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                              label="Choose an expiring date"
-                              value={selectedDate}
-                              onChange={(date) => onChangeUpdateItemDate(date, id)}
-                              // renderInput={(params) => <TextField {...params} />}
-                              slotProps={{ textField: { variant: 'outlined' } }}
-                            />
-                          </LocalizationProvider>
-                        )}
+                        <LocalizationProvider dateAdapter={AdapterDayjs}>
+                          <DatePicker
+                            label="Choose an expiring date"
+                            value={selectedDate}
+                            onChange={(date) => onChangeUpdateItemDate(date, id)}
+                            slotProps={{ textField: { variant: 'outlined' } }}
+                          />
+                        </LocalizationProvider>
+                      )}
 
                     </ListItemButton>
                   </ListItem>
@@ -577,13 +529,11 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       <Grid xs={4}>
                         {/* Add date */}
                         <div>
-                          {/* <LocalizationProvider dateAdapter={AdapterDateFns}> */}
                           <LocalizationProvider dateAdapter={AdapterDayjs}>
                             <DatePicker
                               label="Choose an expiring date"
                               value={selectedDate}
                               onChange={handleDateChange}
-                              // renderInput={(params) => <TextField {...params} />}
                               slotProps={{ textField: { variant: 'outlined' } }}
                             />
                           </LocalizationProvider>

@@ -103,7 +103,6 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
       
   }
 
-
   return (
     <Drawer
       sx={{

@@ -22,7 +22,6 @@ export function App() {
 
 
   return (
-
     <AppState>
       <Box sx={{ display: 'flex' }}>
         <CssBaseline />

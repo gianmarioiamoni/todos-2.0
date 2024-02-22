@@ -5,7 +5,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 
-export default function SortRadioButtonGroup({value, onChange}) {
+export default function SortRadioButtonGroup({ value, onChange }) {
     return (
         <FormControl>
             <FormLabel id="sort-radio-buttons-group">sort by: </FormLabel>
@@ -18,7 +18,6 @@ export default function SortRadioButtonGroup({value, onChange}) {
                 onChange={onChange}
             >
                 <FormControlLabel value="Priority+Date" control={<Radio />} label="Priority+Date" />
-                {/* <FormControlLabel value="Priority" control={<Radio />} label="Priority" /> */}
                 <FormControlLabel value="Date" control={<Radio />} label="Date" />
             </RadioGroup>
         </FormControl>

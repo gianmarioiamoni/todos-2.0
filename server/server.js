@@ -5,13 +5,10 @@ import mongoose from "mongoose";
 import 'dotenv/config'
 import List from "./models/list.js";
 import ListItem from "./models/listItem.js"
-// import dotenv from "dotenv;"
 
 const app = express();
-
 const corsOptions = {
     origin: 'http://localhost:5173',
-    // methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 200,
 };
@@ -19,18 +16,12 @@ const corsOptions = {
 
 app.use(cors(corsOptions));  // Use cors middleware
 
-// app.use(cors());
 app.use(express.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
-
-
-// if (process.env.NODE_ENV !== "production") {
-//     dotenv.config();
-// }
-
 const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : process.env.LOCAL_DB_URL;
+
 
 // ROUTES
 
@@ -82,11 +73,11 @@ app.route("/lists/allTodosList")
             const allTodosList = await List.findOne({ isAllTodos: true }).exec();
             res.send(allTodosList);
 
-        
+
         } catch (err) {
             console.log(err);
         }
-})
+    })
 
 app.route("/lists/:id")
     .get(async function (req, res) {
@@ -138,27 +129,12 @@ app.route("/listItems/:id")
         console.log("PUT - req.body: ", req.body)
         try {
             await ListItem.findByIdAndUpdate((req.params.id),
-                {...req.body}
+                { ...req.body }
             )
         } catch (err) {
             err => res.send(err);
         }
     })
-
-app.route("/listItems/:id/date")
-    .put(async function (req, res) {
-    // try {
-    //     const { date } = req.body;
-    //     const { id } = req.params;
-
-    //     const newDate = new DateModel({ date });
-    //     await newDate.save();
-    //     res.status(200).send('Data saved successfully');
-    // } catch (error) {
-    //     console.error(error);
-    //     res.status(500).send('Error saving data');
-    // }
-});
 
 app.route("/listItems")
     .get(async function (req, res) {
@@ -232,9 +208,6 @@ app.route("/lists/:id/listItems")
             res.send(err);
         }
     });
-
-
-
 
 main()
     .catch(err => console.log(err));
