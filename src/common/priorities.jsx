@@ -11,7 +11,18 @@ export const priorityData = [
     { value: 3, name: "Normal", color: "success.main", chipColor: "success", icon: <LowPriorityIcon /> }
 ];
 
-export function sortItems(a, b) {
-    return a.priority - b.priority || dayjs(a.date) - dayjs(b.date);
+export function sortItems(a, b, sort = "Priority+Date") {
+    switch (sort) {
+        case "Priority+Date":
+            return a.priority - b.priority || dayjs(a.date) - dayjs(b.date);
+        case "Priority":
+            return a.priority - b.priority
+        case "Date":
+            return dayjs(a.date) - dayjs(b.date);;
+    
+        default:
+            break;
+    }
+    
 }
 

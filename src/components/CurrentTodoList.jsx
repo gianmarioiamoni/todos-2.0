@@ -20,6 +20,8 @@ import {
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 
 
+
+
 import { useEffect, useState } from 'react';
 
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -43,6 +45,7 @@ import {
 import { updateList, getAllLists, getAllTodosListId } from '../services/listServices.js';
 
 import PrioritySelect from './PrioritySelect.jsx';
+import SortRadioButtonGroup from './SortRadioButtonGroup.jsx';
 
 import { priorityData, sortItems } from '../common/priorities.jsx';
 import { HighlightedText } from "../common/themes.jsx";
@@ -59,6 +62,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const [originalListItems, setOriginalListItems] = useState({});
   const [newItemPriority, setNewItemPriority] = useState(3);
   const [isPriorityEdit, setIsPriorityEdit] = useState([]);
+
+  const [sortSelection, setSortSelection] = useState("Priority+Date");
 
   const [selectedDate, setSelectedDate] = useState(null);
 
@@ -158,7 +163,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     if (priority != null) {
       newItemsArray[idx].priority = updatedItem.priority;
     }
-    setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b)) }));
+    setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b, sortSelection)) }));
   }
 
   function handleAddItem() {
@@ -167,7 +172,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         const itemsArray = [...data.items];
         if (itemsArray != null) {
           const newItemsArray = [...itemsArray, newTodo];
-          setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b)) }))
+          setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b, sortSelection)) }))
         }
         setIsPriorityEdit(prev => [...prev, { id: item.id, editable: false}])
         setNewItemText('');
@@ -230,7 +235,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       const idx = data.items.findIndex((i) => i.id === id);
       const newItemsArray = [...data.items];
       newItemsArray[idx].priority = event.target.value;
-      setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b)) }));
+      setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b, sortSelection)) }));
       // params: id, name, priority, date
       const updatedItem = await updateItem(id, null, event.target.value, null);
       return updatedItem;
@@ -255,6 +260,17 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     console.log("+++handleDateChange() - date: ", date)
     setSelectedDate(date);
   };
+
+  // sorting
+  const onChangeSort = (event) => {
+    console.log("onChangeSort() - event.target.value: ", event.target.value)
+    setSortSelection(event.target.value);
+    let newDataItems = [...data.items];
+    if (newDataItems != null) {
+      const sortedDataItems = newDataItems.sort((a, b) => sortItems(a, b, event.target.value));
+      setData(prev => ({ ...prev, items: sortedDataItems }));
+    }
+  }
 
   // item
   function getItemData(id) {
@@ -301,6 +317,9 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                 }}
               />
             </Box>
+
+            {/* Sorting */}
+            <SortRadioButtonGroup value={sortSelection || ''} onChange={onChangeSort} />
             <Divider />
             <List
               sx={{
