@@ -339,19 +339,26 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
               />
             </Box>
 
-            {/* Sorting */}
-            <SortRadioButtonGroup value={sortSelection || ''} onChange={onChangeSort} />
-
-            {/* Show Today items only */}
-            <FormGroup>
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={isCheckedTodayItems}
-                    onChange={onChangeTodayItems} />
-                }
-                label="Today's items" />
-            </FormGroup>
+            {/* Sorting and filtering */}
+            <Grid container spacing={2}>
+              <Grid xs={4}>
+                {/* Sorting */}
+                <SortRadioButtonGroup value={sortSelection || ''} onChange={onChangeSort} />
+              </Grid>
+              <Grid xs={4}>
+                {/* Show Today items only */}
+                <FormGroup>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={isCheckedTodayItems}
+                        onChange={onChangeTodayItems} />
+                    }
+                    label="Today's items" 
+                    />
+                </FormGroup>
+              </Grid>
+            </Grid>
 
             <Divider />
             <List
