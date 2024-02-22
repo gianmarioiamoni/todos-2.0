@@ -1,4 +1,4 @@
-import { DeleteOutlineRounded, Send } from '@mui/icons-material';
+import { DeleteOutlineRounded } from '@mui/icons-material';
 import * as Icons from '@mui/icons-material';
 import {
   Box,
@@ -15,13 +15,7 @@ import {
   Typography
 } from '@mui/material';
 
-import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
-
 import { useEffect, useState } from 'react';
-
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
 import dayjs from 'dayjs';
 
@@ -37,12 +31,11 @@ import {
 } from '../services/listItemServices.js';
 import { updateList, getAllLists, getAllTodosListId } from '../services/listServices.js';
 
-import PrioritySelect from './listitems/PrioritySelect.jsx';
-
 import SortingAndFilteringTool from './listitems/SortingAndFilteringTool.jsx';
 import ShowAndEditPriority from './listitems/ShowAndEditPriority.jsx';
 import ShowAndEditDate from './listitems/ShowAndEditDate.jsx';
 import NewItemNameSubmit from './listitems/NewItemNameSubmit.jsx';
+import NewItemPriorityAndDate from './listitems/NewItemPriorityAndDate.jsx';
 
 import { sortItems } from '../common/priorities.jsx';
 
@@ -173,7 +166,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         }
         setIsEdit(prev => [...prev, { id: item.id, priotiyEdit: false, dateEdit: false }])
         setNewItemText('');
-        setNewItemPriority(1);
+        setNewItemPriority(3);
+        setSelectedDate(dayjs(new Date()))
       })
       .catch(err => console.log(err))
 
@@ -430,7 +424,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                         priority={priority}
                         data={data}
                         isEdit={isEdit}
-                        getEditId={getEditId}
                         toggleIsPriorityEdit={toggleIsPriorityEdit}
                         onChangeUpdateItemPriority={onChangeUpdateItemPriority}
                       />
@@ -469,29 +462,12 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                     />
 
                     {/* New item priority and date */}
-                    <Grid container spacing={2}>
-                      <Grid xs={4}>
-                        {/* Add Priority */}
-                        <PrioritySelect
-                          key="priority-select"
-                          value={newItemPriority}
-                          onChange={(event) => onChangePriority(event)} />
-                      </Grid>
-                      <Grid xs={4}>
-                        {/* Add date */}
-                        <div>
-                          <LocalizationProvider dateAdapter={AdapterDayjs}>
-                            <DatePicker
-                              label="Choose an expiring date"
-                              value={selectedDate}
-                              onChange={handleDateChange}
-                              slotProps={{ textField: { variant: 'outlined' } }}
-                            />
-                          </LocalizationProvider>
-                        </div>
-                      </Grid>
-                    </Grid>
-
+                    <NewItemPriorityAndDate 
+                      newItemPriority={newItemPriority}
+                      onChangePriority={onChangePriority}
+                      selectedDate={selectedDate}
+                      handleDateChange={handleDateChange}
+                    />
                   </Box>
                 </ListItem>
               ) : (<p></p>)}

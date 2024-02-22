@@ -3,8 +3,10 @@ import { Chip } from "@mui/material"
 import { priorityData } from "../../common/priorities"
 import PrioritySelect from "./PrioritySelect"
 
-export default function ShowAndEditPriority({ id, priority, data, isEdit, getEditId, toggleIsPriorityEdit, onChangeUpdateItemPriority }) {
-
+export default function ShowAndEditPriority({ id, priority, data, isEdit, toggleIsPriorityEdit, onChangeUpdateItemPriority }) {
+    function getEditId(id) {
+        return isEdit.findIndex(i => i.id === id);
+    }
     return (
         <div>
             {(!isEdit[getEditId(id)]?.priorityEdit) ? (
