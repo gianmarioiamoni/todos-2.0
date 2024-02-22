@@ -43,9 +43,9 @@ import PrioritySelect from './listitems/PrioritySelect.jsx';
 
 import SortingAndFilteringTool from './listitems/SortingAndFilteringTool.jsx';
 import ShowAndEditPriority from './listitems/ShowAndEditPriority.jsx';
+import ShowAndEditDate from './listitems/ShowAndEditDate.jsx';
 
 import { sortItems } from '../common/priorities.jsx';
-import { HighlightedText } from "../common/themes.jsx";
 
 
 export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpdated }) {
@@ -437,33 +437,14 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       />
 
                       {/* Show and edit date */}
-                      {(!isEdit[getEditId(id)]?.dateEdit) ? (
-                        <div >
-                          {(dayjs(getItemData(id).date).format('DD/MM/YYYY') === dayjs(new Date()).format('DD/MM/YYYY')) ? (
-                            <HighlightedText
-                              onClick={() => toggleIsDateEdit(id)}
-                              variant="body1">
-                              {dayjs(getItemData(id).date).format('DD/MM/YYYY')}
-                            </HighlightedText>
-                          ) : (
-                            <Typography
-                              onClick={() => toggleIsDateEdit(id)}
-                              variant="body1"
-                              sx={{ mx: "20px", p: '4px 8px' }}>
-                              {dayjs(getItemData(id).date).format('DD/MM/YYYY')}
-                            </Typography>
-                          )}
-                        </div>
-                      ) : (
-                        <LocalizationProvider dateAdapter={AdapterDayjs}>
-                          <DatePicker
-                            label="Choose an expiring date"
-                            value={selectedDate}
-                            onChange={(date) => onChangeUpdateItemDate(date, id)}
-                            slotProps={{ textField: { variant: 'outlined' } }}
-                          />
-                        </LocalizationProvider>
-                      )}
+                      <ShowAndEditDate
+                        id={id}
+                        data={data}
+                        isEdit={isEdit}
+                        toggleIsDateEdit={toggleIsDateEdit}
+                        selectedDate={selectedDate}
+                        onChangeUpdateItemDate={onChangeUpdateItemDate}
+                      />
 
                     </ListItemButton>
                   </ListItem>
