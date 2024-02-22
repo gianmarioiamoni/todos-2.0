@@ -151,17 +151,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   // EVENTS HANDLERS
 
   function handleUpdateItem(updatedItem, priority) {
-    console.log("§§§§§ handleUpdateItem() - updatedItem = ", updatedItem)
-    console.log("§§§§§ handleUpdateItem() - priority = ", priority)
     const itemsArray = data.items;
     const idx = itemsArray.findIndex((i) => i._id === updatedItem.id);
-    console.log("§§§§§ handleUpdateItem() - idx = ", idx)
     const newItemsArray = [...itemsArray];
     newItemsArray[idx].name = updatedItem.name;
     if (priority != null) {
       newItemsArray[idx].priority = updatedItem.priority;
     }
-    console.log("§§§§§ handleUpdateItem() - newItemsArray = ", newItemsArray)
     setData((prev) => ({ ...prev, items: newItemsArray.sort((a, b) => sortItems(a, b)) }));
   }
 
@@ -215,7 +211,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
     // params: id, name, priority, date
     const updatedItem = await updateItem(id, event.target.value, null, null);
-    const returnItem = handleUpdateItem(updatedItem);
+    const returnItem = handleUpdateItem(updatedItem, null);
     return returnItem;
 
   }
@@ -297,10 +293,11 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                 }}
                 onBlur={(event) => onListUpdate(event)}
                 onKeyDown={(event) => {
-                  onListUpdate(event);
                   if (event.key === 'Enter') {
                     event.preventDefault();
                   }
+                  onListUpdate(event);
+                  
                 }}
               />
             </Box>
@@ -356,7 +353,12 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                             });
                           }}
                           onBlur={event => onListItemUpdate(id, event)}
-                          onKeyDown={(event) => onListItemUpdate(id, event)}
+                          // onKeyDown={(event) => {
+                          //   if (event.key && event.key === 'Enter') {
+                          //     event.preventDefault();
+                          //   }
+                          //   onListItemUpdate(id, event);
+                          // }}
                           value={originalListItems[id] ?? ''}
                           size="small"
                           fullWidth
