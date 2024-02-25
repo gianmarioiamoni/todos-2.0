@@ -5,46 +5,24 @@ import '@fontsource/roboto/700.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
 
-import { App } from './components/App.jsx';
+import App from './components/App.jsx';
 
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { deepPurple, amber } from '@mui/material/colors';
+import { ThemeProvider } from '@mui/material/styles';
 
 import { Box } from '@mui/material';
 
-import {theme} from "../src/common/themes.jsx"
-
-// create a theme using the DeepPurple & Amber palette
-// const theme = createTheme({
-//   palette: {
-//     primary: deepPurple,
-//     secondary: amber,
-//   },
-  
-//   });
-
-// const theme = createTheme({
-//   palette: {
-//     primary: {
-//       main: '#673AB7', // DeepPurple
-//     },
-//     secondary: {
-//       main: '#FFC107', // amber 
-//     },
-//   },
-//   background: {
-//     default: '#F5F5F5', // custom Beige 
-//   },
-// });
-
+import {theme} from "./common/themes.jsx"
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}> 
+    <ThemeProvider theme={theme}>
       <Box sx={{ backgroundColor: theme.background.default, minHeight: '100vh' }}>
-        <App />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
       </Box>
     </ThemeProvider>
   </React.StrictMode>

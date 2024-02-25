@@ -1,41 +1,17 @@
-import { Box, CssBaseline } from '@mui/material';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import LoginPage from './user/LoginPage';
+import RegisterPage from './user/RegisterPage';
+import Homepage from './Homepage';
 
-import { useState } from 'react';
-
-import { AppState } from '../providers/AppState.jsx';
-import { AllTodoLists } from './AllTodoLists.jsx';
-import { AppHeader } from './AppHeader.jsx';
-import { CurrentTodoList } from './CurrentTodoList.jsx';
-
-
-export function App() {
-  const [isListDeleted, setIsListDeleted] = useState(false);
-  const [isListUpdated, setIsListUpdated] = useState(false);
-
-  function handleListDelete() {
-    setIsListDeleted(true);
-  }
-
-  function handleListUpdated() {
-    setIsListUpdated(true);
-  }
-
-
+export default function App() {
   return (
-    <AppState>
-      <Box sx={{ display: 'flex' }}>
-        <CssBaseline />
-        <AppHeader handleListUpdated={handleListUpdated} />
-        <AllTodoLists
-          handleListDelete={handleListDelete}
-          setIsListUpdated={setIsListUpdated} isListUpdated={isListUpdated} />
-        <CurrentTodoList
-          isListDeleted={isListDeleted}
-          setIsListDeleted={setIsListDeleted} 
-          handleListUpdated={handleListUpdated}
-          />
-        </Box>
-      
-      </AppState>
+      <div>
+        <Routes>
+        <Route exact path="/login" element={<LoginPage/>} />
+        <Route exact path="/register" element={<RegisterPage/>} />
+        <Route exact path="/" element={<Homepage/>} />
+        </Routes>
+      </div>
   );
 }
+

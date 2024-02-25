@@ -5,28 +5,15 @@ const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_S
 
 export async function getAllLists() {
     try {
-        // const data = await axios.get(serverUrl + '/lists');
         const orderedListsArray = await axios.get(serverUrl + '/lists');
 
-        // // move "ALL TODOs" list at the top of the array
-        // const listsArray = [...data.data];
-        // const idx = listsArray.findIndex((l) => l.id === allTodosListId);
-        // const allTodosList = [...listsArray[idx]];
-        // const newListsArray = listsArray.filter((l) => l.id !== allTodosListId);
-        // return [allTodosList, ...newListsArray];
-
-        // return data.data;
         return orderedListsArray.data;
-        // return newListsArray;
     } catch (err) { console.log(err) }
 }
 
 export async function updateList(id, name) {
 
     try {
-        // const oldList = await axios.get(serverUrl + `/lists/${id}`);
-        // const newList = { ...oldList.data, name: name };
-
         const response = axios.put(serverUrl + `/lists/${id}`,
             {
                 name: name
