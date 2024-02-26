@@ -29,7 +29,7 @@ export default function LoginPage () {
             const response = await axios.post(serverUrl + '/login', credentials);
             console.log("===== handleSubmit() - response.data: ", response.data)
             console.log(response.data); // manage response here
-            navigate('/dashboard'); // redirect to dashboard after login
+            // navigate('/dashboard'); // redirect to dashboard after login
         } catch (error) {
             console.error('Error during login:', error);
         }

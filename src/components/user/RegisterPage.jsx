@@ -32,7 +32,7 @@ export default function RegisterPage() {
 
             console.log(response.data); // manage answer
 
-            navigate('/login'); // redirect to login after registration
+            // navigate('/login'); // redirect to login after registration
         } catch (error) {
             console.error('Error during registration:', error);
         }

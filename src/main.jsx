@@ -5,7 +5,8 @@ import '@fontsource/roboto/700.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
+// import { BrowserRouter as Route, Routes } from 'react-router-dom';
 
 import App from './components/App.jsx';
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { Box, CssBaseline } from '@mui/material';
@@ -8,7 +8,7 @@ import { AllTodoLists } from './AllTodoLists.jsx';
 import { AppHeader } from './AppHeader.jsx';
 import { CurrentTodoList } from './CurrentTodoList.jsx';
 
-export default function Dashboard() {
+const Dashboard = () => {
     const navigate = useNavigate();
     const [isListDeleted, setIsListDeleted] = useState(false);
     const [isListUpdated, setIsListUpdated] = useState(false);
@@ -51,3 +51,5 @@ export default function Dashboard() {
         </AppState>
     );
 };
+
+export default Dashboard;
