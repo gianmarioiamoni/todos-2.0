@@ -5,7 +5,7 @@ const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_S
 
 export async function getAllLists() {
     try {
-        const orderedListsArray = await axios.get(serverUrl + '/lists');
+        const orderedListsArray = await axios.get(serverUrl + '/lists', { withCredentials: false });
 
         return orderedListsArray.data;
     } catch (err) { console.log(err) }
@@ -53,7 +53,7 @@ export async function deleteList(id) {
 
 export async function getAllTodosListId() {
     try {
-        const allTodosList = await axios.get(serverUrl + "/lists/allTodosList");
+        const allTodosList = await axios.get(serverUrl + "/lists/allTodosList", { withCredentials: false });
         if (allTodosList.data != null) {
             return allTodosList.data.id;
         }

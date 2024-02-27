@@ -38,6 +38,15 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+const corsOptions = {
+    origin: 'http://localhost:5173',
+    credentials: true,
+    optionsSuccessStatus: 200,
+};
+
+
+app.use(cors(corsOptions));  // Use cors middleware
+
 // Mongo store to memorize sessions
 const store = MongoStore.create({
     mongoUrl: dbUrl,
@@ -81,14 +90,7 @@ app.use(passport.session());
 // specify the authentication strategies - defined in User model, added automatically
 passport.use(new LocalStrategy(User.authenticate()));
 
-const corsOptions = {
-    origin: 'http://localhost:5173',
-    credentials: true,
-    optionsSuccessStatus: 200,
-};
 
-
-app.use(cors(corsOptions));  // Use cors middleware
 
 app.use(express.json());
 
@@ -190,7 +192,8 @@ app.use((req, res, next) => {
 // route for dashboard (main page)
 app.get('/dashboard', isAuthenticated, (req, res) => {
     // send the user information to the dashboard
-    res.redirect('dashboard', { user: req.user }); 
+    // res.redirect('dashboard', { user: req.user }); 
+    res.send({ user: req.user })
 });
 
 app.route("/lists")
@@ -339,7 +342,7 @@ app.route("/listItems")
 
 
 app.route("/lists/:id/listItems")
-    .get(isAuthenticated, async function (req, res) {
+    .get(isAuthenticated, cors(), async function (req, res) {
         const { id } = req.params;
 
         try {
@@ -381,26 +384,34 @@ app.route("/lists/:id/listItems")
 // LOGIN AND REGISTRATION
 //
 app.post('/login', passport.authenticate('local', {
+    failureFlash: true,
     successRedirect: '/dashboard', // redirect to dashboard if success
     failureRedirect: '/login', // redirect to login if failure
     session: true
 }));
 
+
 app.get('/login', (req, res) => {
-    // if the user is already authenticated, redirect to dashboard instead of login page
-    if (req.isAuthenticated()) {
-        // return res.redirect('/dashboard');
-        return res.redirect('dashboard');
+
+    const isAuth = req.isAuthenticated();
+    console.log("isAuth = ", isAuth)
+//     // if the user is already authenticated, redirect to dashboard instead of login page
+//     // if (req.isAuthenticated()) {
+    if (isAuth) {
+
+//         // return res.redirect('dashboard');
+        console.log("USER IS ALREADY AUTHENTICATED")
     }
-    // otherwise, show login page
-    // res.render('login');
-    // res.redirect('/login');
-    res.redirect('login');
+//     // otherwise, show login page
+//     // res.redirect('/login');
+
+//     // res.redirect('login');
+    console.log("USER IS NOT AUTHENTICATED")
 });
 
 
 // route for registration
-app.get('/register', (req, res) => {
+app.get('/register', cors(), (req, res) => {
     res.redirect('register'); // show registration page
 });
 
@@ -480,12 +491,12 @@ app.get('/logout', (req, res) => {
 
 
 // setup dir for static files
-app.use(express.static(path.join(__dirname, '/')));
+// app.use(express.static(path.join(__dirname, '/')));
 
-// route for all other requests
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+// // route for all other requests
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// });
 
 
 

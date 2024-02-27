@@ -4,9 +4,8 @@ import { useNavigate, Outlet } from 'react-router-dom';
 
 export default function ProtectedRoute() {
     const navigate = useNavigate();
-    // const { isAuthenticated } = useAuth();
 
-    const isAuthenticated = false;
+    const isAuthenticated = true; // ADD AUTHENTICATION HERE
 
     useEffect(() => {
         if(!isAuthenticated) {
