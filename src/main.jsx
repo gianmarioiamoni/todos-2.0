@@ -18,13 +18,13 @@ import {theme} from "./common/themes.jsx"
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  // <React.StrictMode>
+  <React.StrictMode>
     <ThemeProvider theme={theme}>
       <Box sx={{ backgroundColor: theme.background.default, minHeight: '100vh' }}>
-        <BrowserRouter>
+        {/* <BrowserRouter> */}
           <App />
-        </BrowserRouter>
+        {/* </BrowserRouter> */}
       </Box>
     </ThemeProvider>
-  // </React.StrictMode>
+  </React.StrictMode>
 );
