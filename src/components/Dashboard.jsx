@@ -39,8 +39,10 @@ export default function Dashboard() {
                 <CssBaseline />
                 <AppHeader handleListUpdated={handleListUpdated} handleLogout={handleLogout} />
                 <AllTodoLists
+                    isListUpdated={isListUpdated}
+                    setIsListUpdated={setIsListUpdated}
                     handleListDelete={handleListDelete}
-                    setIsListUpdated={setIsListUpdated} isListUpdated={isListUpdated}
+                     
                 />
                 <CurrentTodoList
                     isListDeleted={isListDeleted}

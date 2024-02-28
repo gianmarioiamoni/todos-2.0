@@ -3,6 +3,7 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
 
+
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -12,8 +13,6 @@ import 'dotenv/config';
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
 import bcrypt from 'bcrypt';
-
-import flash from "connect-flash";
 
 import session from "express-session";
 import MongoStore from 'connect-mongo'; // use MongoDB to store sessions
@@ -33,17 +32,20 @@ const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : proce
 // const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : localDbUrl;
 // const cbUrl = process.env.NODE_ENV === 'production' ? process.env.CB_URL : localCbUrl;
 
+// const CLIENT_URL = "http://localhost:5173/";
+const CLIENT_URL = "http://localhost:5173/";
+
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+const router = express.Router();
 
 const corsOptions = {
     origin: 'http://localhost:5173',
     credentials: true,
     optionsSuccessStatus: 200,
 };
-
 
 app.use(cors(corsOptions));  // Use cors middleware
 
@@ -82,14 +84,24 @@ const sessionConfig = {
 
 app.use(session(sessionConfig));
 
-app.use(flash());
 
-// Passport initialization; session should be initialized before
+// Passport initialization: on every route call
 app.use(passport.initialize());
+// allow Passport to use "express-session" 
 app.use(passport.session());
-// specify the authentication strategies - defined in User model, added automatically
+// specify the authentication strategy - defined in User model, added automatically
 passport.use(new LocalStrategy(User.authenticate()));
 
+// middleware for user information
+app.use((req, res, next) => {
+    // req.user is provided by Passport and contains information about the current user:
+    // id, username, email or undefined if the user is not logged in
+    // Now in all templates I have access to currentUser
+    // used in NavBar to disable login/register or logout buttons
+    res.locals.currentUser = req.user;
+
+    next();
+});
 
 
 app.use(express.json());
@@ -110,9 +122,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // PASSPORT
 //
 
-// Passport.js initialize
-app.use(passport.initialize());
-app.use(passport.session());
 
 // Local Strategy
 
@@ -121,9 +130,14 @@ passport.use(new LocalStrategy(
     { usernameField: 'username' }, // be sure that username is defined as 'username'
     async (username, password, done) => {
         try {
+            
+            console.log("LOCAL STRATEGY - username = ", username)
+            console.log("LOCAL STRATEGY - password = ", password)
             const user = await User.findOne({ username: username });
+            console.log("LOCAL STRATEGY - user = ", user)
 
             if (!user) {
+                console.log("LOCAL STRATEGY - USERNAME NOT FOUND")
                 return done(null, false, { message: 'Username not found' });
             }
 
@@ -141,36 +155,20 @@ passport.use(new LocalStrategy(
 ));
 
 
-// serialize the user for storing in the session
-// passport.serializeUser((user, done) => {
-//     done(null, user.id);
-// });
-
-passport.serializeUser(function (user, cb) {
-    process.nextTick(function () {
-        return cb(null, {
-            _id: user._id,
-            username: user.username
-        });
-    });
+// Serialize the user for storing in the session
+// Passport adds the authenticated user to the end of "req.session.passport" object
+// This allows the authenticated user to be attached to a unique session
+passport.serializeUser((user, done) => {
+    done(null, user);
 });
 
-// deserialize the use from the session
-passport.deserializeUser((id, done) => {
-    User.findById(id, (err, user) => {
-        done(err, user);
-    });
+// Deserialize the user from the session
+// req.user will contain the authenticated user object for the session
+//It can be used in the routes
+passport.deserializeUser(function (user, done) {
+        return done(null, user);
 });
 
-// passport.deserializeUser(function (user, cb) {
-//     process.nextTick(function () {
-//         return cb(null, user);
-//     });
-// });
-
-// use Passport.js in express.js App
-// app.use(passport.initialize());
-// app.use(passport.session());
 
 // middleware for flashes and for user information
 app.use((req, res, next) => {
@@ -180,8 +178,8 @@ app.use((req, res, next) => {
     // used in NavBar to disable login/register or logout buttons
     res.locals.currentUser = req.user;
 
-    res.locals.success = req.flash("success");
-    res.locals.error = req.flash("error");
+    // res.locals.success = req.flash("success");
+    // res.locals.error = req.flash("error");
     next();
 });
 
@@ -190,14 +188,14 @@ app.use((req, res, next) => {
 // protected route
 
 // route for dashboard (main page)
-app.get('/dashboard', isAuthenticated, (req, res) => {
-    // send the user information to the dashboard
-    // res.redirect('dashboard', { user: req.user }); 
-    res.send({ user: req.user })
-});
+// app.get('/dashboard', isAuthenticated, (req, res) => {
+//     // send the user information to the dashboard
+//     // res.redirect('dashboard', { user: req.user }); 
+//     res.send({ user: req.user })
+// });
 
 app.route("/lists")
-    .get(isAuthenticated, async function (req, res) {
+    .get(async function (req, res) {
         try {
             const data = await List.find({}, null);
 
@@ -239,7 +237,8 @@ app.route("/lists")
     })
 
 app.route("/lists/allTodosList")
-    .get(isAuthenticated, async function (req, res) {
+    // .get(isAuthenticated, async function (req, res) {
+    .get(async function (req, res) {
         try {
             const allTodosList = await List.findOne({ isAllTodos: true }).exec();
             res.send(allTodosList);
@@ -251,7 +250,7 @@ app.route("/lists/allTodosList")
     })
 
 app.route("/lists/:id")
-    .get(isAuthenticated, async function (req, res) {
+    .get(async function (req, res) {
         const id = req.params.id;
 
         try {
@@ -308,7 +307,7 @@ app.route("/listItems/:id")
     })
 
 app.route("/listItems")
-    .get(isAuthenticated, async function (req, res) {
+    .get(async function (req, res) {
         try {
             const data = await ListItem.find({}).exec();
             res.send(data);
@@ -342,7 +341,7 @@ app.route("/listItems")
 
 
 app.route("/lists/:id/listItems")
-    .get(isAuthenticated, cors(), async function (req, res) {
+    .get(async function (req, res) {
         const { id } = req.params;
 
         try {
@@ -383,17 +382,73 @@ app.route("/lists/:id/listItems")
 //
 // LOGIN AND REGISTRATION
 //
-app.post('/login', passport.authenticate('local', {
-    failureFlash: true,
-    successRedirect: '/dashboard', // redirect to dashboard if success
-    failureRedirect: '/login', // redirect to login if failure
-    session: true
-}));
+
+router.get("/login/success", (req, res) => {
+    // if (req.user) {
+    //     res.status(200).json({
+    //         success: true,
+    //         message: "successfull",
+    //         user: req.user,
+    //         //   cookies: req.cookies
+    //     });
+    // }
+    const isUser = true;
+    if (isUser) {
+        res.status(200).json({
+            success: true,
+            message: "successfull",
+            user: "gianma",
+            //   cookies: req.cookies
+        });
+    }
+});
+
+// router.get("/login/failed", (req, res) => {
+app.get("/login/failed", (req, res) => {
+    console.log("LOGIN FAILURE");
+    res.send(false);
+    // res.status(401).json({
+    //     success: false,
+    //     message: "failure",
+    // });
+});
+
+// app.post('/login', passport.authenticate('local', {
+//     failureFlash: true,
+//     successRedirect: '/dashboard', // redirect to dashboard if success
+//     failureRedirect: '/login', // redirect to login if failure
+//     session: true
+// }));
+
+app.post('/login',
+    passport.authenticate('local', {
+        // failureFlash: true,
+        // successRedirect: '/dashboard', // redirect to dashboard if success
+        failureRedirect: '/login/failed', // redirect to login if failure
+        session: true
+    }),
+    (req, res) => {
+        console.log("POST - /login")
+        console.log("__dirname: ", __dirname)
+        console.log("__filename: ", __filename)
+        // const loginSuccess = true;
+        // if (loginSuccess) {
+            console.log("res.redirect(dashboard)")
+            // return res.redirect("dashboard");
+            res.send(true);
+        // }
+        // else {
+        //     return res.redirect('/login/failed')
+        // }
+    }
+
+);
 
 
 app.get('/login', (req, res) => {
 
-    const isAuth = req.isAuthenticated();
+    // const isAuth = req.isAuthenticated();
+    const isAuth = true;
     console.log("isAuth = ", isAuth)
 //     // if the user is already authenticated, redirect to dashboard instead of login page
 //     // if (req.isAuthenticated()) {
@@ -417,7 +472,6 @@ app.get('/register', cors(), (req, res) => {
 
 // module.exports.register = async (req, res
 app.post('/register', async (req, res) => {
-    console.log("***** app.post(/register) - req.body: ", req.body);
     const { email, username, password } = req.body;
     // const user = new User({
     //     username,
@@ -429,8 +483,6 @@ app.post('/register', async (req, res) => {
         password
     });
     try {
-        console.log("***** app.post(/register) - try - user:", user);
-        console.log("***** app.post(/register) - password:", password);
         // const registeredUser = await User.register(user, password);
         // const registeredUser = await User.save();
         User.save()
@@ -440,7 +492,6 @@ app.post('/register', async (req, res) => {
                 //     if (err)
                 //         return next(err);
 
-                //     req.flash("success", "Welcome to Todos 2.0");
                 //     res.redirect("dashboard");
 
                 // })
@@ -452,7 +503,6 @@ app.post('/register', async (req, res) => {
         // you don't have to login after register
 
     } catch (err) {
-        req.flash("error during registration: ", err.message);
         return res.redirect("register");
     }
 });
@@ -488,13 +538,30 @@ app.get('/logout', (req, res) => {
     res.redirect('/login'); // redirect to login page
 });
 
+// trovo path di index.html
+const path_dirname = __dirname;
 
+// Trova l'ultima occorrenza del separatore di directory "/"
+const lastIndex = path_dirname.lastIndexOf("/");
 
-// setup dir for static files
+// Ottieni la sottostringa dalla posizione 0 fino all'indice dell'ultimo separatore "/"
+const result = path_dirname.substring(0, lastIndex);
+
+// // setup dir for static files
 // app.use(express.static(path.join(__dirname, '/')));
 
 // // route for all other requests
 // app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// });
+
+// // setup dir for static files
+// app.use(express.static(path.join(__dirname, '/')));
+
+// // route for all other requests
+// app.get('*', (req, res) => {
+//     console.log("app.get(*) - result = ", result);
+
 //     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 // });
 

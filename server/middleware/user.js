@@ -8,14 +8,14 @@
 // }
 
 // middleware to check if an user is authenticated
+// It can be used to protect routes that can be accessed only after a user is logged in
 export const isAuthenticated = (req, res, next) => {
-    // isAuthenticated() is an helper function coming from Passport
-    // if (!req.isAuthenticated()) {
-    //     // store in the session the path we want to redirect the user to after login
-    //     req.session.returnTo = req.originalUrl;
-    //     req.flash("error", "You must be signed in first");
-    //     return res.redirect("/login");
-    // }
+    // req.isAuthenticated() is an helper function coming from Passport
+    if (!req.isAuthenticated()) {
+        // store in the session the path we want to redirect the user to after login
+        req.session.returnTo = req.originalUrl;
+        return res.redirect("/login");
+    }
     next();
 }
 
