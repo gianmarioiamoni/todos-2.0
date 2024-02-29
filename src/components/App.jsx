@@ -37,11 +37,16 @@ export default function App() {
       //       console.log(err);
       //     });
       // };
-      // const resObject = await axios.get("http://localhost:5000/login/success", { withCredentials: false });
-      // if (resObject.data != null && resObject.config.data.status === 200) {
-      //   user = resObject.data.user;
-      // }
-      // setUser(false);
+      const response = await axios.get("http://localhost:5000/login/success", { withCredentials: true });
+      const resObj = response.data;
+
+      console.log("App() - useEffect([]) - resObj = ", resObj)
+
+      if (resObj.success) {
+        setUser(resObj.user);
+      } else {
+        setUser(null);
+      }
     } // getUser()
     getUser();
   }, []);
@@ -55,9 +60,9 @@ export default function App() {
       <div>
         <Routes>
           <Route exact path="/login" element={user ? <Navigate to="/dashboard" /> : <LoginPage setUser={setUser} />} />
-          <Route exact path="/register" element={user ? <Navigate to="/dashboard" /> : <RegisterPage />} />
-          <Route exact path="/" element={<Homepage />} />
-          <Route path="/dashboard" element={user ? <Dashboard /> : <Navigate to="/login" />} />
+          <Route exact path="/register" element={user ? <Navigate to="/dashboard" /> : <RegisterPage setUser={setUser} />} />
+          <Route exact path="/" element={<Homepage user={user} />} />
+          <Route path="/dashboard" element={user ? <Dashboard user={user} /> : <Navigate to="/login" />} />
         </Routes>
       </div>
     </BrowserRouter>

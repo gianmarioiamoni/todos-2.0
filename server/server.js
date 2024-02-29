@@ -17,12 +17,22 @@ import bcrypt from 'bcrypt';
 import session from "express-session";
 import MongoStore from 'connect-mongo'; // use MongoDB to store sessions
 
-import { isAuthenticated, storeReturnTo } from "./middleware/user.js";
+import { checkLoggedIn,isAuthenticated, storeReturnTo } from "./middleware/user.js";
 
 import User from "./models/user.js";
+// import userRoute from "./routes/user.js"
+
+import * as users from "./controllers/user.js"
+
+import ExpressError from "./utils/ExpressError.js";
+import catchAsync from "./utils/catchAsync.js";
 
 import List from "./models/list.js";
 import ListItem from "./models/listItem.js"
+
+import passportLocalMongoose from "passport-local-mongoose";
+import findOrCreate from "mongoose-findorcreate";
+import { FastfoodOutlined } from "@mui/icons-material";
 
 // DEVELOPMENT
 // const localDbUrl = "mongodb://localhost:27017/todos"
@@ -90,7 +100,14 @@ app.use(passport.initialize());
 // allow Passport to use "express-session" 
 app.use(passport.session());
 // specify the authentication strategy - defined in User model, added automatically
+
 passport.use(new LocalStrategy(User.authenticate()));
+
+// passport.use(User.createStrategy());
+
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 // middleware for user information
 app.use((req, res, next) => {
@@ -103,10 +120,31 @@ app.use((req, res, next) => {
     next();
 });
 
+// specify how we store a user in the session and how we remove It from the session
+// methods added by password-local-mongoose
+
+passport.serializeUser(function (user, cb) {
+    process.nextTick(function () {
+        return cb(null, {
+            _id: user._id,
+            username: user.username
+        });
+    });
+});
+
+passport.deserializeUser(function (user, cb) {
+    process.nextTick(function () {
+        return cb(null, user);
+    });
+});
+
+app.set("trust proxy", 1);
 
 app.use(express.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// app.use("/", userRoute);
 
 
 
@@ -126,48 +164,64 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Local Strategy
 
 // configuration of local strategy for Passport.js
-passport.use(new LocalStrategy(
-    { usernameField: 'username' }, // be sure that username is defined as 'username'
-    async (username, password, done) => {
-        try {
+// passport.use(new LocalStrategy(
+//     { usernameField: 'username' }, // be sure that username is defined as 'username'
+//     async (username, password, done) => {
+//         try {
             
-            console.log("LOCAL STRATEGY - username = ", username)
-            console.log("LOCAL STRATEGY - password = ", password)
-            const user = await User.findOne({ username: username });
-            console.log("LOCAL STRATEGY - user = ", user)
+//             console.log("LOCAL STRATEGY - username = ", username)
+//             console.log("LOCAL STRATEGY - password = ", password)
+//             const user = await User.findOne({ username: username });
+//             // const user = await User.find({ username: username });
+//             console.log("LOCAL STRATEGY - user = ", user)
 
-            if (!user) {
-                console.log("LOCAL STRATEGY - USERNAME NOT FOUND")
-                return done(null, false, { message: 'Username not found' });
-            }
+//             if (!user) {
+//                 console.log("LOCAL STRATEGY - USERNAME NOT FOUND")
+//                 return done(null, false, { message: 'Username not found' });
+//             }
 
-            const isMatch = await bcrypt.compare(password, user.password);
+//             const isMatch = await bcrypt.compare(password, user.password);
 
-            if (!isMatch) {
-                return done(null, false, { message: 'Wrong password' });
-            }
+//             if (!isMatch) {
+//                 return done(null, false, { message: 'Wrong password' });
+//             }
 
-            return done(null, user);
-        } catch (err) {
-            return done(err);
-        }
-    }
-));
+//             return done(null, user);
+//         } catch (err) {
+//             return done(err);
+//         }
+//     }
+// ));
 
 
 // Serialize the user for storing in the session
 // Passport adds the authenticated user to the end of "req.session.passport" object
 // This allows the authenticated user to be attached to a unique session
-passport.serializeUser((user, done) => {
-    done(null, user);
-});
+
+// passport.serializeUser((user, done) => {
+//     done(null, user);
+// });
+// passport.serializeUser(function (user, done) {
+//     process.nextTick(function () {
+//         return done(null, {
+//             id: user.id,
+//             username: user.username,
+//         });
+//     });
+// });
 
 // Deserialize the user from the session
 // req.user will contain the authenticated user object for the session
 //It can be used in the routes
-passport.deserializeUser(function (user, done) {
-        return done(null, user);
-});
+
+// passport.deserializeUser(function (user, done) {
+//         return done(null, user);
+// });
+// passport.deserializeUser(function (user, done) {
+//     process.nextTick(function () {
+//         return done(null, user);
+//     });
+// });
 
 
 // middleware for flashes and for user information
@@ -383,129 +437,141 @@ app.route("/lists/:id/listItems")
 // LOGIN AND REGISTRATION
 //
 
-router.get("/login/success", (req, res) => {
+app.get("/login/success", (req, res) => {
+    
+    console.log("app.get(/login/success) - req.user = ", req.user)
+    
     // if (req.user) {
-    //     res.status(200).json({
+    //     res.send({
     //         success: true,
     //         message: "successfull",
-    //         user: req.user,
+    //         user: "gianma",
     //         //   cookies: req.cookies
     //     });
+    // } else {
+    //     res.send(null);
     // }
-    const isUser = true;
-    if (isUser) {
-        res.status(200).json({
-            success: true,
-            message: "successfull",
-            user: "gianma",
-            //   cookies: req.cookies
-        });
-    }
 });
 
 // router.get("/login/failed", (req, res) => {
 app.get("/login/failed", (req, res) => {
     console.log("LOGIN FAILURE");
-    res.send(false);
-    // res.status(401).json({
-    //     success: false,
-    //     message: "failure",
-    // });
+    // res.send(false);
+    res.send({
+        success: false,
+        message: "Login failure"
+    })
 });
 
-// app.post('/login', passport.authenticate('local', {
-//     failureFlash: true,
-//     successRedirect: '/dashboard', // redirect to dashboard if success
-//     failureRedirect: '/login', // redirect to login if failure
-//     session: true
-// }));
+app.route("/register")
+    // route to serve the registration form
+    .get(users.renderRegister)
+    // route for the POST request
+    .post(catchAsync(users.register));
 
-app.post('/login',
-    passport.authenticate('local', {
-        // failureFlash: true,
-        // successRedirect: '/dashboard', // redirect to dashboard if success
-        failureRedirect: '/login/failed', // redirect to login if failure
-        session: true
-    }),
-    (req, res) => {
-        console.log("POST - /login")
-        console.log("__dirname: ", __dirname)
-        console.log("__filename: ", __filename)
-        // const loginSuccess = true;
-        // if (loginSuccess) {
-            console.log("res.redirect(dashboard)")
-            // return res.redirect("dashboard");
-            res.send(true);
-        // }
-        // else {
-        //     return res.redirect('/login/failed')
-        // }
-    }
+app.route("/login")
+    // route to serve the login form
+    // .get(users.renderLogin)
+    // route for the POST request
+    // storeReturnTo stores the returnTo path from session
+    // passport.authenticate() is a middleware provided by Passport
+    // It uses the "local" strategy and accepts some options
+    .post(storeReturnTo,
+        passport.authenticate("local",
+            {
+                failureFlash: true,
+                failureRedirect: "/login/failed",
+                session: true,
+            }),
+        catchAsync(users.login)
+    );
 
-);
+// logout
+app.get("/logout", users.logout);
 
-
-app.get('/login', (req, res) => {
-
-    // const isAuth = req.isAuthenticated();
-    const isAuth = true;
-    console.log("isAuth = ", isAuth)
-//     // if the user is already authenticated, redirect to dashboard instead of login page
-//     // if (req.isAuthenticated()) {
-    if (isAuth) {
-
-//         // return res.redirect('dashboard');
-        console.log("USER IS ALREADY AUTHENTICATED")
-    }
-//     // otherwise, show login page
-//     // res.redirect('/login');
-
-//     // res.redirect('login');
-    console.log("USER IS NOT AUTHENTICATED")
-});
+// // change password
+// router.route("/changePassword")
+//     // route to serve the change password form
+//     .get(isLocalUser, users.renderChangePassword)
+//     // route for POST request
+//     // changePassword() is provided by password-local-mongoose
+//     .post(isValidUser, isLocalUser, catchAsync(users.changePassword));
 
 
-// route for registration
-app.get('/register', cors(), (req, res) => {
-    res.redirect('register'); // show registration page
-});
+// app.post('/login',
+//     // passport.authenticate('local', {
+//     //     // failureFlash: true,
+//     //     // successRedirect: '/dashboard', // redirect to dashboard if success
+//     //     failureRedirect: '/login/failed', // redirect to login if failure
+//     //     session: true
+//     // }),
+//     (req, res) => {
+//         console.log("POST - /login")
+//         console.log("req.user = ", req.user)
+//         console.log("res.redirect(dashboard)")
+//         console.log('LOGIN SUCCESS, IS AUTH: ', req.isAuthenticated())
 
-// module.exports.register = async (req, res
-app.post('/register', async (req, res) => {
-    const { email, username, password } = req.body;
-    // const user = new User({
-    //     username,
-    //     email
-    // });
-    const user = new User({
-        username,
-        email,
-        password
-    });
-    try {
-        // const registeredUser = await User.register(user, password);
-        // const registeredUser = await User.save();
-        User.save()
-            .then(user => {
-                console.log("user registered; user: ", user);
-                // req.login(registeredUser, (err) => {
-                //     if (err)
-                //         return next(err);
+//         // if (req.user) {
+//         //     res.send({
+//         //         success: true,
+//         //         message: "Login success",
+//         //         user: req.user,
+//         //         //   cookies: req.cookies
+//         //     });
+//         // }
+//     }
 
-                //     res.redirect("dashboard");
+// );
 
-                // })
-                return user;
-            })
-            .catch(err => console.log("error in save: ", err))
-        // console.log("***** app.post(/register) - registeredUser: ", registeredUser);
-        // call login() method by Passport to start a login session
-        // you don't have to login after register
 
-    } catch (err) {
-        return res.redirect("register");
-    }
-});
+// app.get('/login', (req, res) => {
+
+//     console.log("app.get(/login) - req.user = ", req.user)
+//     console.log("app.get(/login) - req.isAuthenticated() = ", req.isAuthenticated())
+//     // if (req.user) {
+//     //     res.send({
+//     //         success: true,
+//     //         message: "User already logged in",
+//     //         user: req.user,
+//     //         //   cookies: req.cookies
+//     //     });
+//     // }
+//     // else {
+//     //     res.send(null);
+//     // }
+// });
+
+
+// // route for registration
+// app.get('/register', (req, res) => {
+//     // res.redirect('register'); // show registration page
+// });
+
+// // module.exports.register = async (req, res
+// app.post('/register', async (req, res) => {
+//     const { email, username, password } = req.body;
+//     // const user = new User({
+//     //     username,
+//     //     email
+//     // });
+
+//     // const user = new User({
+//     //     username,
+//     //     email,
+//     //     password
+//     // });
+//     // try {
+//     //     User.save()
+//     //         .then(user => {
+//     //             console.log("user registered; user: ", user);
+//     //             return user;
+//     //         })
+//     //         .catch(err => console.log("error in save: ", err))
+
+//     // } catch (err) {
+//     //     return res.redirect("register");
+//     // }
+// });
 
 // app.post(isValidUser, '/register', async (req, res) => {
 //     console.log("***** app.post('/register') - req.body: ", req.body)
@@ -532,39 +598,29 @@ app.post('/register', async (req, res) => {
 //     }
 // });
 
-// route for logout
-app.get('/logout', (req, res) => {
-    req.logout(); // delete the user session
-    res.redirect('/login'); // redirect to login page
-});
-
-// trovo path di index.html
-const path_dirname = __dirname;
-
-// Trova l'ultima occorrenza del separatore di directory "/"
-const lastIndex = path_dirname.lastIndexOf("/");
-
-// Ottieni la sottostringa dalla posizione 0 fino all'indice dell'ultimo separatore "/"
-const result = path_dirname.substring(0, lastIndex);
-
-// // setup dir for static files
-// app.use(express.static(path.join(__dirname, '/')));
-
-// // route for all other requests
-// app.get('*', (req, res) => {
-//     res.sendFile(path.join(__dirname, 'public', 'index.html'));
+// // route for logout
+// app.get('/logout', (req, res) => {
+//     req.logout(); // delete the user session
+//     res.redirect('/login'); // redirect to login page
 // });
 
-// // setup dir for static files
-// app.use(express.static(path.join(__dirname, '/')));
+app.all("*", (req, res, next) => {
+    next(new ExpressError("Page not found", 404));
+})
 
-// // route for all other requests
-// app.get('*', (req, res) => {
-//     console.log("app.get(*) - result = ", result);
+// error handler
+app.use((err, req, res, next) => {
+    const { statusCode = 500 } = err;
 
-//     res.sendFile(path.join(__dirname, 'public', 'index.html'));
-// });
+    if (!err.message)
+        err.message = "Something went wrong";
 
+    // res.status(statusCode).render("error", { err });
+    res.send({
+        success: false,
+        message: "Something went wrong"
+    })
+})
 
 
 // CONNECT TO DB

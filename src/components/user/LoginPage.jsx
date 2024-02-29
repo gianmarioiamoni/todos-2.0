@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
 import { Box, Button, TextField, Typography } from '@mui/material';
@@ -18,12 +18,19 @@ export default function LoginPage({ setUser }) {
 
     const [isAlert, setIsAlert] = useState(false);
     const [alertData, setAlertData] = useState({ severity: "error", message: "Please login" });
+
+    useEffect(() => {
+        // async function getLogin() {
+        //     await axios.get(serverUrl + '/login');
+        // }
+        // getLogin();
+    } , []);
+
     
     function showAlert(severity, message) {
         setAlertData({ severity: severity, message: message });
         setIsAlert(true);
     }
-
 
     const handleChange = (e) => {
         setCredentials({
@@ -33,23 +40,20 @@ export default function LoginPage({ setUser }) {
     };
 
     const handleSubmit = async (e) => {
-        console.log("===== handleSubmit() - credentials: ", credentials)
-        console.log("===== handleSubmit() - serverUrl: ", serverUrl)
         e.preventDefault();
         try {
             const response = await axios.post(serverUrl + '/login', credentials);
             console.log("===== handleSubmit() - response.data: ", response.data)
+            const resObj = response.data;
 
-            if (!response.data) {
-                showAlert("error", "Login failure");
+            if (!resObj.success) {
+                showAlert("error", resObj.message);
+                setUser(null);
+            } else {
+                setUser(resObj.user)
             }
-
-            setUser(response.data);
             navigate("/login")
 
-            // console.log("===== handleSubmit() - response.data: ", response.data)
-            // console.log(response.data); // manage response here
-            // navigate('/dashboard'); // redirect to dashboard after login
         } catch (error) {
             console.error('Error during login:', error);
         }

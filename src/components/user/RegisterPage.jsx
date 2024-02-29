@@ -7,10 +7,16 @@ import axios from 'axios';
 
 import { registerUser } from "../../services/userServices"
 
+import OutlinedAlert from '../utils/OutlinedAlert';
+
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
-export default function RegisterPage() {
+export default function RegisterPage({setUser}) {
     const navigate = useNavigate();
+
+    const [isAlert, setIsAlert] = useState(false);
+    const [alertData, setAlertData] = useState({ severity: "error", message: "Please login" });
+
     const [userData, setUserData] = useState({
         username: '',
         email: '',
@@ -28,9 +34,23 @@ export default function RegisterPage() {
         e.preventDefault();
         try {
             // const response = await axios.post(serverUrl + '/register', userData);
-            const response = registerUser(userData)
+            // const response = registerUser(userData)
 
-            console.log(response.data); // manage answer
+            const response = await axios.post(serverUrl + '/register', userData);
+            console.log("===== handleSubmit() - response.data: ", response.data)
+            const resObj = response.data;
+
+            if (!resObj.success) {
+                showAlert("error", resObj.message);
+                setUser(null);
+            } else {
+                setUser(resObj.user)
+            }
+            navigate("/register")
+
+            console.log("**** handleSubmit() - response.data: ", response.data); // manage answer
+            setUserData(response.data);
+            setUser(response.data);
 
             // navigate('/login'); // redirect to login after registration
         } catch (error) {
