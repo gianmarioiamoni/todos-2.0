@@ -27,7 +27,7 @@ app.route("/login")
     .post(storeReturnTo,
         passport.authenticate("local",
             {
-                failureFlash: true,
+                failureFlash: false,
                 failureRedirect: "/login/failed",
                 session: true,
             }),

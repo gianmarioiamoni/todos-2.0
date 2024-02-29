@@ -50,7 +50,7 @@ export const renderLogin = (req, res) => {
 export const login = async (req, res) => {
     // we are successfully authenticated (due to middleware in route)
 
-    req.flash("success", "Welcome back!");
+    console.log("success", "Welcome back!");
 
     // Now we can use res.locals.returnTo to redirect the user after login
     // thanks to the storeReturnTo middleware function
@@ -70,48 +70,11 @@ export const logout = (req, res, next) => {
         if (err) {
             return next(err);
         }
-        req.flash('success', 'Goodbye!');
-        res.redirect('/campgrounds');
         return res.send({
-            success: false,
+            success: true,
             message: "Goodbye",
+            user: null
             //   cookies: req.cookies
         });
     });
-
 }
-
-
-
-// module.exports.renderChangePassword = (req, res) => {
-//     res.render("users/changePassword");
-// }
-
-// module.exports.changePassword = async (req, res) => {
-
-//     if (typeof req.user === 'undefined') {
-//         return res.redirect('/login');
-//     }
-
-//     const { oldPassword, newPassword, confirmPassword } = req.body;
-
-//     try {
-//         if (newPassword !== confirmPassword) {
-//             throw new Error("New Password and Confirm Password don't match");
-//         }
-
-//         const user = await User.findOne({ username: req.user.username });
-
-//         await user.changePassword(oldPassword, newPassword);
-
-//         req.flash('success', 'Password Changed Successfully');
-//         res.redirect('/campgrounds')
-
-//         console.log(oldPassword, " ", newPassword, " ", confirmPassword);
-//     } catch (err) {
-//         req.flash("error", err.message);
-//         return res.redirect("/changePassword");
-//     }
-
-// }
-

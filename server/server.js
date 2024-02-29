@@ -232,8 +232,6 @@ app.use((req, res, next) => {
     // used in NavBar to disable login/register or logout buttons
     res.locals.currentUser = req.user;
 
-    // res.locals.success = req.flash("success");
-    // res.locals.error = req.flash("error");
     next();
 });
 
@@ -479,7 +477,7 @@ app.route("/login")
     .post(storeReturnTo,
         passport.authenticate("local",
             {
-                failureFlash: true,
+                failureFlash: false,
                 failureRedirect: "/login/failed",
                 session: true,
             }),
@@ -605,22 +603,24 @@ app.get("/logout", users.logout);
 // });
 
 app.all("*", (req, res, next) => {
+    console.log("app.all(*)")
     next(new ExpressError("Page not found", 404));
 })
 
 // error handler
-app.use((err, req, res, next) => {
-    const { statusCode = 500 } = err;
+// app.use((err, req, res, next) => {
+//     const { statusCode = 500 } = err;
+//     console.log("app.use(err) - err: ", err )
+//     console.log("app.use(err) - err.message: ", err.message )
+//     if (!err.message)
+//         err.message = "Something went wrong";
 
-    if (!err.message)
-        err.message = "Something went wrong";
-
-    // res.status(statusCode).render("error", { err });
-    res.send({
-        success: false,
-        message: "Something went wrong"
-    })
-})
+//     // res.status(statusCode).render("error", { err });
+//     res.send({
+//         success: false,
+//         message: err.message 
+//     })
+// })
 
 
 // CONNECT TO DB
