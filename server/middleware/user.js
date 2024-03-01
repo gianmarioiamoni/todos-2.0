@@ -25,6 +25,23 @@ export const checkLoggedIn = (req, res, next) => {
     next();
 }
 
+// middleware to check if an user is authenticated
+export const isLoggedIn = (req, res, next) => {
+    console.log("isLoggedIn() - req.isAuthenticated(): ", req.isAuthenticated())
+    // isAuthenticated() is an helper function coming from Passport
+    if (!req.isAuthenticated()) {
+        // store in the session the path we want to redirect the user to after login
+        req.session.returnTo = req.originalUrl;
+        // req.flash("error", "You must be signed in first");
+        // return res.redirect("/login");
+        res.send({
+            success: false,
+            message: "You must be signed in first"
+        })
+    }
+    next();
+}
+
 // stores req.session.returnTo in res.locals.returnTo
 export const storeReturnTo = (req, res, next) => {
     if (req.session.returnTo) {

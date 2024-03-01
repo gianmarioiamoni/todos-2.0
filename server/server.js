@@ -34,6 +34,10 @@ import passportLocalMongoose from "passport-local-mongoose";
 import findOrCreate from "mongoose-findorcreate";
 import { FastfoodOutlined } from "@mui/icons-material";
 
+import cookieParser from 'cookie-parser';
+
+
+
 // DEVELOPMENT
 // const localDbUrl = "mongodb://localhost:27017/todos"
 // const localCbUrl = "http://localhost:5173/auth/google/callback"
@@ -49,7 +53,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-const router = express.Router();
+// const router = express.Router();
+app.use(express.json());
 
 const corsOptions = {
     origin: 'http://localhost:5173',
@@ -94,6 +99,7 @@ const sessionConfig = {
 
 app.use(session(sessionConfig));
 
+// app.use(cookieParser({ secret: 'mySecret' }));
 
 // Passport initialization: on every route call
 app.use(passport.initialize());
@@ -106,8 +112,8 @@ passport.use(new LocalStrategy(User.authenticate()));
 // passport.use(User.createStrategy());
 
 
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
+// passport.serializeUser(User.serializeUser());
+// passport.deserializeUser(User.deserializeUser());
 
 // middleware for user information
 app.use((req, res, next) => {
@@ -116,6 +122,8 @@ app.use((req, res, next) => {
     // Now in all templates I have access to currentUser
     // used in NavBar to disable login/register or logout buttons
     res.locals.currentUser = req.user;
+    
+    // console.log("app.use((req, res, next) - req.user = ", req.user);
 
     next();
 });
@@ -124,15 +132,17 @@ app.use((req, res, next) => {
 // methods added by password-local-mongoose
 
 passport.serializeUser(function (user, cb) {
+    console.log("passport.serializeUser - user = ", user)
     process.nextTick(function () {
         return cb(null, {
-            _id: user._id,
+            id: user._id,
             username: user.username
         });
     });
 });
 
 passport.deserializeUser(function (user, cb) {
+    console.log("passport.deserializeUser - user = ", user)
     process.nextTick(function () {
         return cb(null, user);
     });
@@ -140,7 +150,7 @@ passport.deserializeUser(function (user, cb) {
 
 app.set("trust proxy", 1);
 
-app.use(express.json());
+
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -435,9 +445,57 @@ app.route("/lists/:id/listItems")
 // LOGIN AND REGISTRATION
 //
 
+// Server endpoint that returns user info
+app.get('/userinfo',
+    // passport.authenticate('local', {
+    //     session: false,
+    //     failureFlash: false,
+    //     failureRedirect: "/userinfo/failed"
+    // }),
+    (req, res) => {
+        console.log("app.get(/userinfo) - req.user: ", req.user)
+        console.log("app.get(/userinfo) - req.isAuthenticated(): ", req.isAuthenticated())
+        console.log("app.get(/userinfo) - req.session.passport: ", req.session.passport)
+        console.log("app.get(/userinfo) - req.session: ", req.session)
+        console.log("app.get(/userinfo) - req.session.cookie: ", req.session.cookie)
+        if (req.session.cookie != null) {
+            res.send({
+                success: true,
+                message: "User already authenticated",
+                user: req.user
+                // user: true 
+            }
+            );
+        } else {
+            res.send({
+                success: false,
+                message: "User not authenticated",
+            }
+            );
+        }
+    }
+)
+
+app.get("/userinfo/failed", (req, res) => {
+    console.log("app.get(/userinfo/failed)")
+    res.send({
+            success: false,
+            message: "User not authenticated",
+            user: req.user
+        }
+    );
+})
+
 app.get("/login/success", (req, res) => {
     
     console.log("app.get(/login/success) - req.user = ", req.user)
+    // passport.authenticate('local', {
+    //     session: false,
+    //     failureFlash: false,
+    //     failureRedirect: "/login"
+    // })
+
+})
     
     // if (req.user) {
     //     res.send({
@@ -449,7 +507,7 @@ app.get("/login/success", (req, res) => {
     // } else {
     //     res.send(null);
     // }
-});
+// });
 
 // router.get("/login/failed", (req, res) => {
 app.get("/login/failed", (req, res) => {

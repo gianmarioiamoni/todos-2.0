@@ -6,6 +6,8 @@ import LoginPage from './user/LoginPage';
 import RegisterPage from './user/RegisterPage';
 import Homepage from './Homepage';
 import Dashboard from './Dashboard';
+import cookieParser from 'cookie-parser';
+import { CookiesProvider, useCookies } from 'react-cookie'
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
@@ -16,28 +18,8 @@ export default function App() {
 
   useEffect(() => {
     const getUser = async () => {
-      //   fetch("http://localhost:5000/login/success", {
-      //     method: "GET",
-      //     // credentials: "include",
-      //     headers: {
-      //       Accept: "application/json",
-      //       "Content-Type": "application/json",
-      //       // "Access-Control-Allow-Credentials": true,
-      //     },
-      //   })
-      //     .then((response) => {
-      //       if (response.status === 200) return response.json();
-      //       throw new Error("authentication has been failed!");
-      //     })
-      //     .then((resObject) => {
-      //       // setUser(resObject.user);
-      //       user = resObject.user;
-      //     })
-      //     .catch((err) => {
-      //       console.log(err);
-      //     });
-      // };
-      const response = await axios.get("http://localhost:5000/login/success", { withCredentials: true });
+      // const response = await axios.get("http://localhost:5000/login/success", { withCredentials: true });
+      const response = await axios.get("http://localhost:5000/userinfo", { withCredentials: true });
       const resObj = response.data;
 
       console.log("App() - useEffect([]) - resObj = ", resObj)
@@ -47,8 +29,21 @@ export default function App() {
       } else {
         setUser(null);
       }
+
+    //   console.log("App() - useEffect([]) -  _locals= ", _locals)
+    //   if (_locals) {
+    //     setUser({username: _locals.currentUser})
+    //   } else {
+    //     setUser(null)
+    //   }
+        
     } // getUser()
     getUser();
+
+    // console.log("App() - useEffect([]) - user = ", user)
+
+    // LEGGERE COOKIE "SESSION" ???
+
   }, []);
 
   // useEffect(() => {

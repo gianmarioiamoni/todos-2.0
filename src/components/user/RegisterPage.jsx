@@ -36,7 +36,7 @@ export default function RegisterPage({setUser}) {
             // const response = await axios.post(serverUrl + '/register', userData);
             // const response = registerUser(userData)
 
-            const response = await axios.post(serverUrl + '/register', userData);
+            const response = await axios.post(serverUrl + '/register', userData, { withCredentials: true });
             console.log("===== handleSubmit() - response.data: ", response.data)
             const resObj = response.data;
 
