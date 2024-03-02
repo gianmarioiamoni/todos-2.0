@@ -14,17 +14,20 @@ import { ThemeProvider } from '@mui/material/styles';
 
 import { Box } from '@mui/material';
 
-import {theme} from "./common/themes.jsx"
+import { theme } from "./common/themes.jsx"
+import { LogoutState } from './providers/LogoutState.jsx';
 
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <Box sx={{ backgroundColor: theme.background.default, minHeight: '100vh' }}>
-        {/* <BrowserRouter> */}
+    <LogoutState>
+      <ThemeProvider theme={theme}>
+        <Box sx={{ backgroundColor: theme.background.default, minHeight: '100vh' }}>
+          {/* <BrowserRouter> */}
           <App />
-        {/* </BrowserRouter> */}
-      </Box>
-    </ThemeProvider>
+          {/* </BrowserRouter> */}
+        </Box>
+      </ThemeProvider>
+    </LogoutState>
   </React.StrictMode>
 );

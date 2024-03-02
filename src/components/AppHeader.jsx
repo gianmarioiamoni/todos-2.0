@@ -1,10 +1,12 @@
-import { Add } from '@mui/icons-material';
-import { AppBar, IconButton, Toolbar, Typography } from '@mui/material';
+import { Add, Person, SettingsSuggestRounded } from '@mui/icons-material';
+import { AppBar, IconButton, Button, Link, Toolbar, Typography } from '@mui/material';
 import { usePopupState } from 'material-ui-popup-state/hooks';
 
 import { NewListDialog } from './NewListDialog.jsx';
+import LogoutButton from './user/LogoutButton.jsx';
 
-export function AppHeader({handleListUpdated}) {
+
+export function AppHeader({handleListUpdated, handleLogout, user}) {
   const dialogState = usePopupState({ variant: 'dialog', popupId: 'new-list' });
 
   return (
@@ -18,7 +20,7 @@ export function AppHeader({handleListUpdated}) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             My Lists
           </Typography>
-          <IconButton
+          {/* <IconButton
             size="large"
             edge="start"
             color="inherit"
@@ -26,7 +28,23 @@ export function AppHeader({handleListUpdated}) {
             onClick={dialogState.open}
           >
             <Add />
-          </IconButton>
+          </IconButton> */}
+          <Button
+            startIcon={<Add />}
+            color="inherit"
+            sx={{ mr: 1 }}
+            onClick={dialogState.open}
+          >
+            Add List
+          </Button>
+          <Button
+            startIcon={<Person />}
+            color="inherit"
+            sx={{ mr: 1 }}
+          >
+            {user.username}
+          </Button>
+          <LogoutButton onClick={handleLogout} />
         </Toolbar>
       </AppBar>
     </>

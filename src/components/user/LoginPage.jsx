@@ -7,6 +7,8 @@ import axios from 'axios';
 
 import OutlinedAlert from '../utils/OutlinedAlert';
 
+import { useLogoutState } from '../../providers/LogoutState';
+
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 export default function LoginPage({ setUser }) {
@@ -15,6 +17,8 @@ export default function LoginPage({ setUser }) {
         username: '',
         password: ''
     });
+
+    const { isLogout, setIsLogout } = useLogoutState();
 
     const [isAlert, setIsAlert] = useState(false);
     const [alertData, setAlertData] = useState({ severity: "error", message: "Please login" });
@@ -50,7 +54,8 @@ export default function LoginPage({ setUser }) {
                 showAlert("error", resObj.message);
                 setUser(null);
             } else {
-                setUser(resObj.user)
+                setUser(resObj.user);
+                setIsLogout(false);
             }
             navigate("/login")
 

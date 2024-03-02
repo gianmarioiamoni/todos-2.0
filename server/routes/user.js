@@ -13,13 +13,13 @@ import * as users from "../controllers/user.js"
 
 app.route("/register")
     // route to serve the registration form
-    .get(users.renderRegister)
+    // .get(users.renderRegister)
     // route for the POST request
     .post(catchAsync(users.register));
 
 app.route("/login")
     // route to serve the login form
-    .get(users.renderLogin)
+    // .get(users.renderLogin)
     // route for the POST request
     // storeReturnTo stores the returnTo path from session
     // passport.authenticate() is a middleware provided by Passport

@@ -32,7 +32,7 @@ import ListItem from "./models/listItem.js"
 
 import passportLocalMongoose from "passport-local-mongoose";
 import findOrCreate from "mongoose-findorcreate";
-import { FastfoodOutlined } from "@mui/icons-material";
+import { FastfoodOutlined, TrendingUp } from "@mui/icons-material";
 
 import cookieParser from 'cookie-parser';
 
@@ -458,7 +458,8 @@ app.get('/userinfo',
         console.log("app.get(/userinfo) - req.session.passport: ", req.session.passport)
         console.log("app.get(/userinfo) - req.session: ", req.session)
         console.log("app.get(/userinfo) - req.session.cookie: ", req.session.cookie)
-        if (req.session.cookie != null) {
+        // if (req.session.cookie != null) {
+        if (req.user != null) {
             res.send({
                 success: true,
                 message: "User already authenticated",
@@ -470,6 +471,7 @@ app.get('/userinfo',
             res.send({
                 success: false,
                 message: "User not authenticated",
+                user: null
             }
             );
         }
@@ -526,8 +528,13 @@ app.route("/register")
     .post(catchAsync(users.register));
 
 app.route("/login")
-    // route to serve the login form
-    // .get(users.renderLogin)
+    // .get((req, res) => {
+    //     res.send({
+    //         success: true,
+    //         message: "Logout successfull",
+    //         user: null
+    //     })
+    // })
     // route for the POST request
     // storeReturnTo stores the returnTo path from session
     // passport.authenticate() is a middleware provided by Passport
@@ -543,7 +550,76 @@ app.route("/login")
     );
 
 // logout
-app.get("/logout", users.logout);
+// app.get("/logout", users.logout);
+// app.post("/logout", users.logout);
+
+// app.post('/logout', function (req, res) {
+//     req.logout(function (err) {
+//         if (err) { send(err); }
+//         // res.redirect('/login/failed');
+//         res.send({
+//             success: true,
+//             message: "Logout successfull",
+//             user: null
+//         })
+//     });
+// });
+
+app.post('/logout', (req, res, next) => {
+    // req.logout(req.user, (err) => {
+    //     if (err) return next(err);
+    // })
+    // // res.clearCookie('session');
+    // // res.send({ isAuth: req.isAuthenticated(), user: req.user })
+    // res.send({ success: true, message: "Logout successfull", user: null })
+    req.logout(function (err) {
+        if (err) {
+            return next(err);
+        }
+        // req.flash('success', 'Goodbye!');
+        res.redirect('/userinfo');
+    });
+})
+
+app.get('/logoutsuccess', (req, res) => {
+    console.log("app.get(/) - req.user = ", req.user);
+    res.send({
+        success: false,
+        message: "LOGOUT",
+        user: null,
+        logout: true
+    })
+})
+
+// app.post('/logout', async function (req, res, next) {
+//     req.logout(function (err) {
+//         if (err) { return next(err); }
+//         res.redirect('/login/failed');
+//         // res.redirect("/login")
+//     });
+// });
+
+// app.post("/logout", function (req, res, next) {
+//     console.log("logging out, user:" + req.user);
+//     req.logout((err) => {
+//         console.log("inside logout");
+//         if (err) {
+//             console.log("error: " + err);
+//             return next(err);
+//         } else {
+//             console.log("destorying session in logout");
+//             req.session.destroy(function (err) {
+//                 if (err) {
+//                     console.log("error: " + err);
+//                     return next(err);
+//                 } else {
+//                     res.clearCookie('session');
+//                     res.send({success: true, message: "Logged out successfully", user: null });
+//                 }
+//             });
+//         }
+//     });
+// });
 
 // // change password
 // router.route("/changePassword")
@@ -554,107 +630,6 @@ app.get("/logout", users.logout);
 //     .post(isValidUser, isLocalUser, catchAsync(users.changePassword));
 
 
-// app.post('/login',
-//     // passport.authenticate('local', {
-//     //     // failureFlash: true,
-//     //     // successRedirect: '/dashboard', // redirect to dashboard if success
-//     //     failureRedirect: '/login/failed', // redirect to login if failure
-//     //     session: true
-//     // }),
-//     (req, res) => {
-//         console.log("POST - /login")
-//         console.log("req.user = ", req.user)
-//         console.log("res.redirect(dashboard)")
-//         console.log('LOGIN SUCCESS, IS AUTH: ', req.isAuthenticated())
-
-//         // if (req.user) {
-//         //     res.send({
-//         //         success: true,
-//         //         message: "Login success",
-//         //         user: req.user,
-//         //         //   cookies: req.cookies
-//         //     });
-//         // }
-//     }
-
-// );
-
-
-// app.get('/login', (req, res) => {
-
-//     console.log("app.get(/login) - req.user = ", req.user)
-//     console.log("app.get(/login) - req.isAuthenticated() = ", req.isAuthenticated())
-//     // if (req.user) {
-//     //     res.send({
-//     //         success: true,
-//     //         message: "User already logged in",
-//     //         user: req.user,
-//     //         //   cookies: req.cookies
-//     //     });
-//     // }
-//     // else {
-//     //     res.send(null);
-//     // }
-// });
-
-
-// // route for registration
-// app.get('/register', (req, res) => {
-//     // res.redirect('register'); // show registration page
-// });
-
-// // module.exports.register = async (req, res
-// app.post('/register', async (req, res) => {
-//     const { email, username, password } = req.body;
-//     // const user = new User({
-//     //     username,
-//     //     email
-//     // });
-
-//     // const user = new User({
-//     //     username,
-//     //     email,
-//     //     password
-//     // });
-//     // try {
-//     //     User.save()
-//     //         .then(user => {
-//     //             console.log("user registered; user: ", user);
-//     //             return user;
-//     //         })
-//     //         .catch(err => console.log("error in save: ", err))
-
-//     // } catch (err) {
-//     //     return res.redirect("register");
-//     // }
-// });
-
-// app.post(isValidUser, '/register', async (req, res) => {
-//     console.log("***** app.post('/register') - req.body: ", req.body)
-//     try {
-//         const { username, email, password } = req.body;
-
-//         // checking if the user already exists
-//         const existingUser = await User.findOne({ $or: [{ username: username }, { email: email }] });
-//         if (existingUser) {
-//             return res.status(400).json({ message: 'Username or email already registered' });
-//         }
-
-//         // creates a new user
-//         const hashedPassword = await bcrypt.hash(password, 10);
-//         const newUser = new User({ username: username, email: email, password: hashedPassword });
-//         await newUser.save();
-
-//         // redirect to login after registration
-//         // res.redirect('/login');
-//         res.redirect('login');
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ message: 'Error during registration' });
-//     }
-// });
-
-// // route for logout
 // app.get('/logout', (req, res) => {
 //     req.logout(); // delete the user session
 //     res.redirect('/login'); // redirect to login page

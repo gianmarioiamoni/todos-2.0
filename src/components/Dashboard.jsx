@@ -8,10 +8,16 @@ import { AllTodoLists } from './AllTodoLists.jsx';
 import { AppHeader } from './AppHeader.jsx';
 import { CurrentTodoList } from './CurrentTodoList.jsx';
 
-export default function Dashboard() {
+import { logoutUser } from '../services/userServices.js';
+
+import { useLogoutState } from '../providers/LogoutState.jsx';
+
+export default function Dashboard({user, setUser}) {
     const navigate = useNavigate();
     const [isListDeleted, setIsListDeleted] = useState(false);
     const [isListUpdated, setIsListUpdated] = useState(false);
+
+    const { isLogout, setIsLogout } = useLogoutState();
 
     function handleListDelete() {
         setIsListDeleted(true);
@@ -24,10 +30,12 @@ export default function Dashboard() {
     // logout function
     const handleLogout = async () => {
         try {
-            // request to server to implement logout
-            await axios.get('/logout');
-            // after logout, redirect to login page
-            navigate('/login');
+            const response = await logoutUser();
+            console.log("Dashboard() - handleListUpdated() - response: ", response)
+            setUser(null);
+            setIsLogout(true);
+            console.log("Dashboard() - handleLogout() - setIsLogout(true)")
+            navigate("/");
         } catch (error) {
             console.error('Error during logout:', error);
         }
@@ -37,7 +45,7 @@ export default function Dashboard() {
         <AppState>
             <Box sx={{ display: 'flex' }}>
                 <CssBaseline />
-                <AppHeader handleListUpdated={handleListUpdated} handleLogout={handleLogout} />
+                <AppHeader handleListUpdated={handleListUpdated} user={user} handleLogout={handleLogout} />
                 <AllTodoLists
                     isListUpdated={isListUpdated}
                     setIsListUpdated={setIsListUpdated}

@@ -24,3 +24,12 @@ export async function loginUser(credentials) {
         
     } catch (err) {console.log(err)}
 }
+
+export async function logoutUser() {
+    try {
+        const response = await axios.post(serverUrl + '/logout', { withCredentials: true });
+
+        return response.data;
+
+    } catch (err) { console.log(err) }
+}

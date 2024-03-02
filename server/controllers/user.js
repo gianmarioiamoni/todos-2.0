@@ -66,10 +66,13 @@ export const login = async (req, res) => {
 }
 
 export const logout = (req, res, next) => {
+    console.log("logout")
     req.logout(function (err) {
         if (err) {
+            console.log("err")
             return next(err);
         }
+        console.log("return res.send")
         return res.send({
             success: true,
             message: "Goodbye",
@@ -78,3 +81,5 @@ export const logout = (req, res, next) => {
         });
     });
 }
+
+
