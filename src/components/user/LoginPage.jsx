@@ -7,7 +7,6 @@ import axios from 'axios';
 
 import OutlinedAlert from '../utils/OutlinedAlert';
 
-import { useLogoutState } from '../../providers/LogoutState';
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
@@ -18,8 +17,6 @@ export default function LoginPage({ setUser }) {
         password: ''
     });
 
-    const { isLogout, setIsLogout } = useLogoutState();
-
     const [isAlert, setIsAlert] = useState(false);
     const [alertData, setAlertData] = useState({ severity: "error", message: "Please login" });
 
@@ -28,6 +25,7 @@ export default function LoginPage({ setUser }) {
         //     await axios.get(serverUrl + '/login');
         // }
         // getLogin();
+        // console.log("===== LoginPage() - useEffect([]) - user: ", user)
     } , []);
 
     
@@ -47,17 +45,19 @@ export default function LoginPage({ setUser }) {
         e.preventDefault();
         try {
             const response = await axios.post(serverUrl + '/login', credentials, { withCredentials: true });
-            console.log("===== handleSubmit() - response.data: ", response.data)
+            console.log("===== LoginPage() - handleSubmit() - response.data: ", response.data)
             const resObj = response.data;
 
             if (!resObj.success) {
+                console.log("===== LoginPage() - handleSubmit() - !resObj.success ")
                 showAlert("error", resObj.message);
-                setUser(null);
             } else {
-                setUser(resObj.user);
-                setIsLogout(false);
+                showAlert("success", resObj.message);
+                console.log("===== LoginPage() - handleSubmit() - resObj.success ")
             }
-            navigate("/login")
+            console.log("===== LoginPage() - handleSubmit() - res.user = ", resObj.user)
+            setUser(resObj.user)
+            navigate(resObj.navigate)
 
         } catch (error) {
             console.error('Error during login:', error);

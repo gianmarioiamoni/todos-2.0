@@ -10,14 +10,16 @@ import { CurrentTodoList } from './CurrentTodoList.jsx';
 
 import { logoutUser } from '../services/userServices.js';
 
-import { useLogoutState } from '../providers/LogoutState.jsx';
 
-export default function Dashboard({user, setUser}) {
+export default function Dashboard({ user, setUser }) {
     const navigate = useNavigate();
     const [isListDeleted, setIsListDeleted] = useState(false);
     const [isListUpdated, setIsListUpdated] = useState(false);
 
-    const { isLogout, setIsLogout } = useLogoutState();
+
+    useEffect(() => {
+        console.log("Dashboard() - useEffect([]) - user = ", user)
+    } , [])
 
     function handleListDelete() {
         setIsListDeleted(true);
@@ -31,11 +33,9 @@ export default function Dashboard({user, setUser}) {
     const handleLogout = async () => {
         try {
             const response = await logoutUser();
-            console.log("Dashboard() - handleListUpdated() - response: ", response)
-            setUser(null);
-            setIsLogout(true);
-            console.log("Dashboard() - handleLogout() - setIsLogout(true)")
-            navigate("/");
+            console.log("Dashboard() - handleLogout() - response: ", response)
+            setUser(response.user);
+            navigate(response.navigate);
         } catch (error) {
             console.error('Error during logout:', error);
         }

@@ -26,14 +26,16 @@ export const register = async (req, res, next) => {
                 success: true,
                 message: "Welcome to Todos 2.0",
                 user: registeredUser,
+                redirect: "/dashboard"
                 //   cookies: req.cookies
             });
         })
     } catch (err) {
         return res.send({
             success: false,
-            message: "error in login",
+            message: "error in register",
             user: null,
+            redirect: "/register"
             //   cookies: req.cookies
         });
 
@@ -60,6 +62,7 @@ export const login = async (req, res) => {
         success: true,
         message: "Welcome back",
         user: req.user,
+        redirect: "/dashboard"
         //   cookies: req.cookies
     });
 
@@ -76,7 +79,8 @@ export const logout = (req, res, next) => {
         return res.send({
             success: true,
             message: "Goodbye",
-            user: null
+            user: null,
+            redirect: "/"
             //   cookies: req.cookies
         });
     });

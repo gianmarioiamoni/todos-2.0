@@ -25,7 +25,7 @@ export function useLogoutState() {
   const context = useContext(LogoutStateContext);
 
   if (context === undefined) {
-    throw new Error('useLogoutState must be used within a AppStateProvider');
+    throw new Error('useLogoutState must be used within a LogoutStateProvider');
   }
 
   return context;

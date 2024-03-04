@@ -4,7 +4,7 @@ import AdbIcon from '@mui/icons-material/Adb';
 import ResponsiveAppBar from "./ResponsiveAppBar";
 import { themeSelection, themeHighlight } from '../common/themes';
 
-export default function Homepage() {
+export default function Homepage({user, setUser}) {
     return (
         <div style={{ backgroundImage: "url('/src/assets/images/background-4.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '100vh' }}>
             <ResponsiveAppBar />

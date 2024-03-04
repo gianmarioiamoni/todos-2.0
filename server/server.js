@@ -79,7 +79,7 @@ store.on("error", function (err) {
 
 // session config
 const sessionConfig = {
-    store: store, // It uses Mongo to store session information
+    // store: store, // It uses Mongo to store session information
     name: "session", // override default session name, for security reasons
     // secret: process.env.SECRET,
     secret: "THISISMYSECRET",
@@ -170,38 +170,6 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // PASSPORT
 //
 
-
-// Local Strategy
-
-// configuration of local strategy for Passport.js
-// passport.use(new LocalStrategy(
-//     { usernameField: 'username' }, // be sure that username is defined as 'username'
-//     async (username, password, done) => {
-//         try {
-            
-//             console.log("LOCAL STRATEGY - username = ", username)
-//             console.log("LOCAL STRATEGY - password = ", password)
-//             const user = await User.findOne({ username: username });
-//             // const user = await User.find({ username: username });
-//             console.log("LOCAL STRATEGY - user = ", user)
-
-//             if (!user) {
-//                 console.log("LOCAL STRATEGY - USERNAME NOT FOUND")
-//                 return done(null, false, { message: 'Username not found' });
-//             }
-
-//             const isMatch = await bcrypt.compare(password, user.password);
-
-//             if (!isMatch) {
-//                 return done(null, false, { message: 'Wrong password' });
-//             }
-
-//             return done(null, user);
-//         } catch (err) {
-//             return done(err);
-//         }
-//     }
-// ));
 
 
 // Serialize the user for storing in the session
@@ -447,11 +415,12 @@ app.route("/lists/:id/listItems")
 
 // Server endpoint that returns user info
 app.get('/userinfo',
-    // passport.authenticate('local', {
-    //     session: false,
-    //     failureFlash: false,
-    //     failureRedirect: "/userinfo/failed"
-    // }),
+    passport.authenticate('local', {
+        // session: false,
+        session: true,
+        failureFlash: false,
+        failureRedirect: "/userinfo/failed"
+    }),
     (req, res) => {
         console.log("app.get(/userinfo) - req.user: ", req.user)
         console.log("app.get(/userinfo) - req.isAuthenticated(): ", req.isAuthenticated())
@@ -463,17 +432,18 @@ app.get('/userinfo',
             res.send({
                 success: true,
                 message: "User already authenticated",
-                user: req.user
-                // user: true 
+                user: req.user,
+                redirect: "/dashboard"
             }
             );
-        } else {
-            res.send({
-                success: false,
-                message: "User not authenticated",
-                user: null
-            }
-            );
+        // } else {
+        //     res.send({
+        //         success: false,
+        //         message: "User not authenticated",
+        //         user: null,
+        //         redirect: "/login"
+        //     }
+        //     );
         }
     }
 )
@@ -481,10 +451,11 @@ app.get('/userinfo',
 app.get("/userinfo/failed", (req, res) => {
     console.log("app.get(/userinfo/failed)")
     res.send({
-            success: false,
-            message: "User not authenticated",
-            user: req.user
-        }
+        success: false,
+        message: "User not authenticated",
+        user: null,
+        redirect: "/login"
+    }
     );
 })
 
@@ -517,7 +488,9 @@ app.get("/login/failed", (req, res) => {
     // res.send(false);
     res.send({
         success: false,
-        message: "Login failure"
+        message: "Login failure",
+        user: req.user,
+        redirect: "/login"
     })
 });
 
@@ -528,18 +501,12 @@ app.route("/register")
     .post(catchAsync(users.register));
 
 app.route("/login")
-    // .get((req, res) => {
-    //     res.send({
-    //         success: true,
-    //         message: "Logout successfull",
-    //         user: null
-    //     })
-    // })
     // route for the POST request
     // storeReturnTo stores the returnTo path from session
     // passport.authenticate() is a middleware provided by Passport
     // It uses the "local" strategy and accepts some options
-    .post(storeReturnTo,
+    .post(
+        // storeReturnTo,
         passport.authenticate("local",
             {
                 failureFlash: false,
@@ -572,23 +539,27 @@ app.post('/logout', (req, res, next) => {
     // // res.clearCookie('session');
     // // res.send({ isAuth: req.isAuthenticated(), user: req.user })
     // res.send({ success: true, message: "Logout successfull", user: null })
+    console.log("app.post(/logout)")
     req.logout(function (err) {
         if (err) {
             return next(err);
         }
         // req.flash('success', 'Goodbye!');
-        res.redirect('/userinfo');
+        // res.redirect('/userinfo');
+        res.redirect('/logoutsuccess');
     });
 })
 
 app.get('/logoutsuccess', (req, res) => {
-    console.log("app.get(/) - req.user = ", req.user);
-    res.send({
-        success: false,
-        message: "LOGOUT",
-        user: null,
-        logout: true
-    })
+    console.log("app.get(/logoutsuccess) - req.user = ", req.user);
+    if (req.user == null) {
+        res.send({
+            success: true,
+            message: "GOODBYE!",
+            user: null,
+            redirect: "/"
+        })
+    }
 })
 
 // app.post('/logout', async function (req, res, next) {

@@ -7,34 +7,31 @@ import RegisterPage from './user/RegisterPage';
 import Homepage from './Homepage';
 import Dashboard from './Dashboard';
 
-import { useLogoutState } from '../providers/LogoutState';
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 export default function App() {
   const [user, setUser] = useState(null);
 
-  const { isLogout, setIsLogout } = useLogoutState();
-
   useEffect(() => {
-    const getUser = async () => {
-      const response = await axios.get("http://localhost:5000/userinfo", { withCredentials: true });
-      const resObj = response.data;
+    // const getUser = async () => {
+    
+    //   const response = await axios.get("http://localhost:5000/userinfo", { withCredentials: true })
+    //   const resObj = response.data;
 
-      console.log("App() - useEffect([]) - resObj = ", resObj)
-      console.log("App() - useEffect([]) - isLogout = ", isLogout)
+    //   console.log("App() - useEffect([]) - resObj = ", resObj)
 
-      if (resObj.success && !isLogout) {
-        console.log("App() - useEffect)[]) - setUser(resObj.user)")
-        setUser(resObj.user);
-      } else {
-        console.log("App() - useEffect)[]) - setUser(resObj.null)")
-        setUser(null);
-        setIsLogout(true);
-      }
+    //   if (resObj.success) {
+    //     console.log("App() - useEffect)[]) - setUser(resObj.user)")
+    //     setUser(resObj.user);
+    //   } else {
+    //     console.log("App() - useEffect)[]) - setUser(resObj.null)")
+    //     setUser(null);
+    //   }
 
-    } // getUser()
-    getUser();
+    // } // getUser()
+    // getUser();
+    console.log("***** App() - useEffect([]) - user: ", user)
 
   }, []);
 
@@ -43,10 +40,10 @@ export default function App() {
     <BrowserRouter>
       <div>
         <Routes>
-          <Route exact path="/login" element={user && !isLogout ? <Navigate to="/dashboard" /> : <LoginPage setUser={setUser} />} />
-          <Route exact path="/register" element={user ? <Navigate to="/dashboard" /> : <RegisterPage setUser={setUser} />} />
-          <Route exact path="/" element={<Homepage user={user} />} />
-          <Route path="/dashboard" element={user && !isLogout ? <Dashboard user={user} setUser={setUser} /> : <Navigate to="/login" />} />
+          <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <LoginPage setUser={setUser} />} />
+          <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <RegisterPage setUser={setUser} />} />
+          <Route path="/" element={<Homepage user={user} setUser={setUser} />} />
+          <Route path="/dashboard" element={user ? <Dashboard user={user} setUser={setUser} /> : <Navigate to="/" />} />
         </Routes>
       </div>
     </BrowserRouter>
