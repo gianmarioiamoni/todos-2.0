@@ -1,30 +1,25 @@
 import express from "express";
-// const router = express.Router();
-const app = express();
+const router = express.Router();
+
+import * as users from "../controllers/user.js"
 
 import catchAsync from "../utils/catchAsync.js";
 import passport from "passport";
 
-// middleware function to retrieve the stored returnTo path
-import { storeReturnTo } from "../middleware/user.js"
 
-// import { renderRegister, renderLogin, login, register, logout } from "../controllers/user.js" 
-import * as users from "../controllers/user.js" 
-
-app.route("/register")
+router.route("/register")
     // route to serve the registration form
     // .get(users.renderRegister)
     // route for the POST request
     .post(catchAsync(users.register));
 
-app.route("/login")
-    // route to serve the login form
-    // .get(users.renderLogin)
+router.route("/login")
     // route for the POST request
     // storeReturnTo stores the returnTo path from session
     // passport.authenticate() is a middleware provided by Passport
     // It uses the "local" strategy and accepts some options
-    .post(storeReturnTo,
+    .post(
+        // storeReturnTo,
         passport.authenticate("local",
             {
                 failureFlash: false,
@@ -32,10 +27,46 @@ app.route("/login")
                 session: true,
             }),
         catchAsync(users.login)
-    );
+);
+
+router.get("/login/success", (req, res) => {
+    console.log("--- get(/login/success)")
+    if (req.user != null) {
+        res.status(200).json({
+            success: true,
+            message: "Login successfull",
+            user: req.user,
+            redirect: "/dashboard"
+        });
+        // res.send({
+        //     success: true,
+        //     message: "Login successfull",
+        //     user: req.user,
+        //     redirect: "/dashboard"
+        // });
+    } else {
+        redirect("/login/failed")
+    }
+});
+
+router.get("/login/failed", (req, res) => {
+    res.status(401).json({
+        success: false,
+        message: "Login failure",
+        user: null,
+        redirect: "/login"
+    });
+    // res.send({
+    //     success: false,
+    //     message: "Login failure",
+    //     user: null,
+    //     redirect: "/login"
+    // });
+    
+});
 
 // logout
-app.get("/logout", users.logout); 
+router.post("/logout", users.logout); 
 
 // // change password
 // router.route("/changePassword")
@@ -46,5 +77,4 @@ app.get("/logout", users.logout);
 //     .post(isValidUser, isLocalUser, catchAsync(users.changePassword));
     
 
-
-// export default app;
+export default router;

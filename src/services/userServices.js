@@ -26,6 +26,7 @@ export async function loginUser(credentials) {
 }
 
 export async function logoutUser() {
+    console.log("----- logoutUser()")
     try {
         const response = await axios.post(serverUrl + '/logout', { withCredentials: true });
 

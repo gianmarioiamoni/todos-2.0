@@ -11,26 +11,28 @@ import Dashboard from './Dashboard';
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 export default function App() {
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
+  const [user, setUser] = useState();
 
   useEffect(() => {
-    // const getUser = async () => {
+    const getUser = async () => {
     
-    //   const response = await axios.get("http://localhost:5000/userinfo", { withCredentials: true })
-    //   const resObj = response.data;
+      // const response = await axios.get("http://localhost:5000/userinfo", { withCredentials: true })
+      const response = await axios.get("http://localhost:5000/login/success", { withCredentials: true })
+      const resObj = response.data;
 
-    //   console.log("App() - useEffect([]) - resObj = ", resObj)
+      console.log("App() - useEffect([]) - resObj = ", resObj)
 
-    //   if (resObj.success) {
-    //     console.log("App() - useEffect)[]) - setUser(resObj.user)")
-    //     setUser(resObj.user);
-    //   } else {
-    //     console.log("App() - useEffect)[]) - setUser(resObj.null)")
-    //     setUser(null);
-    //   }
+      if (resObj.success) {
+        console.log("App() - useEffect)[]) - setUser(resObj.user)")
+        setUser(resObj.user);
+      } else {
+        console.log("App() - useEffect)[]) - setUser(resObj.null)")
+        setUser(null);
+      }
 
-    // } // getUser()
-    // getUser();
+    } // getUser()
+    getUser();
     console.log("***** App() - useEffect([]) - user: ", user)
 
   }, []);

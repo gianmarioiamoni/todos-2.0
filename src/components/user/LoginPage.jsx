@@ -42,6 +42,7 @@ export default function LoginPage({ setUser }) {
     };
 
     const handleSubmit = async (e) => {
+        console.log("===== LoginPage() - handleSubmit()")
         e.preventDefault();
         try {
             const response = await axios.post(serverUrl + '/login', credentials, { withCredentials: true });
