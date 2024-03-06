@@ -93,12 +93,13 @@ export const loginSuccess = async (req, res) => {
 
 export const getCurrentUser = async (req, res) => {
     console.log("--- get(/currentUser) - req.user = ", req.user)
+    console.log("--- get(/currentUser) - req.session = ", req.session)
     // User.findOne({username: req.user.username})
     // if user === null -> null
     // user.isCurrentUser -> user
     // -> null
     if (req.user == null) {
-        res.send({
+        return res.send({
             success: false,
             message: "User not authenticated",
             user: null,
@@ -160,6 +161,8 @@ export const logout = async (req, res, next) => {
             });
             
         }
+        console.log("logout() - req.session = ", req.session)
+        req.session.passport = {}
         
         // console.log("**** logout() - req.user = ", req.user)
         // console.log("**** logout() - req.isAuthenticated() = ", req.isAuthenticated())
