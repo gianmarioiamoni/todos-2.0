@@ -9,6 +9,8 @@ import { registerUser } from "../../services/userServices"
 
 import OutlinedAlert from '../utils/OutlinedAlert';
 
+import registerImage from '../../assets/images/background-3.jpg'; 
+
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 export default function RegisterPage({setUser}) {
@@ -33,24 +35,17 @@ export default function RegisterPage({setUser}) {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // const response = await axios.post(serverUrl + '/register', userData);
-            // const response = registerUser(userData)
-
-            const response = await axios.post(serverUrl + '/register', userData, { withCredentials: true });
-            console.log("===== handleSubmit() - response.data: ", response.data)
-            const resObj = response.data;
-
+            // const response = await axios.post(serverUrl + '/register', userData, { withCredentials: true });
+            // const resObj = response.data;
+            const resObj = await registerUser(userData);
             if (!resObj.success) {
                 showAlert("error", resObj.message);
                 setUser(null);
             } else {
                 setUser(resObj.user)
+                setUserData(resObj.user);
             }
             navigate("/register")
-
-            console.log("**** handleSubmit() - response.data: ", response.data); // manage answer
-            setUserData(response.data);
-            setUser(response.data);
 
             // navigate('/login'); // redirect to login after registration
         } catch (error) {
@@ -63,6 +58,7 @@ export default function RegisterPage({setUser}) {
                 <Typography variant="h5" gutterBottom>
                     Register
                 </Typography>
+                <img src={registerImage} alt="Register Image" style={{ maxWidth: '100%', height: 'auto' }} />
                 <form onSubmit={handleSubmit}>
                     <TextField
                         name="username"

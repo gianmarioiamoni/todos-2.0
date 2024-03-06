@@ -7,6 +7,9 @@ import axios from 'axios';
 
 import OutlinedAlert from '../utils/OutlinedAlert';
 
+import loginImage from '../../assets/images/background-1.jpg'; 
+import { loginUser } from '../../services/userServices';
+
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
@@ -45,9 +48,12 @@ export default function LoginPage({ setUser }) {
         console.log("===== LoginPage() - handleSubmit()")
         e.preventDefault();
         try {
-            const response = await axios.post(serverUrl + '/login', credentials, { withCredentials: true });
-            console.log("===== LoginPage() - handleSubmit() - response.data: ", response.data)
-            const resObj = response.data;
+            // const response = await axios.post(serverUrl + '/login', credentials, { withCredentials: true });
+            // console.log("===== LoginPage() - handleSubmit() - response.data: ", response.data)
+            // const resObj = response.data;
+
+            const resObj = await loginUser(credentials);
+            console.log("===== LoginPage() - handleSubmit() - resObj: ", resObj)
 
             if (!resObj.success) {
                 console.log("===== LoginPage() - handleSubmit() - !resObj.success ")
@@ -71,6 +77,7 @@ export default function LoginPage({ setUser }) {
             <Typography variant="h5" gutterBottom>
                 Login
             </Typography>
+            <img src={loginImage} alt="Login Image" style={{ maxWidth: '100%', height: 'auto' }} />
             <form onSubmit={handleSubmit}>
                 <TextField
                     name="username"

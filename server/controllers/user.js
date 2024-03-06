@@ -14,6 +14,11 @@ export const register = async (req, res, next) => {
     });
     try {
         const registeredUser = await User.register(user, password);
+        console.log("register() - registereduser = ", registeredUser)
+
+        await User.updateOne({ username: registeredUser.username }, { isCurrentUser: true })
+
+        // await User.findByIdAndUpdate(req.user.id, { isCurrentUser: true });
 
         // call login() method by Passport to start a login session
         // you don't have to login after register

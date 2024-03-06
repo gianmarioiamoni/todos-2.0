@@ -7,7 +7,7 @@ export async function registerUser(userData) {
 
     try {
         console.log("***** registerUser() - try - serverUrl: ", serverUrl)
-        const res = await axios.post(serverUrl + '/register', userData);
+        const res = await axios.post(serverUrl + '/register', userData, { withCredentials: true });
         console.log("***** registerUser() - res: ", res)
 
         return res.data;
@@ -18,7 +18,7 @@ export async function registerUser(userData) {
 
 export async function loginUser(credentials) {
     try {
-        const response = await axios.post(serverUrl + '/login', credentials);
+        const response = await axios.post(serverUrl + '/login', credentials, );
 
         return response.data;
         
