@@ -6,8 +6,6 @@ import { Google, Apple, LinkedIn } from '@mui/icons-material';
 
 import { registerUser } from "../../services/userServices"
 
-import SocialsRegistrationBox from './utils/SocialsRegistrationBox';
-
 import OutlinedAlert from '../utils/OutlinedAlert';
 
 import registerImage from '../../assets/images/background-3.jpg';
@@ -94,13 +92,12 @@ export default function RegisterPage({ setUser }) {
             <Typography variant="body1">
                 Do you already have an account? <Link to="/login">Login</Link>
             </Typography>
-            <SocialsRegistrationBox />
 
-            {/* <Grid container direction="column" spacing={1} justifyContent="center" alignItems="center" style={{ marginTop: '20px' }}>
+            <Grid container direction="column" spacing={1} justifyContent="center" alignItems="center" style={{ marginTop: '20px' }}>
                 <Grid item>
                     <Typography variant="body1">Or register with:</Typography>
                 </Grid>
-                <Grid item style={{ width: '80%' }}>
+                <Grid item style={{ width: '100%' }}>
                     <Button
                         variant="contained"
                         style={{ width: '100%', backgroundColor: '#FF0000', color: '#fff' }}
@@ -112,7 +109,7 @@ export default function RegisterPage({ setUser }) {
                         Google
                     </Button>
                 </Grid>
-                <Grid item style={{ width: '80%' }}>
+                <Grid item style={{ width: '100%' }}>
                     <Button
                         variant="contained"
                         style={{ width: '100%', backgroundColor: '#000', color: '#fff' }}
@@ -124,7 +121,7 @@ export default function RegisterPage({ setUser }) {
                         Apple
                     </Button>
                 </Grid>
-                <Grid item style={{ width: '80%' }}>
+                <Grid item style={{ width: '100%' }}>
                     <Button
                         variant="contained"
                         style={{ width: '100%', backgroundColor: '#0077B5', color: '#fff' }}
@@ -136,9 +133,8 @@ export default function RegisterPage({ setUser }) {
                         LinkedIn
                     </Button>
                 </Grid>
-            </Grid> */}
+            </Grid>
         </Box>
     );
 };
-
 
