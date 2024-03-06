@@ -7,19 +7,19 @@ import RegisterPage from './user/RegisterPage';
 import Homepage from './Homepage';
 import Dashboard from './Dashboard';
 
+import { getUserInfo } from '../services/userServices';
+
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 export default function App() {
-  // const [user, setUser] = useState(null);
-  const [user, setUser] = useState();
+  const [user, setUser] = useState(null);
 
   useEffect(() => {
     const getUser = async () => {
     
       // const response = await axios.get("http://localhost:5000/userinfo", { withCredentials: true })
-      const response = await axios.get("http://localhost:5000/login/success", { withCredentials: true })
-      const resObj = response.data;
+      const resObj = await getUserInfo();
 
       console.log("App() - useEffect([]) - resObj = ", resObj)
 
@@ -45,7 +45,7 @@ export default function App() {
           <Route path="/login" element={user ? <Navigate to="/dashboard" /> : <LoginPage setUser={setUser} />} />
           <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <RegisterPage setUser={setUser} />} />
           <Route path="/" element={<Homepage user={user} setUser={setUser} />} />
-          <Route path="/dashboard" element={user ? <Dashboard user={user} setUser={setUser} /> : <Navigate to="/" />} />
+          <Route path="/dashboard" element={user ? <Dashboard user={user} setUser={setUser} /> : <Navigate to="/login" />} />
         </Routes>
       </div>
     </BrowserRouter>

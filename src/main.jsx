@@ -21,9 +21,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
       <ThemeProvider theme={theme}>
         <Box sx={{ backgroundColor: theme.background.default, minHeight: '100vh' }}>
-          {/* <BrowserRouter> */}
           <App />
-          {/* </BrowserRouter> */}
         </Box>
       </ThemeProvider>
   </React.StrictMode>

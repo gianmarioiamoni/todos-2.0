@@ -9,6 +9,8 @@ import { fileURLToPath } from 'url';
 
 import 'dotenv/config';
 
+import cookieParser from 'cookie-parser';
+
 // Passport.js
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
@@ -41,6 +43,7 @@ const __dirname = path.dirname(__filename);
 const app = express();
 // const router = express.Router();
 app.use(express.json());
+app.use(cookieParser()); // read cookies (needed for auth)
 
 
 // cors
@@ -67,12 +70,13 @@ store.on("error", function (err) {
 
 // session config
 const sessionConfig = {
-    // store: store, // It uses Mongo to store session information
-    name: "session", // override default session name, for security reasons
+    store: store, // It uses Mongo to store session information
+    // name: "session", // override default session name, for security reasons
     // secret: process.env.SECRET,
     secret: "THISISMYSECRET",
     resave: false,
-    saveUninitialized: true,
+    // saveUninitialized: true,
+    saveUninitialized: false,
     cookie: {
         // security
         httpOnly: true,

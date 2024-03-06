@@ -32,7 +32,8 @@ export default function Dashboard({ user, setUser }) {
     // logout function
     const handleLogout = async () => {
         try {
-            const response = await logoutUser();
+            console.log("Dashboard() - handleLogout() - user: ", user)
+            const response = await logoutUser(user._id);
             console.log("Dashboard() - handleLogout() - response: ", response)
             setUser(response.user);
             navigate(response.navigate);

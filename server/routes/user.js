@@ -25,48 +25,36 @@ router.route("/login")
                 failureFlash: false,
                 failureRedirect: "/login/failed",
                 session: true,
+                // keepSessionInfo: false
             }),
         catchAsync(users.login)
 );
 
-router.get("/login/success", (req, res) => {
-    console.log("--- get(/login/success)")
-    if (req.user != null) {
-        res.status(200).json({
-            success: true,
-            message: "Login successfull",
-            user: req.user,
-            redirect: "/dashboard"
-        });
-        // res.send({
-        //     success: true,
-        //     message: "Login successfull",
-        //     user: req.user,
-        //     redirect: "/dashboard"
-        // });
-    } else {
-        redirect("/login/failed")
-    }
-});
+router.get("/login/success", catchAsync(users.loginSuccess))
+
+router.get("/currentUser", catchAsync(users.getCurrentUser))
+    
 
 router.get("/login/failed", (req, res) => {
-    res.status(401).json({
-        success: false,
-        message: "Login failure",
-        user: null,
-        redirect: "/login"
-    });
-    // res.send({
+    // res.status(401).json({
     //     success: false,
     //     message: "Login failure",
     //     user: null,
     //     redirect: "/login"
     // });
+    res.send({
+        success: false,
+        message: "Login failure",
+        user: null,
+        redirect: "/login"
+    });
     
 });
 
 // logout
-router.post("/logout", users.logout); 
+router.post("/logout", catchAsync(users.logout)); 
+
+router.post("/resetUser", catchAsync(users.resetUser));
 
 // // change password
 // router.route("/changePassword")
