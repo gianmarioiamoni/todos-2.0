@@ -4,6 +4,7 @@ import { usePopupState } from 'material-ui-popup-state/hooks';
 
 import { NewListDialog } from './NewListDialog.jsx';
 import LogoutButton from './user/LogoutButton.jsx';
+import LogoutSet from './user/LogoutSet.jsx';
 
 
 export function AppHeader({handleListUpdated, handleLogout, user}) {
@@ -20,15 +21,6 @@ export function AppHeader({handleListUpdated, handleLogout, user}) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             My Lists
           </Typography>
-          {/* <IconButton
-            size="large"
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={dialogState.open}
-          >
-            <Add />
-          </IconButton> */}
           <Button
             startIcon={<Add />}
             color="inherit"
@@ -37,14 +29,15 @@ export function AppHeader({handleListUpdated, handleLogout, user}) {
           >
             Add List
           </Button>
-          <Button
+          {/* <Button
             startIcon={<Person />}
             color="inherit"
             sx={{ mr: 1 }}
           >
             {user.username}
           </Button>
-          <LogoutButton onClick={handleLogout} />
+          <LogoutButton onClick={handleLogout} /> */}
+          <LogoutSet user={user} handleLogout={handleLogout}/>
         </Toolbar>
       </AppBar>
     </>

@@ -25,19 +25,36 @@ export async function loginUser(credentials) {
     } catch (err) {console.log(err)}
 }
 
-export async function logoutUser(id) {
+async function logoutUser(id) {
     console.log("----- logoutUser() - id = ", id)
     try {
-
-        const resetUserRes = await axios.post(serverUrl + '/resetUser', { id: id });
-        console.log("----- logoutUser() - resetUserRes = ", resetUserRes)
         const response = await axios.post(serverUrl + '/logout', { withCredentials: true });
         console.log("----- logoutUser() - response = ", response)
+        const resetUserRes = await axios.post(serverUrl + '/resetUser', { id: id });
+        console.log("----- logoutUser() - resetUserRes = ", resetUserRes)
 
         return response.data;
 
     } catch (err) { console.log(err) }
 }
+
+export const logout = async (user, setUser) => {
+    try {
+        console.log("Dashboard() - logout() - user: ", user)
+        let response;
+        if (user._id != null) {
+            response = await logoutUser(user._id);
+        } else {
+            response = await logoutUser(user.id);
+        }
+        console.log("Dashboard() - handleLogout() - response: ", response)
+        setUser(response.user);
+        return response;
+        // navigate(response.navigate);
+    } catch (error) {
+        console.error('Error during logout:', error);
+    }
+};
 
 export async function getUserInfo() {
     console.log("----- getUserInfo()")
