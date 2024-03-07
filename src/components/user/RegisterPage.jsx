@@ -51,6 +51,15 @@ export default function RegisterPage({ setUser }) {
         }
     };
 
+    const handleGoogleRegister = async () => {
+        try {
+            // Redirect the user to Google authentication URL
+            window.location.href = `${serverUrl}/auth/google`;
+        } catch (error) {
+            console.error('Error during Google registration:', error);
+        }
+    };
+
     return (
         <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
             <Typography variant="h5" gutterBottom>
@@ -94,49 +103,9 @@ export default function RegisterPage({ setUser }) {
             <Typography variant="body1">
                 Do you already have an account? <Link to="/login">Login</Link>
             </Typography>
-            <SocialsRegistrationBox />
+        
+            <SocialsRegistrationBox onClickGoogle={handleGoogleRegister} />
 
-            {/* <Grid container direction="column" spacing={1} justifyContent="center" alignItems="center" style={{ marginTop: '20px' }}>
-                <Grid item>
-                    <Typography variant="body1">Or register with:</Typography>
-                </Grid>
-                <Grid item style={{ width: '80%' }}>
-                    <Button
-                        variant="contained"
-                        style={{ width: '100%', backgroundColor: '#FF0000', color: '#fff' }}
-                        startIcon={<Google />}
-                        onClick={() => {
-                            // Aggiungi qui la logica per la registrazione con Google
-                        }}
-                    >
-                        Google
-                    </Button>
-                </Grid>
-                <Grid item style={{ width: '80%' }}>
-                    <Button
-                        variant="contained"
-                        style={{ width: '100%', backgroundColor: '#000', color: '#fff' }}
-                        startIcon={<Apple />}
-                        onClick={() => {
-                            // Aggiungi qui la logica per la registrazione con Apple
-                        }}
-                    >
-                        Apple
-                    </Button>
-                </Grid>
-                <Grid item style={{ width: '80%' }}>
-                    <Button
-                        variant="contained"
-                        style={{ width: '100%', backgroundColor: '#0077B5', color: '#fff' }}
-                        startIcon={<LinkedIn />}
-                        onClick={() => {
-                            // Aggiungi qui la logica per la registrazione con LinkedIn
-                        }}
-                    >
-                        LinkedIn
-                    </Button>
-                </Grid>
-            </Grid> */}
         </Box>
     );
 };

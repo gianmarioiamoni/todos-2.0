@@ -56,6 +56,16 @@ router.post("/logout", catchAsync(users.logout));
 
 router.post("/resetUser", catchAsync(users.resetUser));
 
+router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+router.get("/auth/google/callback",
+    passport.authenticate("google",
+        {
+            // successRedirect: CLIENT_URL,
+            failureRedirect: "/login/failed",
+        }),
+    catchAsync(users.register)
+);
 // // change password
 // router.route("/changePassword")
 //     // route to serve the change password form

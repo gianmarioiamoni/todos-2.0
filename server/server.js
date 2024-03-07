@@ -14,6 +14,7 @@ import cookieParser from 'cookie-parser';
 // Passport.js
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
 import session from "express-session";
 import MongoStore from 'connect-mongo'; // use MongoDB to store sessions
@@ -33,7 +34,7 @@ import ExpressError from "./utils/ExpressError.js";
 
 const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : process.env.LOCAL_DB_URL;
 // const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : localDbUrl;
-// const cbUrl = process.env.NODE_ENV === 'production' ? process.env.CB_URL : localCbUrl;
+const cbUrl = process.env.NODE_ENV === 'production' ? process.env.CB_URL : process.env.LOCAL_CB_URL;
 
 const CLIENT_URL = "http://localhost:5173/";
 
@@ -96,8 +97,29 @@ app.use(passport.initialize());
 // allow Passport to use "express-session" 
 app.use(passport.session());
 
-// specify the authentication strategy - defined in User model, added automatically
+// specify the local authentication strategy - defined in User model, added automatically
 passport.use(new LocalStrategy(User.authenticate()));
+
+passport.use(new GoogleStrategy({
+    clientID: process.env.GOOGLE_CLIENT_ID,
+    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    callbackURL: cbUrl,
+    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+},
+    function (accessToken, refreshToken, profile, done) {
+        User.findOrCreate(
+            { googleId: profile.id },
+            {
+                username: profile.displayName,
+                email: profile.emails[0].value,
+                googleId: profile.id
+            },
+            function (err, user) {
+                return done(err, user);
+            }
+        );
+    }
+));
 
 //
 // SERIALIZE USER / DESERIALIZE USER
