@@ -34,7 +34,8 @@ import ExpressError from "./utils/ExpressError.js";
 
 const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : process.env.LOCAL_DB_URL;
 // const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : localDbUrl;
-const cbUrl = process.env.NODE_ENV === 'production' ? process.env.CB_URL : process.env.LOCAL_CB_URL;
+// const cbUrl = process.env.NODE_ENV === 'production' ? process.env.CB_URL : process.env.LOCAL_CB_URL;
+const cbUrl = "http://localhost:5173/dashboard"
 
 const CLIENT_URL = "http://localhost:5173/";
 
@@ -104,20 +105,27 @@ passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: cbUrl,
+    // callbackURL: "http://localhost:5173/auth/google/callback",
     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
 },
-    function (accessToken, refreshToken, profile, done) {
-        User.findOrCreate(
-            { googleId: profile.id },
-            {
-                username: profile.displayName,
-                email: profile.emails[0].value,
-                googleId: profile.id
-            },
-            function (err, user) {
-                return done(err, user);
-            }
-        );
+    async function (accessToken, refreshToken, profile, done) {
+        try {
+            console.log("cbUrl = ", cbUrl)
+            User.findOrCreate(
+                { username: profile.displayName },
+                {
+                    username: profile.displayName,
+                    email: profile.emails[0].value,
+                    isCurrentUser: true
+                    // googleId: profile.id
+                },
+                function (err, user) {
+                    return done(err, user);
+                }
+            );
+            await User.updateOne({ username: profile.displayName }, { isCurrentUser: true })
+        } catch (err) { console.log(err) }
+
     }
 ));
 
