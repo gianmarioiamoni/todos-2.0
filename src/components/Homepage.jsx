@@ -38,7 +38,7 @@ export default function Homepage({ user, setUser }) {
                         View your Todos
                     </Button>
                 ) : (
-                    <div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                         <Button variant="contained" color="primary" href="/login" sx={{ marginBottom: 2 }}>
                             Login
                         </Button>

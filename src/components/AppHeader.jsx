@@ -1,14 +1,16 @@
-import { Add, Person, SettingsSuggestRounded } from '@mui/icons-material';
-import { AppBar, IconButton, Button, Link, Toolbar, Typography } from '@mui/material';
+import { Add, Home } from '@mui/icons-material';
+import { AppBar, Button, Link, Toolbar, Typography } from '@mui/material';
 import { usePopupState } from 'material-ui-popup-state/hooks';
 
 import { NewListDialog } from './NewListDialog.jsx';
-import LogoutButton from './user/LogoutButton.jsx';
+import LogoutButton from './user/utils/LogoutButton.jsx';
 import LogoutSet from './user/LogoutSet.jsx';
+import { useNavigate } from 'react-router-dom';
 
 
-export function AppHeader({handleListUpdated, handleLogout, user}) {
+export function AppHeader({ handleListUpdated, handleLogout, user }) {
   const dialogState = usePopupState({ variant: 'dialog', popupId: 'new-list' });
+  const navigate = useNavigate();
 
   return (
     <>
@@ -22,6 +24,14 @@ export function AppHeader({handleListUpdated, handleLogout, user}) {
             My Lists
           </Typography>
           <Button
+            startIcon={<Home />}
+            color="inherit"
+            sx={{ ml: 1 }}
+            onClick={() => navigate("/")}
+          >
+            Home
+          </Button>
+          <Button
             startIcon={<Add />}
             color="inherit"
             sx={{ mr: 1 }}
@@ -29,6 +39,9 @@ export function AppHeader({handleListUpdated, handleLogout, user}) {
           >
             Add List
           </Button>
+
+
+
           {/* <Button
             startIcon={<Person />}
             color="inherit"
@@ -37,7 +50,7 @@ export function AppHeader({handleListUpdated, handleLogout, user}) {
             {user.username}
           </Button>
           <LogoutButton onClick={handleLogout} /> */}
-          <LogoutSet user={user} handleLogout={handleLogout}/>
+          <LogoutSet user={user} handleLogout={handleLogout} />
         </Toolbar>
       </AppBar>
     </>

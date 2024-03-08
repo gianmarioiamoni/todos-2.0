@@ -1,7 +1,7 @@
 import { Button } from "@mui/material"
 import { Person } from "@mui/icons-material"
 
-import LogoutButton from "../LogoutButton"
+import LogoutButton from "./LogoutButton"
 
 export default function LogoutSet({ user, handleLogout }) {
     return (

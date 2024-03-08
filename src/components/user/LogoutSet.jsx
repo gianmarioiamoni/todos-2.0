@@ -1,9 +1,9 @@
 import { Button } from "@mui/material"
 import { Person } from "@mui/icons-material"
 
-import LogoutButton from "./LogoutButton" 
+import LogoutButton from "./utils/LogoutButton"
 
-export default function LogoutSet({user, handleLogout}) {
+export default function LogoutSet({ user, handleLogout }) {
     return (
         <div sx={{ display: 'inline-flex' }}>
             <Button
