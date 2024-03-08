@@ -98,7 +98,6 @@ export const loginSuccess = async (req, res) => {
 
 export const getCurrentUser = async (req, res) => {
     console.log("--- get(/currentUser) - req.user = ", req.user)
-    console.log("--- get(/currentUser) - req.session = ", req.session)
     // User.findOne({username: req.user.username})
     // if user === null -> null
     // user.isCurrentUser -> user
