@@ -42,7 +42,6 @@ router.get("/login/failed", (req, res) => {
     //     user: null,
     //     redirect: "/login"
     // });
-    console.log("router.get(/login/failed)")
     res.send({
         success: false,
         message: "Login failure",
@@ -56,34 +55,6 @@ router.get("/login/failed", (req, res) => {
 router.post("/logout", catchAsync(users.logout)); 
 
 router.post("/resetUser", catchAsync(users.resetUser));
-
-
-// Google Auth consense screen route
-router.get('/auth/google',
-    passport.authenticate('google', {
-        scope:
-            ['email', 'profile']
-    }
-    ));
-
-// Google Callback route
-router.get('/auth/google/callback',
-    passport.authenticate('google', {
-        failureRedirect: '/login/failed',
-        session: true,
-    }),
-    function (req, res) {
-        // Successful authentication, redirect secrets
-        console.log("router.get(/auth/google/callback) - successful authentication")
-        res.send({
-            success: false,
-            message: "Welcome to Todos 2.0",
-            user: req.user,
-            redirect: "/dasboard"
-        })
-    }
-);
-
 
 // // change password
 // router.route("/changePassword")

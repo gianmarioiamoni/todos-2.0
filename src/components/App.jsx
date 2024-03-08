@@ -37,26 +37,7 @@ export default function App() {
 
   }, []);
 
-  // const getUser = async () => {
 
-  //   // const response = await axios.get("http://localhost:5000/userinfo", { withCredentials: true })
-  //   const resObj = await getUserInfo();
-
-  //   console.log("App() - useEffect([]) - resObj = ", resObj)
-
-  //   if (resObj.success) {
-  //     console.log("App() - useEffect)[]) - setUser(resObj.user)")
-  //     setUser(resObj.user);
-  //     return resObj.user;
-  //   } else {
-  //     console.log("App() - useEffect)[]) - setUser(resObj.null)")
-  //     setUser(null);
-  //     return null;
-  //   }
-
-  // }
-
-  const routeCb = "/auth/google/callback"
   return (
     <BrowserRouter>
       <div>
@@ -65,7 +46,6 @@ export default function App() {
           <Route path="/register" element={user ? <Navigate to="/dashboard" /> : <RegisterPage setUser={setUser} />} />
           <Route path="/" element={<Homepage user={user} setUser={setUser} />} />
           <Route path="/dashboard" element={user ? <Dashboard user={user} setUser={setUser} /> : <Navigate to="/login" />} />
-          {/* <Route path={routeCb} element={user ? <Dashboard user={user} setUser={setUser} /> : <Navigate to="/login" />} /> */}
         </Routes>
       </div>
     </BrowserRouter>

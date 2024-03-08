@@ -1,7 +1,7 @@
 import { Grid, Typography, Button } from "@mui/material"
 import { Google, Apple, LinkedIn } from '@mui/icons-material';
 
-export default function SocialsRegistrationBox({ onClickGoogle }) {
+export default function SocialsRegistrationBox() {
     return (
         <Grid container direction="column" spacing={1} justifyContent="center" alignItems="center" style={{ marginTop: '20px' }}>
             <Grid item>
@@ -12,7 +12,9 @@ export default function SocialsRegistrationBox({ onClickGoogle }) {
                     variant="contained"
                     style={{ width: '100%', backgroundColor: '#FF0000', color: '#fff' }}
                     startIcon={<Google />}
-                    onClick={ () => onClickGoogle() }
+                    onClick={() => {
+                        // Aggiungi qui la logica per la registrazione con Google
+                    }}
                 >
                     Google
                 </Button>
