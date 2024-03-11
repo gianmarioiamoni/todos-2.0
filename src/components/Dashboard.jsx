@@ -8,13 +8,17 @@ import { AllTodoLists } from './AllTodoLists.jsx';
 import { AppHeader } from './AppHeader.jsx';
 import { CurrentTodoList } from './CurrentTodoList.jsx';
 
-import { logout } from '../services/userServices.js';
+import { logoutUser } from '../services/userServices.js';
+
+import { useAuth } from '../hooks/useAuth.jsx';
 
 
-export default function Dashboard({ user, setUser }) {
+export default function Dashboard() {
     const navigate = useNavigate();
     const [isListDeleted, setIsListDeleted] = useState(false);
     const [isListUpdated, setIsListUpdated] = useState(false);
+
+    const { user, logout } = useAuth();
 
     useEffect(() => {
         console.log("Dashboard() - useEffect([]) - user = ", user)
@@ -31,8 +35,10 @@ export default function Dashboard({ user, setUser }) {
     // logout function
     const handleLogout = async () => {
         try {
-            const response = await logout(user, setUser);
-            navigate(response.navigate);
+            const response = await logoutUser(user);
+            // useAuth custom hook
+            logout();
+            // navigate(response.navigate);
         }
         catch (err) { console.log(err) }
     }

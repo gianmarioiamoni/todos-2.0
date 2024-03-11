@@ -5,8 +5,7 @@ import '@fontsource/roboto/700.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Route } from 'react-router-dom';
-// import { BrowserRouter as Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 import App from './components/App.jsx';
 
@@ -19,10 +18,12 @@ import { theme } from "./common/themes.jsx"
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
+    <BrowserRouter>
       <ThemeProvider theme={theme}>
         <Box sx={{ backgroundColor: theme.background.default, minHeight: '100vh' }}>
           <App />
         </Box>
       </ThemeProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );

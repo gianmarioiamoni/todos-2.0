@@ -6,17 +6,23 @@ import { useNavigate } from 'react-router-dom';
 import ResponsiveAppBar from "./ResponsiveAppBar";
 import { themeSelection, themeHighlight } from '../common/themes';
 
-import { logout } from '../services/userServices';
+import { logoutUser } from '../services/userServices';
 
-export default function Homepage({ user, setUser }) {
+import { useAuth } from '../hooks/useAuth';
+
+export default function Homepage() {
     const navigate = useNavigate();
+
+    const { user,logout } = useAuth();
 
     // logout function
     const handleLogout = async () => {
         try {
-            const response = await logout(user, setUser);
+            const response = await logoutUser(user);
+            // useAuth custom hook
+            logout();
             // navigate(response.navigate);
-            navigate("/");
+            // navigate("/");
         }
         catch (err) { console.log(err) }
     }

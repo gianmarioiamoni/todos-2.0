@@ -3,33 +3,31 @@ import { useNavigate, Link } from 'react-router-dom';
 
 import { Box, Button, TextField, Typography } from '@mui/material';
 
-import axios from 'axios';
-
 import OutlinedAlert from '../utils/OutlinedAlert';
 
 import loginImage from '../../assets/images/background-1.jpg'; 
 import { loginUser } from '../../services/userServices';
+import { useAuth } from '../../hooks/useAuth';
 
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
-export default function LoginPage({ setUser }) {
-    const navigate = useNavigate();
+// This component serves as the user’s login interface.
+// It uses the useAuth Hook to handle user authentication.
+// When users enter their credentials and submit the form, 
+// the login() function from useAuth is called to authenticate 
+// and log them in.
+
+export default function LoginPage() {
     const [credentials, setCredentials] = useState({
         username: '',
         password: ''
     });
 
+    const { login } = useAuth();
+
     const [isAlert, setIsAlert] = useState(false);
     const [alertData, setAlertData] = useState({ severity: "error", message: "Please login" });
-
-    useEffect(() => {
-        // async function getLogin() {
-        //     await axios.get(serverUrl + '/login');
-        // }
-        // getLogin();
-        // console.log("===== LoginPage() - useEffect([]) - user: ", user)
-    } , []);
 
     
     function showAlert(severity, message) {
@@ -42,6 +40,19 @@ export default function LoginPage({ setUser }) {
             ...credentials,
             [e.target.name]: e.target.value
         });
+    };
+
+    // MOCKUP
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        // Here you would usually send a request to your backend to authenticate the user
+        // For the sake of this example, we're using a mock authentication
+        if (username === "user" && password === "password") {
+            // Replace with actual authentication logic
+            await login({ username });
+        } else {
+            alert("Invalid username or password");
+        }
     };
 
     const handleSubmit = async (e) => {
@@ -60,11 +71,13 @@ export default function LoginPage({ setUser }) {
                 showAlert("error", resObj.message);
             } else {
                 showAlert("success", resObj.message);
+                // await login({ username });
+                await login(credentials);
                 console.log("===== LoginPage() - handleSubmit() - resObj.success ")
             }
             console.log("===== LoginPage() - handleSubmit() - res.user = ", resObj.user)
-            setUser(resObj.user)
-            navigate(resObj.navigate)
+            // setUser(resObj.user)
+            // navigate(resObj.navigate)
 
         } catch (error) {
             console.error('Error during login:', error);
