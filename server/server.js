@@ -13,7 +13,10 @@ import cookieParser from 'cookie-parser';
 
 // Passport.js
 import passport from 'passport';
-import LocalStrategy from 'passport-local';
+// import LocalStrategy from 'passport-local';
+
+import { Strategy as LocalStrategy } from 'passport-local';
+
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
 
 import session from "express-session";
@@ -71,63 +74,84 @@ store.on("error", function (err) {
 });
 
 // session config
-const sessionConfig = {
+// const sessionConfig = {
+//     store: store, // It uses Mongo to store session information
+//     // name: "session", // override default session name, for security reasons
+//     // secret: process.env.SECRET,
+//     secret: "THISISMYSECRET",
+//     resave: false,
+//     // saveUninitialized: true,
+//     saveUninitialized: false,
+//     cookie: {
+//         // security
+//         httpOnly: true,
+//         // secure: true to be added in deployment only 
+//         // secure: (process.env.NODE_ENV === 'production'),
+//         secure: false, // DEPLOYMENT ONLY
+//         // setup expiring date in a week for coockie
+//         expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
+//         maxAge: 1000 * 60 * 60 * 24 * 7
+//     }
+// };
+
+// app.use(session(sessionConfig));
+app.use(session({
     store: store, // It uses Mongo to store session information
-    // name: "session", // override default session name, for security reasons
-    // secret: process.env.SECRET,
     secret: "THISISMYSECRET",
     resave: false,
-    // saveUninitialized: true,
     saveUninitialized: false,
-    cookie: {
-        // security
-        httpOnly: true,
-        // secure: true to be added in deployment only 
-        // secure: (process.env.NODE_ENV === 'production'),
-        secure: false, // DEPLOYMENT ONLY
-        // setup expiring date in a week for coockie
-        expires: Date.now() + 1000 * 60 * 60 * 24 * 7,
-        maxAge: 1000 * 60 * 60 * 24 * 7
-    }
-};
-
-app.use(session(sessionConfig));
+}))
 
 // Passport initialization: on every route call
 app.use(passport.initialize());
 // allow Passport to use "express-session" 
 app.use(passport.session());
 
-// specify the local authentication strategy - defined in User model, added automatically
-passport.use(new LocalStrategy(User.authenticate()));
+// // specify the local authentication strategy - defined in User model, added automatically
+// passport.use(new LocalStrategy(User.authenticate()));
 
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: cbUrl,
-    // callbackURL: "http://localhost:5173/auth/google/callback",
-    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
-},
-    async function (accessToken, refreshToken, profile, done) {
-        try {
-            console.log("cbUrl = ", cbUrl)
-            User.findOrCreate(
-                { username: profile.displayName },
-                {
-                    username: profile.displayName,
-                    email: profile.emails[0].value,
-                    isCurrentUser: true
-                    // googleId: profile.id
-                },
-                function (err, user) {
-                    return done(err, user);
-                }
-            );
-            await User.updateOne({ username: profile.displayName }, { isCurrentUser: true })
-        } catch (err) { console.log(err) }
+// "authUser" is a function that contains the steps to authenticate a user, 
+// and will return the "authenticated user".
+passport.use(new LocalStrategy(authUser));
 
-    }
-));
+authUser = async (username, password, done) => {
+    //Search the user, password in the DB to authenticate the user
+    User.findOne(
+        {username: username},
+    )
+
+    const authenticated_user = { id: 123, name: "Kyle" }
+
+    return done(null, authenticated_user)
+}
+
+// passport.use(new GoogleStrategy({
+//     clientID: process.env.GOOGLE_CLIENT_ID,
+//     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//     callbackURL: cbUrl,
+//     // callbackURL: "http://localhost:5173/auth/google/callback",
+//     userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+// },
+//     async function (accessToken, refreshToken, profile, done) {
+//         try {
+//             console.log("cbUrl = ", cbUrl)
+//             User.findOrCreate(
+//                 { username: profile.displayName },
+//                 {
+//                     username: profile.displayName,
+//                     email: profile.emails[0].value,
+//                     isCurrentUser: true
+//                     // googleId: profile.id
+//                 },
+//                 function (err, user) {
+//                     return done(err, user);
+//                 }
+//             );
+//             await User.updateOne({ username: profile.displayName }, { isCurrentUser: true })
+//         } catch (err) { console.log(err) }
+
+//     }
+// ));
 
 //
 // SERIALIZE USER / DESERIALIZE USER
