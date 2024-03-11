@@ -5,6 +5,7 @@ import LoginPage from './user/LoginPage';
 import RegisterPage from './user/RegisterPage';
 import Homepage from './Homepage';
 import Dashboard from './Dashboard';
+import NotFoundPage from './user/NotFoundPage'
 
 import { getUserInfo } from '../services/userServices';
 
@@ -58,6 +59,8 @@ export default function App() {
             <Dashboard />
           </ProtectedRoute>}
         />
+        <Route path="*" element={<NotFoundPage />} />
+
       </Routes>
     </AuthProvider>
   );
