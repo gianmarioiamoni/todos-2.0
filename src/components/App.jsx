@@ -46,7 +46,7 @@ export default function App() {
 
   }, []);
 
-  const routeCb = "/auth/google/callback"
+  
   return (
     <AuthProvider>
       <Routes>

@@ -59,10 +59,6 @@ export default function LoginPage() {
         console.log("===== LoginPage() - handleSubmit()")
         e.preventDefault();
         try {
-            // const response = await axios.post(serverUrl + '/login', credentials, { withCredentials: true });
-            // console.log("===== LoginPage() - handleSubmit() - response.data: ", response.data)
-            // const resObj = response.data;
-
             const resObj = await loginUser(credentials);
             console.log("===== LoginPage() - handleSubmit() - resObj: ", resObj)
 
@@ -71,7 +67,8 @@ export default function LoginPage() {
                 showAlert("error", resObj.message);
             } else {
                 showAlert("success", resObj.message);
-                // await login({ username });
+
+                // useAuth custom hook
                 await login(credentials);
                 console.log("===== LoginPage() - handleSubmit() - resObj.success ")
             }

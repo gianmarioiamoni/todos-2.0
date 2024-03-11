@@ -12,6 +12,8 @@ import OutlinedAlert from '../utils/OutlinedAlert';
 
 import registerImage from '../../assets/images/background-3.jpg';
 
+import { useAuth } from '../../hooks/useAuth';
+
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 export default function RegisterPage({ setUser }) {
@@ -20,11 +22,19 @@ export default function RegisterPage({ setUser }) {
     const [isAlert, setIsAlert] = useState(false);
     const [alertData, setAlertData] = useState({ severity: "error", message: "Please login" });
 
+    const { login } = useAuth();
+
     const [userData, setUserData] = useState({
         username: '',
         email: '',
         password: ''
     });
+
+    function showAlert(severity, message) {
+        setAlertData({ severity: severity, message: message });
+        setIsAlert(true);
+    }
+
 
     const handleChange = (e) => {
         setUserData({
@@ -33,18 +43,21 @@ export default function RegisterPage({ setUser }) {
         });
     };
 
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
             const resObj = await registerUser(userData);
             if (!resObj.success) {
                 showAlert("error", resObj.message);
-                setUser(null);
+                // navigate("/register")
+                // setUser(null);
             } else {
-                setUser(resObj.user)
+                // setUser(resObj.user)
                 setUserData(resObj.user);
+                // useAuth custom hook
+                await login(resObj.user);
             }
-            navigate("/register")
 
         } catch (error) {
             console.error('Error during registration:', error);
@@ -62,6 +75,7 @@ export default function RegisterPage({ setUser }) {
 
     return (
         <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
+            {isAlert && <OutlinedAlert severity={alertData.severity} message={alertData.message} setIsAlert={setIsAlert} />}
             <Typography variant="h5" gutterBottom>
                 Register
             </Typography>
