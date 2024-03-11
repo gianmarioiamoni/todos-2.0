@@ -1,8 +1,7 @@
 // import { BrowserRouter as Route, Routes } from 'react-router-dom';
 import { useState, useEffect } from 'react';
-
+import axios from 'axios';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-
 import LoginPage from './user/LoginPage';
 import RegisterPage from './user/RegisterPage';
 import Homepage from './Homepage';
