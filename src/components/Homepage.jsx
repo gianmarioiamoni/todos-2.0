@@ -1,17 +1,15 @@
 import { Typography, Button, Container, Link } from '@mui/material';
-import AdbIcon from '@mui/icons-material/Adb';
 
 import { useNavigate } from 'react-router-dom';
 
 import ResponsiveAppBar from "./ResponsiveAppBar";
-import { themeSelection, themeHighlight } from '../common/themes';
+import { themeSelection } from '../common/themes';
 
 import { logoutUser } from '../services/userServices';
 
 import { useAuth } from '../hooks/useAuth';
 
 export default function Homepage() {
-    const navigate = useNavigate();
 
     const { user,logout } = useAuth();
 

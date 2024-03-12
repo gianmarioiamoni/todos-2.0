@@ -14,8 +14,6 @@ import cookieParser from 'cookie-parser';
 // Passport.js
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-// import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 
 import session from "express-session";
 import MongoStore from 'connect-mongo'; // use MongoDB to store sessions
@@ -34,17 +32,14 @@ import ExpressError from "./utils/ExpressError.js";
 // const localCbUrl = "http://localhost:5173/auth/google/callback"
 
 const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : process.env.LOCAL_DB_URL;
-// const dbUrl = process.env.NODE_ENV === 'production' ? process.env.DB_URL : localDbUrl;
 // const cbUrl = process.env.NODE_ENV === 'production' ? process.env.CB_URL : process.env.LOCAL_CB_URL;
 const cbUrl = "http://localhost:5173/dashboard"
 
 const CLIENT_URL = "http://localhost:5173/";
 
 const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const app = express();
-// const router = express.Router();
 app.use(express.json());
 app.use(cookieParser()); // read cookies (needed for auth)
 
@@ -76,10 +71,8 @@ store.on("error", function (err) {
 const sessionConfig = {
     store: store, // It uses Mongo to store session information
     name: "session", // override default session name, for security reasons
-    // secret: process.env.SECRET,
-    secret: "THISISMYSECRET",
+    secret: process.env.SECRET,
     resave: false,
-    // saveUninitialized: true,
     saveUninitialized: false,
     cookie: {
         // security
@@ -93,14 +86,6 @@ const sessionConfig = {
     }
 };
 
-// app.use(
-//     cookieSession({
-//         name: "session",
-//         keys: ["cyberwolve"],
-//         maxAge: 24 * 60 * 60 * 100,
-//     })
-// );
-
 app.use(session(sessionConfig));
 
 // Passport initialization: on every route call
@@ -111,56 +96,7 @@ app.use(passport.session());
 // specify the local authentication strategy - defined in User model, added automatically
 passport.use(new LocalStrategy(User.authenticate()));
 
-passport.use(new GoogleStrategy({
-    clientID: "727893567676-5siepl3625cd0olu091qruar4mnb472f.apps.googleusercontent.com",
-    clientSecret: "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",
-    // callbackURL: "http://yourdomain:3000/auth/google/callback",
-    callbackURL: cbUrl,
-    passReqToCallback: true
-},
-    function (request, accessToken, refreshToken, profile, done) {
-        User.findOrCreate(
-            { googleId: profile.id },
-            {
-                username: profile.displayName,
-                email: profile.emails[0].value,
-                isCurrentUser: true
-                // googleId: profile.id
-            },
-            function (err, user) {
-                return done(err, user);
-            }
-        );
-    }
-));
 
-// passport.use(new GoogleStrategy({
-//     // clientID: process.env.GOOGLE_CLIENT_ID,
-//     clientID: "727893567676-5siepl3625cd0olu091qruar4mnb472f.apps.googleusercontent.com",
-//     // clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//     clientSecret: "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",
-//     // callbackURL: "http://localhost:5173/auth/google/callback",
-//     callbackURL: cbUrl 
-// },
-//     function (accessToken, refreshToken, profile, cb) {
-//         User.findOrCreate(
-//             { username: profile.displayName },
-//             {
-//                 username: profile.displayName,
-//                 email: profile.emails[0].value,
-//                 isCurrentUser: true
-//                 // googleId: profile.id
-//             },
-
-//             function (err, user) {
-//                 return cb(err, user);
-//             }
-//         );
-//     }
-// ));
-
-
-//
 // SERIALIZE USER / DESERIALIZE USER
 // specify how we store a user in the session and how we remove It from the session
 // methods added by password-local-mongoose
@@ -216,7 +152,6 @@ app.use((err, req, res, next) => {
     if (!err.message)
         err.message = "Something went wrong";
 
-    // res.status(statusCode).render("error", { err });
     res.send({
         success: false,
         message: err.message,

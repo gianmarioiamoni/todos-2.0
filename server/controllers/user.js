@@ -1,10 +1,5 @@
 import User from "../models/user.js";
 
-export const renderRegister = (req, res) => {
-    // res.render("users/register")
-    console.log("show registration page");
-    return;
-}
 
 export const register = async (req, res, next) => {
     const { email, username, password } = req.body;
@@ -17,8 +12,6 @@ export const register = async (req, res, next) => {
         console.log("register() - registereduser = ", registeredUser)
 
         await User.updateOne({ username: registeredUser.username }, { isCurrentUser: true })
-
-        // await User.findByIdAndUpdate(req.user.id, { isCurrentUser: true });
 
         // call login() method by Passport to start a login session
         // you don't have to login after register
@@ -48,18 +41,10 @@ export const register = async (req, res, next) => {
 
 }
 
-export const renderLogin = (req, res) => {
-    // res.render("users/login");
-    console.log("render login");
-    // return;
-}
-
 export const login = async (req, res) => {
     // we are successfully authenticated (due to middleware in route)
 
     await User.findByIdAndUpdate(req.user.id, { isCurrentUser: true });
-
-    console.log("success", "Welcome back!");
 
     // Now we can use res.locals.returnTo to redirect the user after login
     // thanks to the storeReturnTo middleware function
@@ -76,9 +61,6 @@ export const login = async (req, res) => {
 }
 
 export const loginSuccess = async (req, res) => {
-    console.log("--- get(/login/success) - req.user = ", req.user)
-    console.log("--- get(/login/success) - req.isAuthenticated() = ", req.isAuthenticated())
-    console.log
     if (req.user != null) {
         res.send({
             success: true,
@@ -97,11 +79,6 @@ export const loginSuccess = async (req, res) => {
 }
 
 export const getCurrentUser = async (req, res) => {
-    console.log("--- get(/currentUser) - req.user = ", req.user)
-    // User.findOne({username: req.user.username})
-    // if user === null -> null
-    // user.isCurrentUser -> user
-    // -> null
     if (req.user == null) {
         return res.send({
             success: false,
@@ -112,7 +89,6 @@ export const getCurrentUser = async (req, res) => {
     }
     
     const currentUser = await User.findOne({ $and: [{ _id: req.user.id }, {isCurrentUser: true } ]});
-    console.log("--- get(/currentUser) - currentUser = ", currentUser)
 
     if (currentUser) {
         res.send({
@@ -131,32 +107,12 @@ export const getCurrentUser = async (req, res) => {
         });
     }
 
-    // if (req.user != null) {
-    //     res.send({
-    //         success: true,
-    //         message: "User already authenticated",
-    //         user: req.user,
-    //         redirect: "/dashboard"
-    //     });
-    // } else {
-    //     res.send({
-    //         success: false,
-    //         message: "User not authenticated",
-    //         user: null,
-    //         redirect: "/login"
-    //     });
-    // }
 }
 
 export const logout = async (req, res, next) => {
 
-    // if (req.user != null) {
-    //     await User.findByIdAndUpdate(req.user.id, { isCurrentUser: false });
-    // }
     req.logout(function (err) {
         if (err) {
-            console.log("err")
-            // return next(err);
             res.send({
                 success: false,
                 message: "Error in logout",
@@ -165,11 +121,8 @@ export const logout = async (req, res, next) => {
             });
             
         }
-        console.log("logout() - req.session = ", req.session)
         req.session.passport = {}
         
-        // console.log("**** logout() - req.user = ", req.user)
-        // console.log("**** logout() - req.isAuthenticated() = ", req.isAuthenticated())
         res.send({
             success: true,
             message: "Goodbye",
@@ -180,9 +133,7 @@ export const logout = async (req, res, next) => {
 }
 
 export const resetUser = async (req, res) => {
-    console.log("resetUser() - req.body = ", req.body)
     await User.findByIdAndUpdate(req.body.id, { isCurrentUser: false });
-    return res.send("user reset")
 }
 
 

@@ -1,5 +1,3 @@
-// import { BrowserRouter as Route, Routes } from 'react-router-dom';
-import { useEffect } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import LoginPage from './user/LoginPage';
 import RegisterPage from './user/RegisterPage';
@@ -19,37 +17,6 @@ const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_S
 // For routes that require authentication, we use the < ProtectedRoute /> component 
 // to restrict access to only authenticated users
 export default function App() {
-  // const [user, setUser] = useState(null);
-  // const { user } = useAuth();
-
-  
-
-  useEffect(() => {
-    
-
-    // const getUser = async () => {
-    
-    //   // const response = await axios.get("http://localhost:5000/userinfo", { withCredentials: true })
-    //   const resObj = await getUserInfo();
-
-    //   console.log("App() - useEffect([]) - resObj = ", resObj)
-
-    //   if (resObj.success) {
-    //     console.log("App() - useEffect)[]) - setUser(resObj.user)")
-    //     setUser(resObj.user);
-    //   } else {
-    //     console.log("App() - useEffect)[]) - setUser(resObj.null)")
-    //     setUser(null);
-    //   }
-
-    // }
-    // getUser();
-    // console.log("***** App() - useEffect([]) - user: ", user)
-    
-    
-
-  }, []);
-
   
   return (
     <AuthProvider>

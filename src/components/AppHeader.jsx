@@ -1,9 +1,8 @@
 import { Add, Home } from '@mui/icons-material';
-import { AppBar, Button, Link, Toolbar, Typography } from '@mui/material';
+import { AppBar, Button, Toolbar, Typography } from '@mui/material';
 import { usePopupState } from 'material-ui-popup-state/hooks';
 
 import { NewListDialog } from './NewListDialog.jsx';
-import LogoutButton from './user/utils/LogoutButton.jsx';
 import LogoutSet from './user/LogoutSet.jsx';
 import { useNavigate } from 'react-router-dom';
 
@@ -40,17 +39,8 @@ export function AppHeader({ handleListUpdated, handleLogout, user }) {
             Add List
           </Button>
 
-
-
-          {/* <Button
-            startIcon={<Person />}
-            color="inherit"
-            sx={{ mr: 1 }}
-          >
-            {user.username}
-          </Button>
-          <LogoutButton onClick={handleLogout} /> */}
           <LogoutSet user={user} handleLogout={handleLogout} />
+          
         </Toolbar>
       </AppBar>
     </>
