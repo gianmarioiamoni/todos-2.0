@@ -25,22 +25,20 @@ export async function loginUser(credentials) {
 async function logout(id) {
     try {
         const response = await axios.post(serverUrl + '/logout', { withCredentials: true });
-        const resetUserRes = await axios.post(serverUrl + '/resetUser', { id: id });
+        // await axios.post(serverUrl + '/resetUser', { id: id });
+
+        // console.log("userServices.js - logout() - id: ", id)
 
         return response.data;
 
     } catch (err) { console.log(err) }
 }
 
-export const logoutUser = async (user, setUser) => {
+export const logoutUser = async (user) => {
+    console.log("userServices.js - logoutUser() - user: ", user)
     try {
-        let response;
-        if (user._id != null) {
-            response = await logout(user._id);
-        } else {
-            response = await logout(user.id);
-        }
-        return response;
+        const response = await axios.post(serverUrl + '/logout', { withCredentials: true });
+        return response.data;
     } catch (error) {
         console.error('Error during logout:', error);
     }
