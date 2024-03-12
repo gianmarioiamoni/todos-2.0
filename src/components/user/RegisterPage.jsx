@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 
 import { Box, Button, TextField, Typography } from '@mui/material';
 
 import { registerUser } from "../../services/userServices"
-
-import SocialsRegistrationBox from './utils/SocialsRegistrationBox';
 
 import OutlinedAlert from '../utils/OutlinedAlert';
 
@@ -15,7 +13,7 @@ import { useAuth } from '../../hooks/useAuth';
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
-export default function RegisterPage({ setUser }) {
+export default function RegisterPage() {
 
     const [isAlert, setIsAlert] = useState(false);
     const [alertData, setAlertData] = useState({ severity: "error", message: "Please login" });
@@ -57,16 +55,6 @@ export default function RegisterPage({ setUser }) {
 
         } catch (error) {
             console.error('Error during registration:', error);
-        }
-    };
-
-    const handleGoogleRegister = async () => {
-        try {
-            console.log("RegisterPage() - handleGoogleRegister() - serverUrl = ", serverUrl)
-            // Redirect the user to Google authentication URL
-            window.location.href = `${serverUrl}/auth/google`;
-        } catch (error) {
-            console.error('Error during Google registration:', error);
         }
     };
 
@@ -115,8 +103,6 @@ export default function RegisterPage({ setUser }) {
                 Do you already have an account? <Link to="/login">Login</Link>
             </Typography>
         
-            <SocialsRegistrationBox onClickGoogle={handleGoogleRegister} />
-
         </Box>
     );
 };
