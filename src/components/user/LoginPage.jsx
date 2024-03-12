@@ -4,10 +4,14 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Box, Button, TextField, Typography } from '@mui/material';
 
 import OutlinedAlert from '../utils/OutlinedAlert';
+import SocialsRegistrationBox from './utils/SocialsRegistrationBox';
 
 import loginImage from '../../assets/images/background-1.jpg'; 
 import { loginUser } from '../../services/userServices';
 import { useAuth } from '../../hooks/useAuth';
+import { ConstructionOutlined } from '@mui/icons-material';
+
+import { jwtDecode } from "jwt-decode";
 
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
@@ -29,6 +33,46 @@ export default function LoginPage() {
     const [isAlert, setIsAlert] = useState(false);
     const [alertData, setAlertData] = useState({ severity: "error", message: "Please login" });
 
+    const handleCallbackResponse = async (response) => {
+        console.log("Encoded JWT ID token = ", response.credential);
+
+        try {
+
+            const userObj = jwtDecode(response.credential);
+            console.log("userObj = ", userObj);
+
+            await login(
+                {
+                    username: userObj.name,
+                    email: userObj.email,
+                    googleId: userObj.sub
+                });
+            
+        } catch (err) {console.log(err)}
+
+    }
+
+    useEffect(() => {
+        /* global google */
+        google.accounts.id.initialize({
+            client_id: "727893567676-5siepl3625cd0olu091qruar4mnb472f.apps.googleusercontent.com",
+            callback: handleCallbackResponse
+        });
+
+        google.accounts.id.renderButton(
+            document.getElementById("googleSignInDiv"),
+            {
+                theme: "outline",
+                size: "large",
+                locale: "en_EN",
+                width: "250px",
+                shape: "circle"
+            }
+        );
+
+        google.accounts.id.prompt();
+    }, [])
+
     
     function showAlert(severity, message) {
         setAlertData({ severity: severity, message: message });
@@ -42,18 +86,6 @@ export default function LoginPage() {
         });
     };
 
-    // MOCKUP
-    const handleLogin = async (e) => {
-        e.preventDefault();
-        // Here you would usually send a request to your backend to authenticate the user
-        // For the sake of this example, we're using a mock authentication
-        if (username === "user" && password === "password") {
-            // Replace with actual authentication logic
-            await login({ username });
-        } else {
-            alert("Invalid username or password");
-        }
-    };
 
     const handleSubmit = async (e) => {
         console.log("===== LoginPage() - handleSubmit()")
@@ -78,6 +110,16 @@ export default function LoginPage() {
 
         } catch (error) {
             console.error('Error during login:', error);
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        try {
+            console.log("LoginPage() - handleGoogleLogin() - serverUrl = ", serverUrl)
+            // Redirect the user to Google authentication URL
+            window.location.href = `${serverUrl}/auth/google`;
+        } catch (error) {
+            console.error('Error during Google login:', error);
         }
     };
 
@@ -115,6 +157,14 @@ export default function LoginPage() {
             <Typography variant="body1">
                 Don't have an account? <Link to="/register">Registration</Link>
             </Typography>
+
+            {/* <SocialsRegistrationBox onClickGoogle={handleGoogleLogin} /> */}
+            
+            <div
+                id="googleSignInDiv"
+                style={{ marginTop: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+
+            </div>
         </Box>
     );
 };

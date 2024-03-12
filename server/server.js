@@ -14,7 +14,8 @@ import cookieParser from 'cookie-parser';
 // Passport.js
 import passport from 'passport';
 import LocalStrategy from 'passport-local';
-import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+// import { Strategy as GoogleStrategy } from 'passport-google-oauth20';
+import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
 
 import session from "express-session";
 import MongoStore from 'connect-mongo'; // use MongoDB to store sessions
@@ -52,6 +53,7 @@ app.use(cookieParser()); // read cookies (needed for auth)
 const corsOptions = {
     origin: 'http://localhost:5173',
     credentials: true,
+    methods: "GET,POST,PUT,DELETE",
     optionsSuccessStatus: 200,
 };
 
@@ -73,7 +75,7 @@ store.on("error", function (err) {
 // session config
 const sessionConfig = {
     store: store, // It uses Mongo to store session information
-    // name: "session", // override default session name, for security reasons
+    name: "session", // override default session name, for security reasons
     // secret: process.env.SECRET,
     secret: "THISISMYSECRET",
     resave: false,
@@ -91,6 +93,14 @@ const sessionConfig = {
     }
 };
 
+// app.use(
+//     cookieSession({
+//         name: "session",
+//         keys: ["cyberwolve"],
+//         maxAge: 24 * 60 * 60 * 100,
+//     })
+// );
+
 app.use(session(sessionConfig));
 
 // Passport initialization: on every route call
@@ -102,32 +112,53 @@ app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 
 passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    clientID: "727893567676-5siepl3625cd0olu091qruar4mnb472f.apps.googleusercontent.com",
+    clientSecret: "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",
+    // callbackURL: "http://yourdomain:3000/auth/google/callback",
     callbackURL: cbUrl,
-    // callbackURL: "http://localhost:5173/auth/google/callback",
-    userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
+    passReqToCallback: true
 },
-    async function (accessToken, refreshToken, profile, done) {
-        try {
-            console.log("cbUrl = ", cbUrl)
-            User.findOrCreate(
-                { username: profile.displayName },
-                {
-                    username: profile.displayName,
-                    email: profile.emails[0].value,
-                    isCurrentUser: true
-                    // googleId: profile.id
-                },
-                function (err, user) {
-                    return done(err, user);
-                }
-            );
-            await User.updateOne({ username: profile.displayName }, { isCurrentUser: true })
-        } catch (err) { console.log(err) }
-
+    function (request, accessToken, refreshToken, profile, done) {
+        User.findOrCreate(
+            { googleId: profile.id },
+            {
+                username: profile.displayName,
+                email: profile.emails[0].value,
+                isCurrentUser: true
+                // googleId: profile.id
+            },
+            function (err, user) {
+                return done(err, user);
+            }
+        );
     }
 ));
+
+// passport.use(new GoogleStrategy({
+//     // clientID: process.env.GOOGLE_CLIENT_ID,
+//     clientID: "727893567676-5siepl3625cd0olu091qruar4mnb472f.apps.googleusercontent.com",
+//     // clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+//     clientSecret: "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",
+//     // callbackURL: "http://localhost:5173/auth/google/callback",
+//     callbackURL: cbUrl 
+// },
+//     function (accessToken, refreshToken, profile, cb) {
+//         User.findOrCreate(
+//             { username: profile.displayName },
+//             {
+//                 username: profile.displayName,
+//                 email: profile.emails[0].value,
+//                 isCurrentUser: true
+//                 // googleId: profile.id
+//             },
+
+//             function (err, user) {
+//                 return cb(err, user);
+//             }
+//         );
+//     }
+// ));
+
 
 //
 // SERIALIZE USER / DESERIALIZE USER

@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-import { Box, Button, TextField, Typography, Grid } from '@mui/material';
-import { Google, Apple, LinkedIn } from '@mui/icons-material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 
 import { registerUser } from "../../services/userServices"
 
@@ -17,7 +16,6 @@ import { useAuth } from '../../hooks/useAuth';
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 export default function RegisterPage({ setUser }) {
-    const navigate = useNavigate();
 
     const [isAlert, setIsAlert] = useState(false);
     const [alertData, setAlertData] = useState({ severity: "error", message: "Please login" });
@@ -50,11 +48,9 @@ export default function RegisterPage({ setUser }) {
             const resObj = await registerUser(userData);
             if (!resObj.success) {
                 showAlert("error", resObj.message);
-                // navigate("/register")
-                // setUser(null);
             } else {
-                // setUser(resObj.user)
                 setUserData(resObj.user);
+                
                 // useAuth custom hook
                 await login(resObj.user);
             }
@@ -66,6 +62,7 @@ export default function RegisterPage({ setUser }) {
 
     const handleGoogleRegister = async () => {
         try {
+            console.log("RegisterPage() - handleGoogleRegister() - serverUrl = ", serverUrl)
             // Redirect the user to Google authentication URL
             window.location.href = `${serverUrl}/auth/google`;
         } catch (error) {

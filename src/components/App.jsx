@@ -1,17 +1,14 @@
 // import { BrowserRouter as Route, Routes } from 'react-router-dom';
-import { useState, useEffect } from 'react';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Route, Routes } from 'react-router-dom';
 import LoginPage from './user/LoginPage';
 import RegisterPage from './user/RegisterPage';
 import Homepage from './Homepage';
 import Dashboard from './Dashboard';
 import NotFoundPage from './user/NotFoundPage'
 
-import { getUserInfo } from '../services/userServices';
-
 import { ProtectedRoute } from './user/ProtectedRoute';
 import { AuthProvider } from '../hooks/useAuth';
-// import { useAuth } from '../hooks/useAuth.jsx';
 
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
@@ -25,7 +22,11 @@ export default function App() {
   // const [user, setUser] = useState(null);
   // const { user } = useAuth();
 
+  
+
   useEffect(() => {
+    
+
     // const getUser = async () => {
     
     //   // const response = await axios.get("http://localhost:5000/userinfo", { withCredentials: true })
@@ -41,9 +42,11 @@ export default function App() {
     //     setUser(null);
     //   }
 
-    // } 
+    // }
     // getUser();
     // console.log("***** App() - useEffect([]) - user: ", user)
+    
+    
 
   }, []);
 
