@@ -11,6 +11,9 @@ import registerImage from '../../assets/images/background-3.jpg';
 
 import { useAuth } from '../../hooks/useAuth';
 
+
+// import.meta.env.
+
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 export default function RegisterPage() {
@@ -44,6 +47,7 @@ export default function RegisterPage() {
         e.preventDefault();
         try {
             const resObj = await registerUser(userData);
+
             if (!resObj.success) {
                 showAlert("error", resObj.message);
             } else {

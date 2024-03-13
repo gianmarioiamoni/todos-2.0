@@ -22,20 +22,8 @@ export async function loginUser(credentials) {
     } catch (err) {console.log(err)}
 }
 
-async function logout(id) {
-    try {
-        const response = await axios.post(serverUrl + '/logout', { withCredentials: true });
-        // await axios.post(serverUrl + '/resetUser', { id: id });
-
-        // console.log("userServices.js - logout() - id: ", id)
-
-        return response.data;
-
-    } catch (err) { console.log(err) }
-}
 
 export const logoutUser = async (user) => {
-    console.log("userServices.js - logoutUser() - user: ", user)
     try {
         const response = await axios.post(serverUrl + '/logout', { withCredentials: true });
         return response.data;

@@ -41,12 +41,14 @@ export default function LoginPage() {
             const userObj = jwtDecode(response.credential);
             console.log("userObj = ", userObj);
 
+            // useAuth custom hook
             await login(
                 {
                     username: userObj.name,
                     email: userObj.email,
                     googleId: userObj.sub
-                });
+                }
+            );
             
         } catch (err) {console.log(err)}
 
@@ -113,15 +115,6 @@ export default function LoginPage() {
         }
     };
 
-    const handleGoogleLogin = async () => {
-        try {
-            console.log("LoginPage() - handleGoogleLogin() - serverUrl = ", serverUrl)
-            // Redirect the user to Google authentication URL
-            window.location.href = `${serverUrl}/auth/google`;
-        } catch (error) {
-            console.error('Error during Google login:', error);
-        }
-    };
 
     return (
         <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>

@@ -1,11 +1,12 @@
 import express from "express";
-const router = express.Router();
+
+import { isLoggedIn } from "../middleware/user.js";
 
 import catchAsync from "../utils/catchAsync.js";
-import passport from "passport";
 
 import * as listItems from "../controllers/listItems.js" 
 
+const router = express.Router();
 
 router.route("/listItems/:id")
     .delete(catchAsync(listItems.deleteListItem))
