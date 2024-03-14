@@ -9,7 +9,6 @@ import SocialsRegistrationBox from './utils/SocialsRegistrationBox';
 import loginImage from '../../assets/images/background-1.jpg'; 
 import { loginUser } from '../../services/userServices';
 import { useAuth } from '../../hooks/useAuth';
-import { ConstructionOutlined } from '@mui/icons-material';
 
 import { jwtDecode } from "jwt-decode";
 
@@ -34,12 +33,10 @@ export default function LoginPage() {
     const [alertData, setAlertData] = useState({ severity: "error", message: "Please login" });
 
     const handleCallbackResponse = async (response) => {
-        console.log("Encoded JWT ID token = ", response.credential);
 
         try {
 
             const userObj = jwtDecode(response.credential);
-            console.log("userObj = ", userObj);
 
             // useAuth custom hook
             await login(
@@ -90,23 +87,18 @@ export default function LoginPage() {
 
 
     const handleSubmit = async (e) => {
-        console.log("===== LoginPage() - handleSubmit()")
         e.preventDefault();
         try {
             const resObj = await loginUser(credentials);
-            console.log("===== LoginPage() - handleSubmit() - resObj: ", resObj)
 
             if (!resObj.success) {
-                console.log("===== LoginPage() - handleSubmit() - !resObj.success ")
                 showAlert("error", resObj.message);
             } else {
                 showAlert("success", resObj.message);
 
                 // useAuth custom hook
                 await login(resObj.user);
-                console.log("===== LoginPage() - handleSubmit() - resObj.success ")
             }
-            console.log("===== LoginPage() - handleSubmit() - res.user = ", resObj.user)
             // setUser(resObj.user)
 
         } catch (error) {

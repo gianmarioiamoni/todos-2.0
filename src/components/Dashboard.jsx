@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { Box, CssBaseline } from '@mui/material';
 
 import { AppState } from '../providers/AppState.jsx';
+import { AllTodosListIdAppState } from '../providers/AllTodosListIdAppState.jsx';
 import { AllTodoLists } from './AllTodoLists.jsx';
 import { AppHeader } from './AppHeader.jsx';
 import { CurrentTodoList } from './CurrentTodoList.jsx';
@@ -19,9 +20,9 @@ export default function Dashboard() {
 
     const { user, logout } = useAuth();
 
-    useEffect(() => {
-        console.log("Dashboard() - useEffect([]) - user = ", user)
-    } , [])
+    // useEffect(() => {
+    //     console.log("Dashboard() - useEffect([]) - user = ", user)
+    // } , [])
 
     function handleListDelete() {
         setIsListDeleted(true);
@@ -45,24 +46,26 @@ export default function Dashboard() {
 
     return (
         <AppState>
-            <Box sx={{ display: 'flex' }}>
-                <CssBaseline />
-                <AppHeader
-                    handleListUpdated={handleListUpdated}
-                    // user={user}
-                    handleLogout={handleLogout} />
-                <AllTodoLists
-                    isListUpdated={isListUpdated}
-                    setIsListUpdated={setIsListUpdated}
-                    handleListDelete={handleListDelete}
-                     
-                />
-                <CurrentTodoList
-                    isListDeleted={isListDeleted}
-                    setIsListDeleted={setIsListDeleted}
-                    handleListUpdated={handleListUpdated}
-                />
-            </Box>
+            <AllTodosListIdAppState>
+                <Box sx={{ display: 'flex' }}>
+                    <CssBaseline />
+                    <AppHeader
+                        handleListUpdated={handleListUpdated}
+                        // user={user}
+                        handleLogout={handleLogout} />
+                    <AllTodoLists
+                        isListUpdated={isListUpdated}
+                        setIsListUpdated={setIsListUpdated}
+                        handleListDelete={handleListDelete}
+
+                    />
+                    <CurrentTodoList
+                        isListDeleted={isListDeleted}
+                        setIsListDeleted={setIsListDeleted}
+                        handleListUpdated={handleListUpdated}
+                    />
+                </Box>
+            </AllTodosListIdAppState>
         </AppState>
     );
 };

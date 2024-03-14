@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 
 import { useAppState } from '../providers/AppState.jsx';
+import { useAllTodosListIdAppState } from '../providers/AllTodosListIdAppState.jsx';
 
 import {
   newItem,
@@ -47,6 +48,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   const [data, setData] = useState({});
   // const [allTodosListId, setAllTodosListId] = useState();
+  const { allTodosListId, setAllTodosListId } = useAllTodosListIdAppState();
+
 
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
@@ -61,7 +64,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   const { user } = useAuth();
 
-  let allTodosListId;
+  // let allTodosListId;
 
 
   // USE EFFECTS
@@ -73,11 +76,11 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         const listId = await getAllTodosListId();
 
         // setAllTodosListId(listId);
-        allTodosListId = listId;
+        // allTodosListId = listId;
         setCurrentList(listId);
 
-        console.log("CurrentTodoList() - useEffect([]) - listId: ", listId)
-        console.log("CurrentTodoList() - useEffect([]) - allTodoslistId ", allTodosListId)
+        console.log("----- CurrentTodoList() - useEffect([]) - listId: ", listId)
+        console.log("----- CurrentTodoList() - useEffect([]) - allTodoslistId ", allTodosListId)
 
         const lists = await getAllLists(user);
 

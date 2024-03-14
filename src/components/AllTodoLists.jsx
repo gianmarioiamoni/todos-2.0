@@ -14,18 +14,25 @@ import { useState, useEffect } from 'react';
 import { AllTodosListItem } from './AllTodosListItem.jsx';
 
 import { useAppState } from '../providers/AppState.jsx';
+import { useAllTodosListIdAppState } from '../providers/AllTodosListIdAppState.jsx';
 import { getAllLists, getAllTodosListId, deleteList } from '../services/listServices.js';
 
 import { themeSelection } from "../common/themes";
 
 import { useAuth } from '../hooks/useAuth.jsx';
 
-let allTodosListId = "";
+// let allTodosListId = "";
+
+
+
+
 
 export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}) {
   const [data, setData] = useState([]); // add loading
+  
   const { currentList, setCurrentList } = useAppState();
-
+  const { allTodosListId, setAllTodosListId } = useAllTodosListIdAppState();
+  
   const { user } = useAuth();
   
   // USE EFFECTS
@@ -46,7 +53,9 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
         //   return newTodosList._id;
         // }
 
-        allTodosListId = listId;
+        // allTodosListId = listId;
+        console.log("AllTodosList() - useEffect([]) - listId: ", listId)
+        setAllTodosListId(listId);
         handleAllTodosList();
         return listId;
       })
@@ -66,6 +75,7 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
 
   }, [currentList, setCurrentList, isListUpdated]);
 
+
   function handleAllTodosList() {
     getAllLists(user)
       .then(data => {
@@ -82,7 +92,9 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
           // add list at the top of the array
           const newListArray = [list, ...filteredArray];
           console.log("AllTodoLists - handleAllTodosList() - newListArray: ", newListArray)
-
+          ///
+          setAllTodosListId(list.id);
+          ///
           setData(newListArray);
 
           if (!currentList) {
@@ -96,7 +108,15 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
           if (!currentList) {
             setCurrentList(data[0]?.id);
           }
-        } 
+
+          ///
+          setAllTodosListId(data[0]?.id);
+          ///
+        }
+        
+        ///
+        (data[0]?.id);
+        ///
 
         return data;
       })
@@ -126,7 +146,6 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
       <Toolbar />
       <List>
         {data != null && data.map(({ name, id, icon }) => {
-          console.log("AllTodoLists() - id: ", id)
           const Icon = Icons[icon];
           if (!isAllTodosList(id)) {
             return (

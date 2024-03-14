@@ -77,7 +77,9 @@ export async function addList(req, res) {
 
 export async function getAllTodosList(req, res) {
     const { userId } = req.query;
+    console.log("lists.js - getAllTodosList() - userId: ", userId)
     const allTodosList = await List.findOne({ $and: [{ userId: userId }, { isAllTodos: true }] }).exec();
+    console.log("lists.js - getAllTodosList() - allTodosList: ", allTodosList)
     res.send(allTodosList);
 }
 

@@ -7,7 +7,12 @@ const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_S
 
 export async function getAllTodosListItems(user) {
     try {
-        const resItems = await axios.get(serverUrl + `/listItems`, {userId: user._id});
+        const resItems = await axios.get(serverUrl + `/listItems`,
+            {
+                params:
+                    { userId: user._id }
+            }
+        );
         const resList = await axios.get(serverUrl + `/lists/allTodosList`, { withCredentials: false });
         // format dates
         // const newResItems = resItems.data.map(item => ({ ...item, date: date && dayjs(date) }));

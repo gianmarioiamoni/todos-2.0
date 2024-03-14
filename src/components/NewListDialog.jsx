@@ -28,8 +28,6 @@ export function NewListDialog({ dialogState, handleListUpdated }) {
 
   const { user } = useAuth();
 
-  console.log("NewListDialog - user: ", user)
-
   useEffect(() => {
     setFilteredIcons(
       Object.entries(Icons)

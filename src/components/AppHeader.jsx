@@ -15,8 +15,6 @@ export function AppHeader({ handleListUpdated, handleLogout }) {
 
   const { user } = useAuth();
 
-  console.log("AppHeader - user = ", user)
-
   return (
     <>
       <NewListDialog dialogState={dialogState} handleListUpdated={handleListUpdated} />
