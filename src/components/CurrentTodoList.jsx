@@ -39,12 +39,14 @@ import CurrentListNameAndIcon from './list/CurrentListNameAndIcon.jsx';
 
 import { sortItems } from '../common/priorities.jsx';
 
+import { useAuth } from '../hooks/useAuth.jsx';
+
 
 export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpdated }) {
   const { currentList, setCurrentList } = useAppState();
 
   const [data, setData] = useState({});
-  const [allTodosListId, setAllTodosListId] = useState();
+  // const [allTodosListId, setAllTodosListId] = useState();
 
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
@@ -57,6 +59,10 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   const [selectedDate, setSelectedDate] = useState(dayjs(new Date()));
 
+  const { user } = useAuth();
+
+  let allTodosListId;
+
 
   // USE EFFECTS
 
@@ -66,12 +72,16 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       try {
         const listId = await getAllTodosListId();
 
-        setAllTodosListId(listId);
+        // setAllTodosListId(listId);
+        allTodosListId = listId;
         setCurrentList(listId);
 
-        const lists = await getAllLists();
+        console.log("CurrentTodoList() - useEffect([]) - listId: ", listId)
+        console.log("CurrentTodoList() - useEffect([]) - allTodoslistId ", allTodosListId)
 
-        const l = await getAllTodosListItems();
+        const lists = await getAllLists(user);
+
+        const l = await getAllTodosListItems(user);
         setData(l);
 
         l.items.map(item => setIsEdit(prev => [...prev, { id: item.id, priorityEdit: false, dateEdit: false }]))
@@ -87,11 +97,11 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     if (isListDeleted) {
 
       async function setListDeleted() {
-        const lists = await getAllLists();
+        const lists = await getAllLists(user);
         setCurrentList(lists[0]?.id);
 
         if (currentList != null && currentList === allTodosListId) {
-          const newList = await getAllTodosListItems();
+          const newList = await getAllTodosListItems(user);
           setData(newList);
         } else {
           const newList = await getListItems(lists[0]?.id);
@@ -108,7 +118,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     if (currentList != null) {
       async function setCurrentListChange() {
         if (currentList != null && currentList === allTodosListId) {
-          const listItems = await getAllTodosListItems();
+          const listItems = await getAllTodosListItems(user);
           setData(listItems);
         } else {
           const listItems = await getListItems(currentList);
@@ -117,6 +127,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       }
       setCurrentListChange();
     }
+    console.log("§§§§ CurrentTodoList() - useEffect([currentList]) - currentList: ", currentList)
   }, [currentList]);
 
   // data?.name
@@ -158,7 +169,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   }
 
   function handleAddItem() {
-    const item = newItem(newItemText, currentList, newItemPriority, selectedDate)
+    const item = newItem(newItemText, currentList, user._id, newItemPriority, selectedDate)
       .then((newTodo) => {
         const itemsArray = [...data.items];
         if (itemsArray != null) {
@@ -298,7 +309,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         const newList = await getListItems(currentList);
         setData(newList);
       } else {
-        const newList = await getAllTodosListItems();
+        const newList = await getAllTodosListItems(user);
         setData(newList);
       }
     }
@@ -424,7 +435,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       return handleAddItem();
                     }}
                   >
-                    {/* New Item name and send button */}
+                    {/* New Item name and submit button */}
                     <NewItemNameSubmit 
                       setNewItemText={setNewItemText}
                       newItemText={newItemText}

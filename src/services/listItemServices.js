@@ -5,9 +5,9 @@ import { sortItems } from "../common/priorities";
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 
-export async function getAllTodosListItems() {
+export async function getAllTodosListItems(user) {
     try {
-        const resItems = await axios.get(serverUrl + `/listItems`, {withCredentials: false});
+        const resItems = await axios.get(serverUrl + `/listItems`, {userId: user._id});
         const resList = await axios.get(serverUrl + `/lists/allTodosList`, { withCredentials: false });
         // format dates
         // const newResItems = resItems.data.map(item => ({ ...item, date: date && dayjs(date) }));
@@ -35,13 +35,14 @@ export async function getListItems(listId) {
     } catch { (err) => console.log(err) }
 }
 
-export async function newItem(newItemName, listId, priority = 3, date) {
+export async function newItem(newItemName, listId, userId, priority = 3, date) {
     try {
         const payload = {
             name: newItemName,
             checked: false,
             priority: priority,
             listId: listId,
+            userId: userId,
             date: date
         };
         const res = await axios.post(serverUrl + "/listItems", payload);

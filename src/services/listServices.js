@@ -3,11 +3,19 @@ import axios from 'axios';
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
 
-export async function getAllLists() {
+export async function getAllLists(user) {
     try {
-        const orderedListsArray = await axios.get(serverUrl + '/lists', { withCredentials: false });
-
+        const orderedListsArray = await axios.get(serverUrl + '/lists',
+            {
+                params: {
+                    userId: user._id
+                }
+            }
+        );
+        console.log("listServices.js - getAllLists() - orderedListsArray: ", orderedListsArray)
+        
         return orderedListsArray.data;
+        
     } catch (err) { console.log(err) }
 }
 
@@ -23,15 +31,16 @@ export async function updateList(id, name) {
     } catch (err) { console.log(err) }
 }
 
-export async function newList(name, icon, isAllTodos=false) {
-    const newListData = {
-        name: name,
-        icon: icon,
-        id: crypto.randomUUID(),
+export async function newList(name, icon, userId, isAllTodos=false) {
+    // const newListData = {
+    //     name: name,
+    //     icon: icon,
+    //     userId,
+    //     id: crypto.randomUUID(),
 
-    };
+    // };
     try {
-        const payload = { name: name, icon: icon, isAllTodos: isAllTodos};
+        const payload = { name: name, icon: icon, userId: userId, isAllTodos: isAllTodos};
         const res = await axios.post(serverUrl + "/lists", payload);
 
         // id field is added to db by the server

@@ -11,7 +11,8 @@ const listItemSchema = new Schema({
         max: 3
     },
     date: Date,
-    listId: String
+    listId: String,
+    userId: String
     // listId: {
     //     type: Schema.Types.ObjectId,
     //     ref: "List"

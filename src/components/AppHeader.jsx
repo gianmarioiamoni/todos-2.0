@@ -6,10 +6,16 @@ import { NewListDialog } from './NewListDialog.jsx';
 import LogoutSet from './user/LogoutSet.jsx';
 import { useNavigate } from 'react-router-dom';
 
+import { useAuth } from '../hooks/useAuth.jsx';
 
-export function AppHeader({ handleListUpdated, handleLogout, user }) {
+
+export function AppHeader({ handleListUpdated, handleLogout }) {
   const dialogState = usePopupState({ variant: 'dialog', popupId: 'new-list' });
   const navigate = useNavigate();
+
+  const { user } = useAuth();
+
+  console.log("AppHeader - user = ", user)
 
   return (
     <>

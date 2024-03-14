@@ -1,5 +1,4 @@
 import * as Icons from '@mui/icons-material';
-import { DeleteOutlineRounded } from '@mui/icons-material';
 import ClearIcon from '@mui/icons-material/Clear';
 import {
   Drawer,
@@ -14,17 +13,20 @@ import { useState, useEffect } from 'react';
 
 import { AllTodosListItem } from './AllTodosListItem.jsx';
 
-// import { useTodoLists } from '../hooks/useTodoLists.js';
 import { useAppState } from '../providers/AppState.jsx';
-import { getAllLists, getAllTodosListId, newList, deleteList } from '../services/listServices.js';
+import { getAllLists, getAllTodosListId, deleteList } from '../services/listServices.js';
 
 import { themeSelection } from "../common/themes";
+
+import { useAuth } from '../hooks/useAuth.jsx';
 
 let allTodosListId = "";
 
 export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}) {
   const [data, setData] = useState([]); // add loading
   const { currentList, setCurrentList } = useAppState();
+
+  const { user } = useAuth();
   
   // USE EFFECTS
 
@@ -36,13 +38,13 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
 
     getAllTodosListId()
       .then((listId) => {
-        // getAllTodosListId() returns -1 if an "ALL TODOs" list is not in the db
-        if (listId === -1) {
-          // add a "ALL TODOs" list to the db
-          const newTodosList = newList("NEW TODOs", "List", true);
-          allTodosListId = newTodosList._id;
-          return newTodosList._id;
-        }
+        // // getAllTodosListId() returns -1 if an "ALL TODOs" list is not in the db
+        // if (listId === -1) {
+        //   // add a "ALL TODOs" list to the db
+        //   const newTodosList = newList("NEW TODOs", "List", user._id, true);
+        //   allTodosListId = newTodosList._id;
+        //   return newTodosList._id;
+        // }
 
         allTodosListId = listId;
         handleAllTodosList();
@@ -65,10 +67,11 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
   }, [currentList, setCurrentList, isListUpdated]);
 
   function handleAllTodosList() {
-    getAllLists()
+    getAllLists(user)
       .then(data => {
         // check if "ALL TODOs" list is the first in the list
-        if (data[0]?._id != allTodosListId) {
+        // if (data[0]?._id != allTodosListId) {
+        if (data.length > 1 && !data[0]?.isAllTodos) {
           // move "ALL TODOs" list at the top of the array
           const oldListsArray = [...data];
           const idx = oldListsArray.findIndex((l) => l.id === allTodosListId);
@@ -78,6 +81,7 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
           const filteredArray = oldListsArray.filter((l) => l.id !== allTodosListId);
           // add list at the top of the array
           const newListArray = [list, ...filteredArray];
+          console.log("AllTodoLists - handleAllTodosList() - newListArray: ", newListArray)
 
           setData(newListArray);
 
@@ -86,6 +90,7 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
           }
         } else {
           // "ALL TODOs" list is already at the top
+          console.log("AllTodoLists - handleAllTodosList() - data: ", data)
           setData(data);
 
           if (!currentList) {
@@ -100,7 +105,6 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
 
   function isAllTodosList(listId) {
     return (listId === allTodosListId); 
-      
   }
 
   return (
@@ -122,6 +126,7 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
       <Toolbar />
       <List>
         {data != null && data.map(({ name, id, icon }) => {
+          console.log("AllTodoLists() - id: ", id)
           const Icon = Icons[icon];
           if (!isAllTodosList(id)) {
             return (
@@ -172,6 +177,7 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
               </ListItem>
             );
           } else {
+            console.log("AllTodoLists() - AllTodos - id: ", id)
             return <AllTodosListItem
               key={id}
               id={id}

@@ -16,6 +16,8 @@ import { useEffect, useState } from 'react';
 
 import { newList } from '../services/listServices.js';
 
+import { useAuth } from '../hooks/useAuth.jsx';
+
 
 export function NewListDialog({ dialogState, handleListUpdated }) {
   const [state, setState] = useState('');
@@ -23,6 +25,10 @@ export function NewListDialog({ dialogState, handleListUpdated }) {
   const [icon, setIcon] = useState('');
 
   const [filteredIcons, setFilteredIcons] = useState(Object.entries(Icons));
+
+  const { user } = useAuth();
+
+  console.log("NewListDialog - user: ", user)
 
   useEffect(() => {
     setFilteredIcons(
@@ -100,7 +106,7 @@ export function NewListDialog({ dialogState, handleListUpdated }) {
         <Button onClick={dialogState.close}>Cancel</Button>
         <Button
           onClick={() => {
-            void newList(state, icon);
+            void newList(state, icon, user._id);
             handleListUpdated();
             dialogState.close();
           }}

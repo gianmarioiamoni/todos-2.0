@@ -5,6 +5,7 @@ const listSchema = new Schema({
     name: String,
     icon: String,
     id: String,
+    userId: String,
     isAllTodos: Boolean
 });
 

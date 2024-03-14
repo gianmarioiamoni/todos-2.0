@@ -4,7 +4,6 @@ import bodyParser from "body-parser";
 import mongoose from "mongoose";
 
 
-import path from 'path';
 import { fileURLToPath } from 'url';
 
 import 'dotenv/config';
@@ -106,7 +105,6 @@ passport.use(new LocalStrategy(User.authenticate()));
 // Passport adds the authenticated user to the end of "req.session.passport" object
 // This allows the authenticated user to be attached to a unique session
 passport.serializeUser(function (user, cb) {
-    console.log("passport.serializeUser - user = ", user)
     process.nextTick(function () {
         return cb(null, {
             id: user._id,
@@ -119,7 +117,6 @@ passport.serializeUser(function (user, cb) {
 // req.user will contain the authenticated user object for the session
 //It can be used in the routes
 passport.deserializeUser(function (user, cb) {
-    console.log("passport.deserializeUser - user = ", user)
     process.nextTick(function () {
         return cb(null, user);
     });

@@ -14,7 +14,6 @@ import { useAuth } from '../hooks/useAuth.jsx';
 
 
 export default function Dashboard() {
-    const navigate = useNavigate();
     const [isListDeleted, setIsListDeleted] = useState(false);
     const [isListUpdated, setIsListUpdated] = useState(false);
 
@@ -50,7 +49,7 @@ export default function Dashboard() {
                 <CssBaseline />
                 <AppHeader
                     handleListUpdated={handleListUpdated}
-                    user={user}
+                    // user={user}
                     handleLogout={handleLogout} />
                 <AllTodoLists
                     isListUpdated={isListUpdated}

@@ -12,7 +12,8 @@ export async function updateListItem(req, res) {
 }
 
 export async function getListItems(req, res) {
-    const data = await ListItem.find({}).exec();
+    const { userId } = req.query;
+    const data = await ListItem.find({ userId: userId}).exec();
     res.send(data);
 }
 

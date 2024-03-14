@@ -103,12 +103,11 @@ export default function LoginPage() {
                 showAlert("success", resObj.message);
 
                 // useAuth custom hook
-                await login(credentials);
+                await login(resObj.user);
                 console.log("===== LoginPage() - handleSubmit() - resObj.success ")
             }
             console.log("===== LoginPage() - handleSubmit() - res.user = ", resObj.user)
             // setUser(resObj.user)
-            // navigate(resObj.navigate)
 
         } catch (error) {
             console.error('Error during login:', error);
