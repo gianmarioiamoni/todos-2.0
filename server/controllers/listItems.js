@@ -18,13 +18,14 @@ export async function getListItems(req, res) {
 }
 
 export async function addListItem(req, res) {
-    const { name, checked, priority, listId, date } = req.body;
+    const { name, checked, priority, listId, userId, date } = req.body;
     const savedData = await new ListItem({
         name: name,
         checked: checked,
         priority: priority,
         date: date,
-        listId: listId
+        listId: listId,
+        userId: userId
     }).save()
 
     const newStrId = savedData._id.valueOf();

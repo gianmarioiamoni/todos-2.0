@@ -1,9 +1,15 @@
 import { ListItem, ListItemButton, ListItemText } from "@mui/material";
 import * as Icons from '@mui/icons-material';
 
-import { themeSelection,  } from "../common/themes";
+import { themeSelection, } from "../common/themes";
 
-export function AllTodosListItem({ id, name, setCurrentList, currentList }) {
+import { useAppState } from '../providers/AppState.jsx';
+
+
+export function AllTodosListItem({ id, name }) {
+
+    const { currentList, setCurrentList } = useAppState();
+
     function isSelected() {
         return currentList === id;
     }

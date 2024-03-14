@@ -21,11 +21,6 @@ import { themeSelection } from "../common/themes";
 
 import { useAuth } from '../hooks/useAuth.jsx';
 
-// let allTodosListId = "";
-
-
-
-
 
 export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}) {
   const [data, setData] = useState([]); // add loading
@@ -201,8 +196,7 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
               key={id}
               id={id}
               name={name}
-              setCurrentList={setCurrentList}
-              currentList={currentList} />
+            />
           }
         })}
       </List>

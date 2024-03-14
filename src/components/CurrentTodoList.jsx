@@ -64,9 +64,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   const { user } = useAuth();
 
-  // let allTodosListId;
-
-
   // USE EFFECTS
 
   // first render
@@ -75,12 +72,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       try {
         const listId = await getAllTodosListId();
 
-        // setAllTodosListId(listId);
-        // allTodosListId = listId;
         setCurrentList(listId);
-
-        console.log("----- CurrentTodoList() - useEffect([]) - listId: ", listId)
-        console.log("----- CurrentTodoList() - useEffect([]) - allTodoslistId ", allTodosListId)
 
         const lists = await getAllLists(user);
 
@@ -130,7 +122,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
       }
       setCurrentListChange();
     }
-    console.log("§§§§ CurrentTodoList() - useEffect([currentList]) - currentList: ", currentList)
   }, [currentList]);
 
   // data?.name
@@ -263,6 +254,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   }
 
+  // UTILITIES
+
   function getEditId(id) {
     return isEdit.findIndex(i => i.id === id);
   }
@@ -282,6 +275,10 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
     const newData = { ...data };
     setData(newData)
+  }
+
+  function isCurrentListEmpty() {
+    return data.items.length === 0;
   }
 
   // dates
@@ -331,14 +328,19 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
               onListUpdate={onListUpdate}
               icon={data.icon}
             />
-
             {/* Sorting and filtering */}
-            <SortingAndFilteringTool
-              sortSelection={sortSelection}
-              onChangeSort={onChangeSort}
-              isCheckedTodayItems={isCheckedTodayItems || false}
-              onChangeTodayItems={onChangeTodayItems}
-            />
+            {!isCurrentListEmpty() ? (
+              <SortingAndFilteringTool
+                sortSelection={sortSelection}
+                onChangeSort={onChangeSort}
+                isCheckedTodayItems={isCheckedTodayItems || false}
+                onChangeTodayItems={onChangeTodayItems}
+              />
+            ) : (
+              <Typography>
+                The selected list has no items.
+              </Typography>
+            )}
 
             <Divider />
 
