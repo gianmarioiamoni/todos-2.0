@@ -47,15 +47,15 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const { currentList, setCurrentList } = useAppState();
 
   const [data, setData] = useState({});
-  // const [allTodosListId, setAllTodosListId] = useState();
+  
   const { allTodosListId, setAllTodosListId } = useAllTodosListIdAppState();
-
 
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
   const [originalListItems, setOriginalListItems] = useState({});
   const [newItemPriority, setNewItemPriority] = useState(3);
   const [isEdit, setIsEdit] = useState([]);
+  const [isListEmpty, setIsListEmpty] = useState();
 
   const [sortSelection, setSortSelection] = useState("Priority+Date");
   const [isCheckedTodayItems, setIsCheckedTodayItems] = useState(false);
@@ -77,6 +77,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         const lists = await getAllLists(user);
 
         const l = await getAllTodosListItems(user);
+        setIsListEmpty(l.items.length === 0);
+        console.log("CurrentTodoList() - useEffect([]) - l: ", l)
         setData(l);
 
         l.items.map(item => setIsEdit(prev => [...prev, { id: item.id, priorityEdit: false, dateEdit: false }]))
@@ -112,14 +114,16 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   useEffect(() => {
     if (currentList != null) {
       async function setCurrentListChange() {
+        let listItems;
         if (currentList != null && currentList === allTodosListId) {
-          const listItems = await getAllTodosListItems(user);
-          setData(listItems);
+          listItems = await getAllTodosListItems(user);
         } else {
-          const listItems = await getListItems(currentList);
-          setData(listItems);
+          listItems = await getListItems(currentList);
         }
+        setData(listItems);
+        setIsListEmpty(listItems.items.length === 0);
       }
+      
       setCurrentListChange();
     }
   }, [currentList]);
@@ -277,10 +281,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     setData(newData)
   }
 
-  function isCurrentListEmpty() {
-    return data.items.length === 0;
-  }
-
   // dates
   const handleDateChange = (date) => {
     setSelectedDate(date);
@@ -329,7 +329,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
               icon={data.icon}
             />
             {/* Sorting and filtering */}
-            {!isCurrentListEmpty() ? (
+            {!isListEmpty ? (
               <SortingAndFilteringTool
                 sortSelection={sortSelection}
                 onChangeSort={onChangeSort}

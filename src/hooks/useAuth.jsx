@@ -16,7 +16,13 @@ export const AuthProvider = ({ children }) => {
     // call this function when you want to authenticate the user
     // redirect to /dashboard after successful login
     const login = async (data) => {
-        setUser(data);
+        console.log("AuthProvider - data: ", data)
+        if (data.googleId != null) {
+            setUser((prev) => ({ _id: data.googleId, ...prev }));
+        } else {
+            setUser(data);
+        }
+        // setUser(data);
         navigate("/dashboard");
     };
 
