@@ -2,9 +2,13 @@ import { AppBar, Toolbar, Typography, Button, Container, Link } from '@mui/mater
 import AdbIcon from '@mui/icons-material/Adb';
 // import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 
-import LogoutSet from './user/LogoutSet';
+import LogoutSet from './user/utils/LogoutSet';
 
-export default function ResponsiveAppBar({ handleLogout, user }) {
+import { useAuth } from '../hooks/useAuth';
+
+export default function ResponsiveAppBar({ handleLogout }) {
+
+    const { user } = useAuth();
 
     
     return (
@@ -15,7 +19,7 @@ export default function ResponsiveAppBar({ handleLogout, user }) {
                         <AdbIcon sx={{ mr: 1 }} /> Todos 2.0
                     </Typography>
                     {user ? (
-                        <LogoutSet user={user} handleLogout={handleLogout} />
+                        <LogoutSet handleLogout={handleLogout} />
                     ) : (
                         <div>
                             <Button component={Link} href="/login" color="inherit" sx={{ mr: 1 }}>

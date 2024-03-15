@@ -12,7 +12,6 @@ export async function getAllLists(user) {
                 }
             }
         );
-        console.log("listServices.js - getAllLists() - orderedListsArray: ", orderedListsArray)
         
         return orderedListsArray.data;
         

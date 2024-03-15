@@ -11,7 +11,7 @@ import { useAuth } from '../hooks/useAuth';
 
 export default function Homepage() {
 
-    const { user,logout } = useAuth();
+    const { user, logout } = useAuth();
 
     // logout function
     const handleLogout = async () => {
@@ -26,7 +26,7 @@ export default function Homepage() {
     }
     return (
         <div style={{ backgroundImage: "url('/src/assets/images/background-4.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '100vh' }}>
-            <ResponsiveAppBar user={user} handleLogout={handleLogout} />
+            <ResponsiveAppBar handleLogout={handleLogout} />
             <Container maxWidth="md" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
                 <Typography variant="h3" sx={{ marginBottom: 4, color: themeSelection.palette.secondary.main, }}>
                     Welcome to Todos 2.0

@@ -1,9 +1,14 @@
 import { Button } from "@mui/material"
 import { Person } from "@mui/icons-material"
 
+import { useAuth } from "../../../hooks/useAuth"
+
 import LogoutButton from "./LogoutButton"
 
-export default function LogoutSet({ user, handleLogout }) {
+export default function LogoutSet({ handleLogout }) {
+    const { user } = useAuth();
+
+
     return (
         <div sx={{ display: 'inline-flex' }}>
             <Button

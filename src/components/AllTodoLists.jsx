@@ -40,16 +40,6 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
 
     getAllTodosListId()
       .then((listId) => {
-        // // getAllTodosListId() returns -1 if an "ALL TODOs" list is not in the db
-        // if (listId === -1) {
-        //   // add a "ALL TODOs" list to the db
-        //   const newTodosList = newList("NEW TODOs", "List", user._id, true);
-        //   allTodosListId = newTodosList._id;
-        //   return newTodosList._id;
-        // }
-
-        // allTodosListId = listId;
-        console.log("AllTodosList() - useEffect([]) - listId: ", listId)
         setAllTodosListId(listId);
         handleAllTodosList();
         return listId;
@@ -86,10 +76,8 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
           const filteredArray = oldListsArray.filter((l) => l.id !== allTodosListId);
           // add list at the top of the array
           const newListArray = [list, ...filteredArray];
-          console.log("AllTodoLists - handleAllTodosList() - newListArray: ", newListArray)
-          ///
+          
           setAllTodosListId(list.id);
-          ///
           setData(newListArray);
 
           if (!currentList) {
@@ -97,7 +85,6 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
           }
         } else {
           // "ALL TODOs" list is already at the top
-          console.log("AllTodoLists - handleAllTodosList() - data: ", data)
           setData(data);
 
           if (!currentList) {
@@ -191,7 +178,6 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
               </ListItem>
             );
           } else {
-            console.log("AllTodoLists() - AllTodos - id: ", id)
             return <AllTodosListItem
               key={id}
               id={id}

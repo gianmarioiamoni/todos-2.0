@@ -47,8 +47,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   const { currentList, setCurrentList } = useAppState();
 
   const [data, setData] = useState({});
-  
-  const { allTodosListId, setAllTodosListId } = useAllTodosListIdAppState();
+
+  const { allTodosListId } = useAllTodosListIdAppState();
 
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
@@ -78,7 +78,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
         const l = await getAllTodosListItems(user);
         setIsListEmpty(l.items.length === 0);
-        console.log("CurrentTodoList() - useEffect([]) - l: ", l)
         setData(l);
 
         l.items.map(item => setIsEdit(prev => [...prev, { id: item.id, priorityEdit: false, dateEdit: false }]))
@@ -123,7 +122,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         setData(listItems);
         setIsListEmpty(listItems.items.length === 0);
       }
-      
+
       setCurrentListChange();
     }
   }, [currentList]);
@@ -322,7 +321,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         {data ? (
           <>
             {/* List name show and edit, plus icon */}
-            <CurrentListNameAndIcon 
+            <CurrentListNameAndIcon
               originalListName={originalListName}
               setOriginalListName={setOriginalListName}
               onListUpdate={onListUpdate}
@@ -405,7 +404,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                       </ListItemText>
 
                       {/* Show and edit Priority  */}
-                      <ShowAndEditPriority 
+                      <ShowAndEditPriority
                         id={id}
                         priority={priority}
                         data={data}
@@ -441,14 +440,14 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                     }}
                   >
                     {/* New Item name and submit button */}
-                    <NewItemNameSubmit 
+                    <NewItemNameSubmit
                       setNewItemText={setNewItemText}
                       newItemText={newItemText}
                       handleAddItem={handleAddItem}
                     />
 
                     {/* New item priority and date */}
-                    <NewItemPriorityAndDate 
+                    <NewItemPriorityAndDate
                       newItemPriority={newItemPriority}
                       onChangePriority={onChangePriority}
                       selectedDate={selectedDate}

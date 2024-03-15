@@ -46,6 +46,7 @@ export default function LoginPage() {
                     googleId: userObj.sub
                 }
             );
+
             
         } catch (err) {console.log(err)}
 

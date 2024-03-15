@@ -3,7 +3,7 @@ import { AppBar, Button, Toolbar, Typography } from '@mui/material';
 import { usePopupState } from 'material-ui-popup-state/hooks';
 
 import { NewListDialog } from './NewListDialog.jsx';
-import LogoutSet from './user/LogoutSet.jsx';
+import LogoutSet from './user/utils/LogoutSet.jsx'; 
 import { useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../hooks/useAuth.jsx';
@@ -43,7 +43,7 @@ export function AppHeader({ handleListUpdated, handleLogout }) {
             Add List
           </Button>
 
-          <LogoutSet user={user} handleLogout={handleLogout} />
+          <LogoutSet handleLogout={handleLogout} />
           
         </Toolbar>
       </AppBar>
