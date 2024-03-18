@@ -4,7 +4,6 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Box, Button, TextField, Typography } from '@mui/material';
 
 import OutlinedAlert from '../utils/OutlinedAlert';
-import SocialsRegistrationBox from './utils/SocialsRegistrationBox';
 
 import loginImage from '../../assets/images/background-1.jpg'; 
 import { loginUser } from '../../services/userServices';
@@ -100,7 +99,6 @@ export default function LoginPage() {
                 // useAuth custom hook
                 await login(resObj.user);
             }
-            // setUser(resObj.user)
 
         } catch (error) {
             console.error('Error during login:', error);
@@ -143,8 +141,6 @@ export default function LoginPage() {
                 Don't have an account? <Link to="/register">Registration</Link>
             </Typography>
 
-            {/* <SocialsRegistrationBox onClickGoogle={handleGoogleLogin} /> */}
-            
             <div
                 id="googleSignInDiv"
                 style={{ marginTop: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>

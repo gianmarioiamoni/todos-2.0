@@ -5,7 +5,7 @@ import Homepage from './Homepage';
 import Dashboard from './Dashboard';
 import NotFoundPage from './user/NotFoundPage'
 
-import { ProtectedRoute } from './user/ProtectedRoute';
+import { ProtectedRoute } from './user/utils/ProtectedRoute'
 import { AuthProvider } from '../hooks/useAuth';
 
 

@@ -19,24 +19,19 @@ export default function Homepage() {
             const response = await logoutUser(user);
             // useAuth custom hook
             logout();
-            // navigate(response.navigate);
-            // navigate("/");
         }
         catch (err) { console.log(err) }
     }
     return (
         <div style={{ backgroundImage: "url('/src/assets/images/background-4.jpg')", backgroundSize: 'cover', backgroundPosition: 'center', minHeight: '100vh' }}>
             <ResponsiveAppBar handleLogout={handleLogout} />
-            <Container maxWidth="md" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+            <Container maxWidth="xl" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
                 <Typography variant="h3" sx={{ marginBottom: 4, color: themeSelection.palette.secondary.main, }}>
                     Welcome to Todos 2.0
                 </Typography>
                 <Typography variant="h5" sx={{ marginBottom: 2, textAlign: 'center', color: themeSelection.palette.secondary.main }}>
                     Organize. Prioritize. Achieve.
                 </Typography>
-                {/* <Typography variant="h5" sx={{ marginBottom: 2, textAlign: 'center' }}>
-                    Efficiency Elevated: Your Personal Task Master
-                </Typography> */}
                 {user ? (
                     <Button variant="contained" color="primary" href="/dashboard" sx={{ marginBottom: 2 }}>
                         View your Todos

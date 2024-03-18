@@ -1,7 +1,7 @@
 import { ListItem, ListItemButton, ListItemText } from "@mui/material";
 import * as Icons from '@mui/icons-material';
 
-import { themeSelection, } from "../common/themes";
+import { themeSelection, } from "../common/themes.jsx";
 
 import { useAppState } from '../providers/AppState.jsx';
 
@@ -17,21 +17,21 @@ export function AllTodosListItem({ id, name }) {
     return (
         <ListItem
             key={id}
-            sx={ !isSelected() ? (
+            sx={!isSelected() ? (
                 {
-                // color: 'blue',
-                color: themeSelection.palette.primary.main,
-                fontWeight: 'bold'
+                    // color: 'blue',
+                    color: themeSelection.palette.primary.main,
+                    fontWeight: 'bold'
                 }
             ) : (
-                    {
-                        color: themeSelection.palette.secondary.main,
-                        backgroundColor: themeSelection.palette.primary.main,
-                        fontWeight: 'bold'
-                    }    
+                {
+                    color: themeSelection.palette.secondary.main,
+                    backgroundColor: themeSelection.palette.primary.main,
+                    fontWeight: 'bold'
+                }
             )
             }
-            
+
             disablePadding>
             <ListItemButton
                 onClick={() => {
@@ -40,7 +40,7 @@ export function AllTodosListItem({ id, name }) {
                 selected={currentList === id}
             >
                 {<Icons.List />}
-                    <ListItemText sx={{ ml: 0.5 }} primary={name} />
+                <ListItemText sx={{ ml: 0.5 }} primary={name} />
             </ListItemButton>
         </ListItem>
     )

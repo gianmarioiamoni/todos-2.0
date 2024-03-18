@@ -1,5 +1,5 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../../../hooks/useAuth";
 
 // ProtectedRoute component checks the current user’s state from the useAuth Hook 
 // and redirects them to the homescreen if they are not authenticate

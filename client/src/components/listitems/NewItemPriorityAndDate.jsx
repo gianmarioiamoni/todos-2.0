@@ -16,7 +16,6 @@ export default function NewItemPriorityAndDate({newItemPriority, onChangePriorit
                 <PrioritySelect
                     key="priority-select"
                     value={newItemPriority}
-                    // onChange={(event) => onChangePriority(event)} />
                     onChange={onChangePriority} />
             </Grid>
             <Grid xs={4}>

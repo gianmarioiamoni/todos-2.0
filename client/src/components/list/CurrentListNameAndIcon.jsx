@@ -1,7 +1,6 @@
 import { Box, TextField } from "@mui/material";
 import * as Icons from '@mui/icons-material';
 
-import {theme} from "../../common/themes"
 
 export default function CurrentListNameAndIcon({ originalListName, setOriginalListName, onListUpdate, icon }) {
     const Icon = Icons[icon];

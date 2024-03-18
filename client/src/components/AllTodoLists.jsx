@@ -17,19 +17,19 @@ import { useAppState } from '../providers/AppState.jsx';
 import { useAllTodosListIdAppState } from '../providers/AllTodosListIdAppState.jsx';
 import { getAllLists, getAllTodosListId, deleteList } from '../services/listServices.js';
 
-import { themeSelection } from "../common/themes";
+import { themeSelection } from "../common/themes.jsx";
 
 import { useAuth } from '../hooks/useAuth.jsx';
 
 
-export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}) {
+export function AllTodoLists({ handleListDelete, isListUpdated, setIsListUpdated }) {
   const [data, setData] = useState([]); // add loading
-  
+
   const { currentList, setCurrentList } = useAppState();
   const { allTodosListId, setAllTodosListId } = useAllTodosListIdAppState();
-  
+
   const { user } = useAuth();
-  
+
   // USE EFFECTS
 
   // first render
@@ -46,7 +46,7 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
       })
       .catch(err => console.log(err))
   }, []);
-    
+
   // currentList, setCurrentList, isListUpdated
   useEffect(() => {
     if (!currentList) {
@@ -76,7 +76,7 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
           const filteredArray = oldListsArray.filter((l) => l.id !== allTodosListId);
           // add list at the top of the array
           const newListArray = [list, ...filteredArray];
-          
+
           setAllTodosListId(list.id);
           setData(newListArray);
 
@@ -95,7 +95,7 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
           setAllTodosListId(data[0]?.id);
           ///
         }
-        
+
         ///
         (data[0]?.id);
         ///
@@ -106,7 +106,7 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
   }
 
   function isAllTodosList(listId) {
-    return (listId === allTodosListId); 
+    return (listId === allTodosListId);
   }
 
   return (
@@ -133,11 +133,11 @@ export function AllTodoLists({handleListDelete, isListUpdated, setIsListUpdated}
             return (
               <ListItem
                 key={id}
-                sx={ id === currentList ? (
-                {
-                  color: themeSelection.palette.secondary.main,
-                  backgroundColor: themeSelection.palette.primary.main,
-                  fontWeight: 'bold'
+                sx={id === currentList ? (
+                  {
+                    color: themeSelection.palette.secondary.main,
+                    backgroundColor: themeSelection.palette.primary.main,
+                    fontWeight: 'bold'
                   }
                 ) : ({})
                 }
