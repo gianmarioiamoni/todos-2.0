@@ -1,8 +1,6 @@
 import List from "../models/list.js";
 import ListItem from "../models/listItem.js";
 
-//var ObjectId = require('mongodb').ObjectId;
-import { ObjectId } from 'mongodb';
 
 export async function getLists(req, res) {
 

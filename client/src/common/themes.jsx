@@ -1,4 +1,4 @@
-import { createTheme, ThemeProvider } from '@mui/material/styles';
+import { createTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
 import { Typography } from '@mui/material';
 import { amber, deepPurple } from '@mui/material/colors';

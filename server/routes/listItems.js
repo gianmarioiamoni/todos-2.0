@@ -1,7 +1,5 @@
 import express from "express";
 
-import { isLoggedIn } from "../middleware/user.js";
-
 import catchAsync from "../utils/catchAsync.js";
 
 import * as listItems from "../controllers/listItems.js" 
