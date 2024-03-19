@@ -68,8 +68,6 @@ export async function getAllTodosListId(user) {
                 }
             }
         );
-        console.log("***** listServices() - getAllTodoListId() - allTodosList: ", allTodosList)
-        console.log("***** listServices() - getAllTodoListId() - allTodosList.data: ", allTodosList.data)
         if (allTodosList.data != null) {
             return allTodosList.data.id;
         }

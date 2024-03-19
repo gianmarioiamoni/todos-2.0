@@ -17,8 +17,8 @@ export const AuthProvider = ({ children }) => {
     // redirect to /dashboard after successful login
     const login = async (data) => {
         if (data.googleId != null) { 
-            // if the user ha a Google account, set _id ad googleId
-            setUser(() => ({ ...data, _id: data.googleId }));
+            // if the user has a Google account, set _id ad googleId
+            setUser({ ...data, _id: data.googleId });
         } else {
             setUser(data);
         }

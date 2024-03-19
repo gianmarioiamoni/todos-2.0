@@ -17,8 +17,6 @@ export async function getAllTodosListItems(user) {
             params:
                 { userId: user._id }
         });
-        // format dates
-        // const newResItems = resItems.data.map(item => ({ ...item, date: date && dayjs(date) }));
 
         const returnData = { ...resList?.data, items: resItems?.data.sort((a, b) => sortItems(a, b)) };
 
@@ -32,9 +30,6 @@ export async function getListItems(listId) {
 
         const resItems = await axios.get(serverUrl + `/lists/${listId}/listItems`, { withCredentials: false });
         const resList = await axios.get(serverUrl + `/lists/${listId}`, { withCredentials: false });
-
-        // format dates
-        // const newResItems = resItems.data.map(item => ({ ...item, date: date && dayjs(date) }));
 
         const returnData = { ...resList?.data, items: resItems?.data.sort((a, b) => sortItems(a, b)) };
 

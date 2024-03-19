@@ -14,7 +14,7 @@ const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_S
 
 // App.jsx encapsulates all routes within the AuthProvider from useAuth Hook 
 // to provide a consistent authentication context across your app.
-// For routes that require authentication, we use the < ProtectedRoute /> component 
+// For routes that require authentication, we use the <ProtectedRoute/> component 
 // to restrict access to only authenticated users
 export default function App() {
   

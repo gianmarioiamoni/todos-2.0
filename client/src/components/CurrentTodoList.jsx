@@ -68,18 +68,11 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   useEffect(() => {
     async function getInitialData() {
       try {
-        // const listId = await getAllTodosListId(user);
-        // console.log("CurrentTodoList() - useEffect([]) - listId: ", listId)
-
-        // setCurrentList(listId);
         setCurrentList(allTodosListId);
 
         const lists = await getAllLists(user);
-        console.log("CurrentTodoList() - useEffect([]) - lists: ", lists)
 
         const l = await getAllTodosListItems(user);
-        console.log("CurrentTodoList() - useEffect([]) - user: ", user)
-        console.log("CurrentTodoList() - useEffect([]) - l: ", l)
         setIsListEmpty(l.items.length === 0);
         setData(l);
 
@@ -127,11 +120,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         setData(listItems);
         setIsListEmpty(listItems.items.length === 0);
 
-        console.log("useEffect([currentList]) - data.name", data.name)
-        console.log("useEffect([currentList]) - currentList", currentList)
-        console.log("useEffect([currentList]) - listItems", listItems)
-
-        // setOriginalListName(data.name);
       }
 
       setCurrentListChange();
@@ -392,9 +380,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                           onClick={e => e.stopPropagation()}
                           onChange={event => {
                             const listItems = [...data.items];
-                            console.log(data.items)
                             const idx = listItems.findIndex(item => (item.id === id));
-                            console.log(idx)
                             listItems[idx].name = event.target.value;
                             setData((prev) => ({...prev, items: listItems}))
                           }}
