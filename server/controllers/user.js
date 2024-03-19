@@ -14,7 +14,8 @@ export const register = async (req, res, next) => {
         const registeredUser = await User.register(user, password);
         console.log("register() - registereduser = ", registeredUser)
 
-        await User.updateOne({ username: registeredUser.username }, { isCurrentUser: true })
+        // await User.updateOne({ username: registeredUser.username }, { isCurrentUser: true })
+        await User.updateOne({ username: registeredUser.username })
 
         // call login() method by Passport to start a login session
         // you don't have to login after register
@@ -47,7 +48,8 @@ export const register = async (req, res, next) => {
 export const login = async (req, res) => {
     // we are successfully authenticated (due to middleware in route)
 
-    await User.findByIdAndUpdate(req.user.id, { isCurrentUser: true });
+    // await User.findByIdAndUpdate(req.user.id, { isCurrentUser: true });
+    await User.findByIdAndUpdate(req.user.id);
 
     // Now we can use res.locals.returnTo to redirect the user after login
     // thanks to the storeReturnTo middleware function
@@ -81,36 +83,37 @@ export const loginSuccess = async (req, res) => {
     }
 }
 
-export const getCurrentUser = async (req, res) => {
-    if (req.user == null) {
-        return res.send({
-            success: false,
-            message: "User not authenticated",
-            user: null,
-            redirect: "/login"
-        });
-    }
+// export const getCurrentUser = async (req, res) => {
+//     if (req.user == null) {
+//         return res.send({
+//             success: false,
+//             message: "User not authenticated",
+//             user: null,
+//             redirect: "/login"
+//         });
+//     }
     
-    const currentUser = await User.findOne({ $and: [{ _id: req.user.id }, {isCurrentUser: true } ]});
+//     // const currentUser = await User.findOne({ $and: [{ _id: req.user.id }, {isCurrentUser: true } ]});
+//     const currentUser = await User.findOne({ $and: [{ _id: req.user.id }]});
 
-    if (currentUser) {
-        res.send({
-            success: true,
-            message: "User already authenticated",
-            user: req.user,
-            redirect: "/dashboard"
-        });
-    } else {
+//     if (currentUser) {
+//         res.send({
+//             success: true,
+//             message: "User already authenticated",
+//             user: req.user,
+//             redirect: "/dashboard"
+//         });
+//     } else {
 
-        res.send({
-            success: false,
-            message: "User not authenticated",
-            user: null,
-            redirect: "/login"
-        });
-    }
+//         res.send({
+//             success: false,
+//             message: "User not authenticated",
+//             user: null,
+//             redirect: "/login"
+//         });
+//     }
 
-}
+// }
 
 export const logout = async (req, res, next) => {
 
@@ -136,7 +139,8 @@ export const logout = async (req, res, next) => {
 }
 
 export const resetUser = async (req, res) => {
-    await User.findByIdAndUpdate(req.body.id, { isCurrentUser: false });
+    // await User.findByIdAndUpdate(req.body.id, { isCurrentUser: false });
+    await User.findByIdAndUpdate(req.body.id);
 }
 
 

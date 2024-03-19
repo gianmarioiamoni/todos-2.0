@@ -52,7 +52,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
-  const [originalListItems, setOriginalListItems] = useState({});
+  const [originalListItems, ] = useState({});
   const [newItemPriority, setNewItemPriority] = useState(3);
   const [isEdit, setIsEdit] = useState([]);
   const [isListEmpty, setIsListEmpty] = useState();
@@ -70,13 +70,18 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   useEffect(() => {
     async function getInitialData() {
       try {
-        const listId = await getAllTodosListId();
+        // const listId = await getAllTodosListId(user);
+        // console.log("CurrentTodoList() - useEffect([]) - listId: ", listId)
 
-        setCurrentList(listId);
+        // setCurrentList(listId);
+        setCurrentList(allTodosListId);
 
         const lists = await getAllLists(user);
+        console.log("CurrentTodoList() - useEffect([]) - lists: ", lists)
 
         const l = await getAllTodosListItems(user);
+        console.log("CurrentTodoList() - useEffect([]) - user: ", user)
+        console.log("CurrentTodoList() - useEffect([]) - l: ", l)
         setIsListEmpty(l.items.length === 0);
         setData(l);
 
@@ -138,17 +143,13 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
   useEffect(() => {
 
     if (data != null && data?.name) {
-
-      if (data?.name) {
-        setOriginalListName(data.name);
-      }
-
-      if (data?.items) {
-        setOriginalListItems(
-          data.items.reduce((acc, { id, name }) => ({ ...acc, [id]: name }), {})
-        );
-      }
+      setOriginalListName(data.name);
     }
+    // if (data?.items) {
+    //   setOriginalListItems(
+    //     data.items.reduce((acc, { id, name }) => ({ ...acc, [id]: name }), {})
+    //   );
+    // }
   }, [data]);
 
 
@@ -352,7 +353,7 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                 mt: 2,
               }}
             >
-              {data.items != null && data.items.map(({ id, checked, priority }) => {
+              {data.items != null && data.items.map(({ id, name, checked, priority }) => {
                 const labelId = `checkbox-list-label-${id}`;
 
                 // list item
@@ -389,13 +390,15 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
                         <TextField
                           onClick={e => e.stopPropagation()}
                           onChange={event => {
-                            setOriginalListItems({
-                              ...originalListItems,
-                              [id]: event.target.value,
-                            });
+                            const listItems = [...data.items];
+                            console.log(data.items)
+                            const idx = listItems.findIndex(item => (item.id === id));
+                            console.log(idx)
+                            listItems[idx].name = event.target.value;
+                            setData((prev) => ({...prev, items: listItems}))
                           }}
                           onBlur={event => onListItemUpdate(id, event)}
-                          value={originalListItems[id] ?? ''}
+                          value={name}
                           size="small"
                           fullWidth
                           variant="standard"

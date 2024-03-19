@@ -30,7 +30,7 @@ router.route("/login")
 
 router.get("/login/success", catchAsync(users.loginSuccess))
 
-router.get("/currentUser", catchAsync(users.getCurrentUser))
+// router.get("/currentUser", catchAsync(users.getCurrentUser))
     
 router.get("/login/failed", (req, res) => {
     console.log("router.get(/login/failed)")

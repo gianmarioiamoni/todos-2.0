@@ -38,10 +38,11 @@ export function AllTodoLists({ handleListDelete, isListUpdated, setIsListUpdated
       setCurrentList(data[0]?.id);
     }
 
-    getAllTodosListId()
+    getAllTodosListId(user)
       .then((listId) => {
-        setAllTodosListId(listId);
+        // setAllTodosListId(listId);
         handleAllTodosList();
+        setAllTodosListId(listId);
         return listId;
       })
       .catch(err => console.log(err))

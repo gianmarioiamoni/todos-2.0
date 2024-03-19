@@ -59,9 +59,17 @@ export async function deleteList(id) {
     } catch (err) { console.log(err) }
 }
 
-export async function getAllTodosListId() {
+export async function getAllTodosListId(user) {
     try {
-        const allTodosList = await axios.get(serverUrl + "/lists/allTodosList", { withCredentials: true });
+        const allTodosList = await axios.get(serverUrl + "/lists/allTodosList",
+            {
+                params: {
+                    userId: user._id
+                }
+            }
+        );
+        console.log("***** listServices() - getAllTodoListId() - allTodosList: ", allTodosList)
+        console.log("***** listServices() - getAllTodoListId() - allTodosList.data: ", allTodosList.data)
         if (allTodosList.data != null) {
             return allTodosList.data.id;
         }
