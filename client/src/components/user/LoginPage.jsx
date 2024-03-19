@@ -11,6 +11,8 @@ import { useAuth } from '../../hooks/useAuth';
 
 import { jwtDecode } from "jwt-decode";
 
+import ResponsiveAppBar from '../ResponsiveAppBar';
+
 
 const serverUrl = process.env.NODE_ENV === 'production' ? import.meta.env.VITE_SERVER_URL : import.meta.env.VITE_LOCAL_SERVER_URL;
 
@@ -107,45 +109,48 @@ export default function LoginPage() {
 
 
     return (
-        <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
-            {isAlert && <OutlinedAlert severity={alertData.severity} message={alertData.message} setIsAlert={setIsAlert} />}
-            <Typography variant="h5" gutterBottom>
-                Login
-            </Typography>
-            <img src={loginImage} alt="Login Image" style={{ maxWidth: '100%', height: 'auto' }} />
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    name="username"
-                    label="Username"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={credentials.username}
-                    onChange={handleChange}
-                />
-                <TextField
-                    name="password"
-                    type="password"
-                    label="Password"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={credentials.password}
-                    onChange={handleChange}
-                />
-                <Button type="submit" variant="contained" color="primary" fullWidth>
+        <>
+            <ResponsiveAppBar handleLogout={null} showLogin={false} showHome={true} showRegister={true} />
+            <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
+                {isAlert && <OutlinedAlert severity={alertData.severity} message={alertData.message} setIsAlert={setIsAlert} />}
+                <Typography variant="h5" gutterBottom>
                     Login
-                </Button>
-            </form>
-            <Typography variant="body1">
-                Don't have an account? <Link to="/register">Registration</Link>
-            </Typography>
+                </Typography>
+                <img src={loginImage} alt="Login Image" style={{ maxWidth: '100%', height: 'auto' }} />
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        name="username"
+                        label="Username"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={credentials.username}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        name="password"
+                        type="password"
+                        label="Password"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={credentials.password}
+                        onChange={handleChange}
+                    />
+                    <Button type="submit" variant="contained" color="primary" fullWidth>
+                        Login
+                    </Button>
+                </form>
+                <Typography variant="body1">
+                    Don't have an account? <Link to="/register">Registration</Link>
+                </Typography>
 
-            <div
-                id="googleSignInDiv"
-                style={{ marginTop: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                <div
+                    id="googleSignInDiv"
+                    style={{ marginTop: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
 
-            </div>
-        </Box>
+                </div>
+            </Box>
+        </>
     );
 };

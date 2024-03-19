@@ -5,12 +5,17 @@ import MenuIcon from '@mui/icons-material/Menu';
 import LoginIcon from '@mui/icons-material/Login';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 
+
 import LogoutSet from './user/utils/LogoutSet';
 import { useAuth } from '../hooks/useAuth';
 
-export default function ResponsiveAppBar({ handleLogout }) {
+import { useNavigate } from 'react-router-dom';
+
+export default function ResponsiveAppBar({ handleLogout, showHome=true, showLogin=true, showRegister=true }) {
     const { user } = useAuth();
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+    const navigate = useNavigate();
 
     const toggleDrawer = () => {
         setIsDrawerOpen(!isDrawerOpen);
@@ -28,12 +33,32 @@ export default function ResponsiveAppBar({ handleLogout }) {
                             <LogoutSet handleLogout={handleLogout} />
                         ) : (
                             <div>
-                                <Button component={Link} href="/login" color="inherit" sx={{ mr: 1 }}>
-                                    Login
-                                </Button>
-                                <Button component={Link} href="/register" color="inherit">
-                                    Register
-                                </Button>
+                                {showHome && (
+                                    <Button
+                                        color="inherit"
+                                        sx={{ ml: 1 }}
+                                        onClick={() => navigate("/")}
+                                    >
+                                        Home
+                                    </Button>
+                                )}
+                                {showLogin && (
+                                        <Button
+                                            component={Link}
+                                            href="/login"
+                                            color="inherit"
+                                            sx={{ mr: 1 }}>
+                                        Login
+                                    </Button>
+                                )}
+                                {showRegister && (
+                                        <Button
+                                            component={Link}
+                                            href="/register"
+                                            color="inherit">
+                                        Register
+                                    </Button>
+                                )}
                             </div>
                         )}
                     </Box>
@@ -47,7 +72,7 @@ export default function ResponsiveAppBar({ handleLogout }) {
             {/* Drawer for small screen */}
             <Drawer anchor="right" open={isDrawerOpen} onClose={toggleDrawer}>
                 {user ? (
-                    <LogoutSet handleLogout={handleLogout} dir="column"/>
+                    <LogoutSet handleLogout={handleLogout} dir="column" />
                 ) : (
                     <List>
                         <ListItem component={Link} href="/login" onClick={toggleDrawer}>

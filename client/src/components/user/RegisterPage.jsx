@@ -11,6 +11,8 @@ import registerImage from '../../assets/images/background-3.jpg';
 
 import { useAuth } from '../../hooks/useAuth';
 
+import ResponsiveAppBar from '../ResponsiveAppBar';
+
 
 // import.meta.env.
 
@@ -63,51 +65,54 @@ export default function RegisterPage() {
     };
 
     return (
-        <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
-            {isAlert && <OutlinedAlert severity={alertData.severity} message={alertData.message} setIsAlert={setIsAlert} />}
-            <Typography variant="h5" gutterBottom>
-                Register
-            </Typography>
-            <img src={registerImage} alt="Register Image" style={{ maxWidth: '100%', height: 'auto' }} />
-            <form onSubmit={handleSubmit}>
-                <TextField
-                    name="username"
-                    label="Username"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={userData.username}
-                    onChange={handleChange}
-                />
-                <TextField
-                    name="email"
-                    type="email"
-                    label="Email"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={userData.email}
-                    onChange={handleChange}
-                />
-                <TextField
-                    name="password"
-                    type="password"
-                    label="Password"
-                    variant="outlined"
-                    fullWidth
-                    margin="normal"
-                    value={userData.password}
-                    onChange={handleChange}
-                />
-                <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+        <>
+            <ResponsiveAppBar handleLogout={null} showLogin={true} showHome={true} showRegister={false} />
+            <Box sx={{ maxWidth: 400, mx: 'auto', mt: 4 }}>
+                {isAlert && <OutlinedAlert severity={alertData.severity} message={alertData.message} setIsAlert={setIsAlert} />}
+                <Typography variant="h5" gutterBottom>
                     Register
-                </Button>
-            </form>
-            <Typography variant="body1">
-                Do you already have an account? <Link to="/login">Login</Link>
-            </Typography>
-        
-        </Box>
+                </Typography>
+                <img src={registerImage} alt="Register Image" style={{ maxWidth: '100%', height: 'auto' }} />
+                <form onSubmit={handleSubmit}>
+                    <TextField
+                        name="username"
+                        label="Username"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={userData.username}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        name="email"
+                        type="email"
+                        label="Email"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={userData.email}
+                        onChange={handleChange}
+                    />
+                    <TextField
+                        name="password"
+                        type="password"
+                        label="Password"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={userData.password}
+                        onChange={handleChange}
+                    />
+                    <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
+                        Register
+                    </Button>
+                </form>
+                <Typography variant="body1">
+                    Do you already have an account? <Link to="/login">Login</Link>
+                </Typography>
+            
+            </Box>
+        </>
     );
 };
 
