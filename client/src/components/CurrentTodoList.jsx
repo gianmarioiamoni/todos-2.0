@@ -45,14 +45,13 @@ import { useAuth } from '../hooks/useAuth.jsx';
 
 export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpdated }) {
   const { currentList, setCurrentList } = useAppState();
+  const { allTodosListId } = useAllTodosListIdAppState();
+  const { user } = useAuth();
 
   const [data, setData] = useState({});
 
-  const { allTodosListId } = useAllTodosListIdAppState();
-
   const [newItemText, setNewItemText] = useState('');
   const [originalListName, setOriginalListName] = useState('');
-  const [originalListItems, ] = useState({});
   const [newItemPriority, setNewItemPriority] = useState(3);
   const [isEdit, setIsEdit] = useState([]);
   const [isListEmpty, setIsListEmpty] = useState();
@@ -62,7 +61,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
 
   const [selectedDate, setSelectedDate] = useState(dayjs(new Date()));
 
-  const { user } = useAuth();
 
   // USE EFFECTS
 
@@ -84,6 +82,8 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         console.log("CurrentTodoList() - useEffect([]) - l: ", l)
         setIsListEmpty(l.items.length === 0);
         setData(l);
+
+        setOriginalListName(lists[0].name);
 
         l.items.map(item => setIsEdit(prev => [...prev, { id: item.id, priorityEdit: false, dateEdit: false }]))
 
@@ -126,6 +126,12 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
         }
         setData(listItems);
         setIsListEmpty(listItems.items.length === 0);
+
+        console.log("useEffect([currentList]) - data.name", data.name)
+        console.log("useEffect([currentList]) - currentList", currentList)
+        console.log("useEffect([currentList]) - listItems", listItems)
+
+        // setOriginalListName(data.name);
       }
 
       setCurrentListChange();
@@ -145,11 +151,6 @@ export function CurrentTodoList({ isListDeleted, setIsListDeleted, handleListUpd
     if (data != null && data?.name) {
       setOriginalListName(data.name);
     }
-    // if (data?.items) {
-    //   setOriginalListItems(
-    //     data.items.reduce((acc, { id, name }) => ({ ...acc, [id]: name }), {})
-    //   );
-    // }
   }, [data]);
 
 

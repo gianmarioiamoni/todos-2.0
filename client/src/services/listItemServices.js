@@ -13,7 +13,10 @@ export async function getAllTodosListItems(user) {
                     { userId: user._id }
             }
         );
-        const resList = await axios.get(serverUrl + `/lists/allTodosList`, { withCredentials: false });
+        const resList = await axios.get(serverUrl + `/lists/allTodosList`, {
+            params:
+                { userId: user._id }
+        });
         // format dates
         // const newResItems = resItems.data.map(item => ({ ...item, date: date && dayjs(date) }));
 

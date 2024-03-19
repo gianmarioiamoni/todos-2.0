@@ -92,9 +92,7 @@ export function AllTodoLists({ handleListDelete, isListUpdated, setIsListUpdated
             setCurrentList(data[0]?.id);
           }
 
-          ///
           setAllTodosListId(data[0]?.id);
-          ///
         }
 
         ///
