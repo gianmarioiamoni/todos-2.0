@@ -26,7 +26,7 @@ The Homepage of the application allows an easy access to login and register sect
 ![Screenshot 2024-03-20 alle 12 48 45](https://github.com/gianmarioiamoni/todos-2.0/assets/113024091/36026d8c-3ec3-42d9-82c7-d024cdde6234)
 
 
-Use authentication can be done either by registering with username and password or by using Google account
+User authentication can be done either by registering with username and password or by using Google account
 
 # ALL TODOs list, Priority and Expiring Date, creation functionalities
 
