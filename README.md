@@ -33,7 +33,7 @@ The Homepage of the application allows an easy access to login and register sect
 User authentication can be done either by registering with username and password or by using Google account
 
 
-# ALL TODOs list, Priority and Expiring Date, creation functionalities
+## ALL TODOs list, Priority and Expiring Date, creation functionalities
 
 ![Screenshot 2024-03-20 alle 12 42 57](https://github.com/gianmarioiamoni/todos-2.0/assets/113024091/e7317e38-4570-4df2-8e09-1aca5a670fe4)
 
